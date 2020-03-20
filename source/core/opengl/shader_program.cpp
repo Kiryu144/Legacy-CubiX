@@ -90,4 +90,50 @@ ShaderProgram& ShaderProgram::link()
 	return *this;
 }
 
+ShaderProgram& ShaderProgram::bind()
+{
+	glUseProgram( m_program );
+	return *this;
+}
+
+void ShaderProgram::bind() const
+{
+	glUseProgram( m_program );
+}
+
+int ShaderProgram::getUniformLocation( const std::string& uniformName ) const
+{
+	return gl_log_error( glGetUniformLocation( m_program, uniformName.c_str() ) );
+}
+
+ShaderProgram& ShaderProgram::setUniform( const std::string& uniform, float value )
+{
+	glUniform1f( getUniformLocation( uniform ), value );
+	return *this;
+}
+
+ShaderProgram& ShaderProgram::setUniform( const std::string& uniform, const glm::vec2& vec )
+{
+	glUniform2f( getUniformLocation( uniform ), vec.x, vec.y );
+	return *this;
+}
+
+ShaderProgram& ShaderProgram::setUniform( const std::string& uniform, const glm::vec3& vec )
+{
+	glUniform3f( getUniformLocation( uniform ), vec.x, vec.y, vec.z );
+	return *this;
+}
+
+ShaderProgram& ShaderProgram::setUniform( const std::string& uniform, const glm::vec4& vec )
+{
+	glUniform4f( getUniformLocation( uniform ), vec.x, vec.y, vec.z, vec.w );
+	return *this;
+}
+
+ShaderProgram& ShaderProgram::setUniform( const std::string& uniform, const glm::mat4& mat )
+{
+	glUniformMatrix4fv( getUniformLocation( uniform ), 1, GL_FALSE, &mat[ 0 ][ 0 ] );
+	return *this;
+}
+
 } // namespace Core

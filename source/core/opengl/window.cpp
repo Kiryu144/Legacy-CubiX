@@ -35,6 +35,8 @@ Window::Window( int width, int height, const std::string& title, GLFWwindow* par
 							 "Unable to load opengl" );
 
 		glViewport( 0, 0, width, height );
+		glClearColor( 0.1, 0.1, 0.1, 1.0 );
+		glEnable( GL_DEPTH_TEST );
 	}
 }
 
@@ -57,6 +59,19 @@ void Window::swap()
 {
 	glfwSwapBuffers( m_window );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+}
+
+int Window::getWidth() const
+{
+	int w, h;
+	glfwGetWindowSize( m_window, &w, &h );
+	return w;
+}
+int Window::getHeight() const
+{
+	int w, h;
+	glfwGetWindowSize( m_window, &w, &h );
+	return h;
 }
 
 } // namespace Core

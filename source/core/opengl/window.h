@@ -30,6 +30,9 @@ public:
 
 	bool shouldClose() const;
 	void swap();
+
+	int getWidth() const;
+	int getHeight() const;
 };
 
 } // namespace Core
