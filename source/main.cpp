@@ -2,16 +2,16 @@
  * Copyright (c) 2020 David Klostermann.
  */
 
-#define CUBIX_DEBUG
-
-#include <iostream>
-#include "core/cubix_assert.h"
+#include "core/opengl/window.h"
 
 int main()
 {
-	std::cout << "Hello, World!" << std::endl;
+	Core::Window window( 1440, 900, "Cubix" );
 
-	cubix_assert( false, "This is wrooong!" );
+	while( !window.shouldClose() )
+	{
+		Core::Window::Update();
+	}
 
 	return 0;
 }

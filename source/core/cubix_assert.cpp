@@ -1,9 +1,6 @@
 /*
  * Copyright (c) 2020 David Klostermann.
  */
-
-#include "cubix_assert.h"
-
 #include <iostream>
 #include <sstream>
 

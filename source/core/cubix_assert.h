@@ -8,9 +8,16 @@
 #ifdef CUBIX_DEBUG
 #include <cstring>
 #define __FILENAME__ ( strrchr( __FILE__, '\\' ) ? strrchr( __FILE__, '\\' ) + 1 : __FILE__ )
-#define cubix_assert( expr, msg ) __M_assert( #expr, expr, __FILENAME__, __LINE__, msg )
+#define cubix_assert( expr, msg )                               \
+	do                                                          \
+	{                                                           \
+		__M_assert( #expr, expr, __FILENAME__, __LINE__, msg ); \
+	} while( false )
 #else
-#define cubix_assert( expr, msg ) ;
+#define cubix_assert( expr, msg ) \
+	do                            \
+	{                             \
+	} while( false )
 #endif
 
 void __M_assert(
