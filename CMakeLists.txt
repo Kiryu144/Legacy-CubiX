@@ -22,7 +22,7 @@ include_directories(${PROJECT_SOURCE_DIR}/../libraries/glm/include)
 set(LINKER_TARGETS glfw3 gdi32 opengl32)
 
 # List of all the source files to compile
-set(SOURCE_FILES source/main.cpp)
+set(SOURCE_FILES source/main.cpp source/core/cubix_assert.h source/core/cubix_assert.cpp)
 
 
 add_executable(CubiX ${SOURCE_FILES})

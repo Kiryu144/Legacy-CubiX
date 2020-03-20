@@ -11,16 +11,18 @@
  * General Public License for more details.
  */
 
-#define CUBIX_DEBUG
+#ifndef CUBIX_CUBIX_ASSERT_H
+#define CUBIX_CUBIX_ASSERT_H
 
-#include <iostream>
-#include "core/cubix_assert.h"
+#ifdef CUBIX_DEBUG
+#include <cstring>
+#define __FILENAME__ ( strrchr( __FILE__, '\\' ) ? strrchr( __FILE__, '\\' ) + 1 : __FILE__ )
+#define cubix_assert( expr, msg ) __M_assert( #expr, expr, __FILENAME__, __LINE__, msg )
+#else
+#define cubix_assert( expr, msg ) ;
+#endif
 
-int main()
-{
-	std::cout << "Hello, World!" << std::endl;
+void __M_assert(
+	const char* expressionStr, bool expression, const char* file, int line, const char* message );
 
-	cubix_assert( false, "This is wrooong!" );
-
-	return 0;
-}
+#endif // CUBIX_CUBIX_ASSERT_H
