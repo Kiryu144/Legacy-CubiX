@@ -5,6 +5,7 @@
 #include "window.h"
 
 #include "core/cubix_assert.h"
+#include "core/cubix_log.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -15,13 +16,13 @@ namespace Core
 Window::Window( int width, int height, const std::string& title, GLFWwindow* parent )
 {
 	cubix_assert( width > 0 && height > 0, "Invalid window size" );
-	cubix_assert( glfwInit(), "Unable to initialize GLFW" );
+	cubix_log_or_assert( glfwInit(), "Initialized GLFW", "Unable to initialize GLFW" );
 	m_window = glfwCreateWindow( width, height, title.c_str(), nullptr, parent );
-	cubix_assert( m_window, "Unable to create GLFW Window" );
+	cubix_log_or_assert(
+		m_window, "Created window '" + title + "'", "Unable to create GLFW Window" );
 	m_parent = parent;
 
 	glfwSwapInterval( 0 ); // Disable VSync
-
 	if( !parent )
 	{
 		glfwWindowHint( GLFW_DOUBLEBUFFER, true );
@@ -29,7 +30,9 @@ Window::Window( int width, int height, const std::string& title, GLFWwindow* par
 		glfwMakeContextCurrent( m_window );
 
 		gladLoadGLLoader( ( GLADloadproc )glfwGetProcAddress );
-		cubix_assert( gladLoadGL(), "Unable to load opengl" );
+		cubix_log_or_assert( gladLoadGL(),
+							 "Created opengl context for window '" + title + "'",
+							 "Unable to load opengl" );
 
 		glViewport( 0, 0, width, height );
 	}

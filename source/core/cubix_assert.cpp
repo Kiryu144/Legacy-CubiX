@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2020 David Klostermann.
  */
+#include "cubix_assert.h"
+
 #include <iostream>
 #include <sstream>
 
@@ -8,22 +10,18 @@
 #include <windows.h>
 #endif
 
-void __M_assert(
-	const char* expressionStr, bool expression, const char* file, int line, const char* message )
+void __M_assert( const char* expressionStr, const char* file, int line, const char* message )
 {
-	if( !expression )
-	{
-		std::stringstream text;
-		text << "File: " << file << ":" << line << std::endl;
-		text << "Expression: " << expressionStr << std::endl;
-		text << "Message: " << message;
-		std::string str = text.str();
+	std::stringstream text;
+	text << "File: " << file << ":" << line << std::endl;
+	text << "Expression: " << expressionStr << std::endl;
+	text << "Message: " << message;
+	std::string str = text.str();
 
-		std::cerr << "Cubix Assertion" << std::endl << str << std::endl;
+	Core::Logger::Log( Core::Logger::Loglevel::WARNING, str );
 
 #ifdef _WIN32
-		MessageBox( nullptr, str.c_str(), "Cubix Assertion", MB_OK );
+	MessageBox( nullptr, str.c_str(), "Cubix Assertion", MB_OK );
 #endif
-		abort();
-	}
+	abort();
 }
