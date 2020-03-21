@@ -5,6 +5,7 @@
 #include "shader_program.h"
 
 #include "core/opengl/openg_error.h"
+#include "core/opengl/opengl_helper.h"
 
 #include <fstream>
 
@@ -25,12 +26,21 @@ ShaderProgram& ShaderProgram::compileShaderFromSource( const std::string& source
 
 	if( status == GL_TRUE )
 	{
-		Logger::Log( "Compiled shader ID:" + std::to_string( shader ) );
+		Logger::Log( "Compiled " + Core::to_string( shaderType )
+					 + " shader ID:" + std::to_string( shader ) );
 		m_compiledShaders[ shaderType ] = shader;
 	}
 	else
 	{
-		Logger::Log( Logger::WARNING, "Error on compiling shader ID:" + std::to_string( shader ) );
+		GLint logLength = 0;
+		gl_log_error( glGetShaderiv( shader, GL_INFO_LOG_LENGTH, &logLength ) );
+		std::string log( logLength, 0 );
+		gl_log_error( glGetShaderInfoLog( shader, logLength, &logLength, &log.at( 0 ) ) );
+
+		Logger::Log( Logger::WARNING,
+					 "Error on compiling " + Core::to_string( shaderType )
+						 + " shader ID: " + std::to_string( shader ) + "\n" + log );
+
 		glDeleteShader( shader );
 	}
 
@@ -79,8 +89,15 @@ ShaderProgram& ShaderProgram::link()
 	}
 	else
 	{
+		GLint logLength = 0;
+		gl_log_error( glGetProgramiv( m_program, GL_INFO_LOG_LENGTH, &logLength ) );
+		std::string log( logLength, 0 );
+		gl_log_error( glGetProgramInfoLog( m_program, logLength, &logLength, &log.at( 0 ) ) );
+
 		Logger::Log( Logger::WARNING,
-					 "Error on compiling shader program ID:" + std::to_string( m_program ) );
+					 "Error on linking shader program ID: " + std::to_string( m_program ) + "\n"
+						 + log );
+
 		glDeleteProgram( m_program );
 		m_program = 0;
 	}
