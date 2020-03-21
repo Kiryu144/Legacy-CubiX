@@ -29,5 +29,5 @@ set(LINKER_TARGETS glfw3 gdi32 opengl32)
 set(SOURCE_FILES ./../libraries/glad/src/glad.c source/main.cpp source/core/cubix_assert.h source/core/cubix_assert.cpp source/core/opengl/window.cpp source/core/opengl/window.h source/core/opengl/shader_program.cpp source/core/opengl/shader_program.h source/core/cubix_log.cpp source/core/cubix_log.h source/core/opengl/openg_error.h source/core/opengl/opengl_error.cpp source/core/opengl/opengl_helper.h source/core/opengl/opengl_helper.cpp source/core/opengl/attributebuffer.cpp source/core/opengl/attributebuffer.h source/core/event.h)
 
 
-add_executable(CubiX ${SOURCE_FILES})
+add_executable(CubiX ${SOURCE_FILES} resources.rc)
 target_link_libraries(CubiX ${LINKER_TARGETS})
