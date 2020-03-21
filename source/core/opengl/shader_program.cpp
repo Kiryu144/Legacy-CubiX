@@ -12,6 +12,13 @@
 namespace Core
 {
 
+ShaderProgram::~ShaderProgram()
+{
+	Logger::Log( "Deleting shader program ID: " + std::to_string( m_program ) );
+	glDeleteProgram( m_program );
+	m_program = 0;
+}
+
 ShaderProgram& ShaderProgram::compileShaderFromSource( const std::string& source,
 													   const ShaderProgram::ShaderType& shaderType )
 {
@@ -27,7 +34,7 @@ ShaderProgram& ShaderProgram::compileShaderFromSource( const std::string& source
 	if( status == GL_TRUE )
 	{
 		Logger::Log( "Compiled " + Core::to_string( shaderType )
-					 + " shader ID:" + std::to_string( shader ) );
+					 + " shader ID: " + std::to_string( shader ) );
 		m_compiledShaders[ shaderType ] = shader;
 	}
 	else
@@ -85,7 +92,7 @@ ShaderProgram& ShaderProgram::link()
 
 	if( status == GL_TRUE )
 	{
-		Logger::Log( "Linked shader program ID:" + std::to_string( m_program ) );
+		Logger::Log( "Linked shader program ID: " + std::to_string( m_program ) );
 	}
 	else
 	{

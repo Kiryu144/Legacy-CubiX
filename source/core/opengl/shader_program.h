@@ -29,6 +29,10 @@ public:
 		GEOMETRY_SHADER = GL_GEOMETRY_SHADER
 	};
 
+	ShaderProgram()								= default;
+	ShaderProgram( const ShaderProgram& other ) = delete;
+	~ShaderProgram();
+
 	ShaderProgram& compileShaderFromSource( const std::string& source,
 											const ShaderType& shaderType );
 	ShaderProgram& compileShaderFromFile( const std::string& file, const ShaderType& shaderType );

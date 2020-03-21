@@ -3,6 +3,7 @@
  */
 
 #include <core/opengl/shader_program.h>
+#include <core/opengl/attributebuffer.h>
 #include "core/opengl/window.h"
 
 int main()
@@ -14,10 +15,20 @@ int main()
 		.compileShaderFromFile( "3dcube.frag", Core::ShaderProgram::FRAGMENT_SHADER )
 		.link();
 
+	glm::vec3 vertices[] = { { -0.5f, -0.5f, 0.0f }, { 0.5f, -0.5f, 0.0f }, { 0.0f, 0.5f, 0.0f } };
+
+	shader.bind();
+
+	Core::AttributeBuffer buffer( GL_ARRAY_BUFFER );
+	buffer.upload< glm::vec3 >( &vertices[ 0 ], 9 );
+	buffer.bind( 0 );
+
 	while( !window.shouldClose() )
 	{
 		Core::Window::Update();
 		window.swap();
+
+		glDrawArrays( GL_TRIANGLES, 0, 3 );
 	}
 
 	return 0;
