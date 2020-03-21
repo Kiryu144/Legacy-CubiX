@@ -2,8 +2,8 @@
  * Copyright (c) 2020 David Klostermann.
  */
 
-#include <core/opengl/shader_program.h>
-#include <core/opengl/attributebuffer.h>
+#include "core/opengl/shader_program.h"
+#include "core/opengl/attributebuffer.h"
 #include "core/opengl/window.h"
 
 int main()
@@ -20,7 +20,7 @@ int main()
 	shader.bind();
 
 	Core::AttributeBuffer buffer( GL_ARRAY_BUFFER );
-	buffer.upload< glm::vec3 >( &vertices[ 0 ], 9 );
+	buffer.upload< glm::vec3 >( &vertices[ 0 ], 3 );
 	buffer.bind( 0 );
 
 	while( !window.shouldClose() )

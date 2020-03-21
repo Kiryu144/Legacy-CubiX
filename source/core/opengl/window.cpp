@@ -6,6 +6,7 @@
 
 #include "core/cubix_assert.h"
 #include "core/cubix_log.h"
+#include "core/event.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -38,6 +39,12 @@ Window::Window( int width, int height, const std::string& title, GLFWwindow* par
 		glClearColor( 0.1, 0.1, 0.1, 1.0 );
 		glEnable( GL_DEPTH_TEST );
 	}
+
+	glfwSetWindowSizeCallback( m_window, []( GLFWwindow* window, int w, int h ) {
+		EventWindowResize resize{ static_cast< unsigned int >( w ),
+								  static_cast< unsigned int >( h ) };
+		Handler< EventWindowResize >::Fire( resize );
+	} );
 }
 
 Window::~Window()

@@ -35,6 +35,11 @@ public:
 	int getHeight() const;
 };
 
+struct EventWindowResize
+{
+	unsigned int w, h;
+};
+
 } // namespace Core
 
 #endif
