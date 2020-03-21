@@ -15,12 +15,24 @@ int main()
 		.compileShaderFromFile( "3dcube.frag", Core::ShaderProgram::FRAGMENT_SHADER )
 		.link();
 
-	glm::vec3 vertices[] = { { -0.5f, -0.5f, 0.0f }, { 0.5f, -0.5f, 0.0f }, { 0.0f, 0.5f, 0.0f } };
+	glm::vec3 vertices[]
+		= { { -0.5f, -0.5f, -0.5f }, { 0.5f, -0.5f, -0.5f }, { 0.5f, 0.5f, -0.5f },
+			{ 0.5f, 0.5f, -0.5f },	 { -0.5f, 0.5f, -0.5f }, { -0.5f, -0.5f, -0.5f },
+			{ -0.5f, -0.5f, 0.5f },	 { 0.5f, -0.5f, 0.5f },	 { 0.5f, 0.5f, 0.5f },
+			{ 0.5f, 0.5f, 0.5f },	 { -0.5f, 0.5f, 0.5f },	 { -0.5f, -0.5f, 0.5f },
+			{ -0.5f, 0.5f, 0.5f },	 { -0.5f, 0.5f, -0.5f }, { -0.5f, -0.5f, -0.5f },
+			{ -0.5f, -0.5f, -0.5f }, { -0.5f, -0.5f, 0.5f }, { -0.5f, 0.5f, 0.5f },
+			{ 0.5f, 0.5f, 0.5f },	 { 0.5f, 0.5f, -0.5f },	 { 0.5f, -0.5f, -0.5f },
+			{ 0.5f, -0.5f, -0.5f },	 { 0.5f, -0.5f, 0.5f },	 { 0.5f, 0.5f, 0.5f },
+			{ -0.5f, -0.5f, -0.5f }, { 0.5f, -0.5f, -0.5f }, { 0.5f, -0.5f, 0.5f },
+			{ 0.5f, -0.5f, 0.5f },	 { -0.5f, -0.5f, 0.5f }, { -0.5f, -0.5f, -0.5f },
+			{ -0.5f, 0.5f, -0.5f },	 { 0.5f, 0.5f, -0.5f },	 { 0.5f, 0.5f, 0.5f },
+			{ 0.5f, 0.5f, 0.5f },	 { -0.5f, 0.5f, 0.5f },	 { -0.5f, 0.5f, -0.5f } };
 
 	shader.bind();
 
-	Core::AttributeBuffer buffer( GL_ARRAY_BUFFER );
-	buffer.upload< glm::vec3 >( &vertices[ 0 ], 3 );
+	Core::AttributeBuffer buffer( GL_ARRAY_BUFFER, Core::StandardVertexAttribute );
+	buffer.upload< glm::vec3 >( &vertices[ 0 ], 36 );
 	buffer.bind( 0 );
 
 	while( !window.shouldClose() )
@@ -28,7 +40,7 @@ int main()
 		Core::Window::Update();
 		window.swap();
 
-		glDrawArrays( GL_TRIANGLES, 0, 3 );
+		glDrawArrays( GL_TRIANGLES, 0, 36 );
 	}
 
 	return 0;

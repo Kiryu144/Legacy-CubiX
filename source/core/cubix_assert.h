@@ -43,5 +43,9 @@
 #endif
 
 void __M_assert( const char* expressionStr, const char* file, int line, const char* message );
+void __M_assert( const char* expressionStr,
+				 const char* file,
+				 int line,
+				 const std::string& message );
 
 #endif // CUBIX_CUBIX_ASSERT_H

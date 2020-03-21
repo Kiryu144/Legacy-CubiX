@@ -8,7 +8,9 @@
 #include <glad/glad.h>
 
 #include "core/opengl/openg_error.h"
-#include "opengl_helper.h"
+#include "core/opengl/opengl_helper.h"
+#include "core/cubix_assert.h"
+#include "core/opengl/attribute.h"
 
 namespace Core
 {
@@ -18,11 +20,12 @@ class AttributeBuffer
 private:
 	GLenum m_bufferTarget;
 	GLuint m_id;
-	size_t m_size;
-	size_t m_sizePerSingle;
+	GLuint m_vertices;
+	GLuint m_totalSize;
+	Attribute m_attribute;
 
 public:
-	AttributeBuffer( GLenum bufferTarget );
+	AttributeBuffer( GLenum bufferTarget, Attribute attribute );
 	AttributeBuffer( const AttributeBuffer& other ) = delete;
 	~AttributeBuffer();
 	AttributeBuffer& operator=( AttributeBuffer& other ) = delete;
@@ -30,12 +33,13 @@ public:
 	template< typename T >
 	void upload( T* data, size_t amount )
 	{
-		m_sizePerSingle = sizeof( T );
-		m_size			= sizeof( T ) * amount;
-		Core::Logger::Log( "Uploading " + std::to_string( m_size ) + "B data to a "
+		cubix_assert( sizeof( T ) == m_attribute.getTotalSize( 1 ), "Invalid datatype provided" );
+		m_vertices	= amount;
+		m_totalSize = m_attribute.getTotalSize( m_vertices );
+		Core::Logger::Log( "Uploading " + std::to_string( m_totalSize ) + "B data to a "
 						   + Core::to_string( m_bufferTarget ) + " buffer" );
 		gl_log_error( glBindBuffer( m_bufferTarget, m_id ) );
-		gl_log_error( glBufferData( m_bufferTarget, m_size, data, GL_STATIC_DRAW ) );
+		gl_log_error( glBufferData( m_bufferTarget, m_totalSize, data, GL_STATIC_DRAW ) );
 	}
 
 	void bind( GLuint vertexAttribIndex );

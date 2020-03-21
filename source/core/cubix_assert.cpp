@@ -25,3 +25,8 @@ void __M_assert( const char* expressionStr, const char* file, int line, const ch
 #endif
 	abort();
 }
+
+void __M_assert( const char* expressionStr, const char* file, int line, const std::string& message )
+{
+	__M_assert( expressionStr, file, line, message.c_str() );
+}
