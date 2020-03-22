@@ -2,18 +2,15 @@
  * Copyright (c) 2020 David Klostermann.
  */
 
-#include "core/opengl/shader_program.h"
-#include "core/opengl/attributebuffer.h"
-#include "core/opengl/window.h"
+#include "game/cubix.h"
 
-#include "game/voxel/voxel_group.h"
-#include "core/container/transform.h"
+int main()
+{
+	Cubix game;
+	return 0;
+}
 
-#include <glm/gtc/matrix_transform.hpp>
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/string_cast.hpp>
-#include <GLFW/glfw3.h>
-
+/*
 int main()
 {
 	Core::Window window( 1440, 900, "Cubix" );
@@ -60,3 +57,4 @@ int main()
 
 	return 0;
 }
+*/

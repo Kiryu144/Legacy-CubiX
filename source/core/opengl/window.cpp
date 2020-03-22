@@ -47,6 +47,10 @@ Window::Window( int width, int height, const std::string& title, GLFWwindow* par
 								  static_cast< unsigned int >( h ) };
 		Handler< EventWindowResize >::Fire( resize );
 	} );
+
+	EventWindowResize resize{ static_cast< unsigned int >( width ),
+							  static_cast< unsigned int >( height ) };
+	Handler< EventWindowResize >::Fire( resize );
 }
 
 Window::~Window()
