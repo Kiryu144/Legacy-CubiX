@@ -37,6 +37,12 @@ protected:
 public:
 	Container3D( const glm::uvec3& size ) : m_size( size )
 	{
+		initialize( size );
+	}
+
+	void initialize( const glm::uvec3& size )
+	{
+		m_size = size;
 		m_data.resize( size.x * size.y * size.z );
 	}
 

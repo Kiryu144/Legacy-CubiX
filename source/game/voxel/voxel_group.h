@@ -21,6 +21,7 @@ private:
 
 public:
 	VoxelGroup( const glm::uvec3& size );
+	VoxelGroup( const std::string& voxFilePath );
 
 	void set( const glm::uvec3& pos, const Voxel& voxel, bool update = true );
 	Voxel& get( const glm::uvec3& pos );

@@ -23,45 +23,34 @@ int main()
 		.compileShaderFromFile( "basic.frag", Core::ShaderProgram::FRAGMENT_SHADER )
 		.link();
 
-	Game::VoxelGroup voxelGroup( { 16, 16, 16 } );
+	Game::VoxelGroup voxelGroup( "antenna.vox" );
 
 	glDisable( GL_CULL_FACE );
-
-	for( int x = 0; x < 16; ++x )
-	{
-		for( int y = 0; y < 16; ++y )
-		{
-			for( int z = 0; z < 16; ++z )
-			{
-				if( rand() % 100 < 50 )
-				{
-					voxelGroup.set( { x, y, z }, { 128, 128, 64, 255 }, false );
-				}
-			}
-		}
-	}
 
 	voxelGroup.updateAllFaces();
 	voxelGroup.regenerateMesh();
 
 	glm::mat4 projection = glm::perspective(
-		70.0f, static_cast< float >( window.getWidth() ) / window.getHeight(), 0.1f, 100.0f );
+		70.0f, static_cast< float >( window.getWidth() ) / window.getHeight(), 0.1f, 1000.0f );
 	glm::mat4 view( 1.0 );
 
 	Core::Transform transform;
-	transform.getPosition() += glm::vec3( 0.0f, 0.0f, -45.0f );
+	transform.getPosition() += glm::vec3( 0.0f, 0.0f, -85.0f );
 
 	shader.bind();
-	shader.setUniform( "projection", projection );
-	shader.setUniform( "view", view );
+	shader.setUniform( "u_projection", projection );
+	shader.setUniform( "u_view", view );
+	shader.setUniform( "u_ambientLightPower", 0.6f );
+	shader.setUniform( "u_directionalLightPower", 0.9f );
+	shader.setUniform( "u_directionalLightPosition", { 1000.0f, 0.0f, 0.0f } );
 
 	while( !window.shouldClose() )
 	{
 		Core::Window::Update();
 		window.swap();
 
-		transform.getRotation() = glm::vec3{ glfwGetTime() / 2.0f, glfwGetTime() / 4.0f, 0.0f };
-		shader.setUniform( "transformation", transform.getMatrix() );
+		transform.getRotation() = glm::vec3{ 0.0f, glfwGetTime() / 2.0f, 0.0f };
+		shader.setUniform( "u_transformation", transform.getMatrix() );
 
 		voxelGroup.getVertices().bind( 0 );
 		voxelGroup.getNormals().bind( 1 );
