@@ -43,6 +43,8 @@ public:
 	}
 
 	void bind( GLuint vertexAttribIndex );
+
+	GLuint getVerticeAmount() const;
 };
 
 } // namespace Core

@@ -6,42 +6,57 @@
 #define CUBIX_VOXEL_H
 
 #include "core/container/color.h"
+#include "core/container/facing.h"
 
 namespace Game
 {
 
 class Voxel : public Core::Color
 {
-protected:
 public:
-	Voxel( unsigned char r = 0, unsigned char g = 0, unsigned char b = 0, unsigned char a = 255 );
-};
-
-class FlagVoxel : public Voxel
-{
-public:
-	enum class Flag : uint64_t
+	enum Flag : uint64_t
 	{
-		EXISTS		   = 1,
-		FACE_FLAGS_SET = 2,
-		FACE_NORTH	   = 4,
-		FACE_EAST	   = 8,
-		FACE_SOUTH	   = 16,
-		FACE_WEST	   = 32,
-		FACE_UP		   = 64,
-		FACE_DOWN	   = 128
+		FACE_FRONT	= 1 << 0,
+		FACE_RIGHT	= 1 << 1,
+		FACE_BACK	= 1 << 2,
+		FACE_LEFT	= 1 << 3,
+		FACE_TOP	= 1 << 4,
+		FACE_BOTTOM = 1 << 5,
+		EXISTS		= 1 << 6,
+
+		COMPLEX_VOXEL_STRUCTURE_PLACEHOLDER_START = ( uint64_t )1 << 48,
+		COMPLEX_VOXEL_STRUCTURE_PLACEHOLDER_1	  = ( uint64_t )1 << 49,
+		COMPLEX_VOXEL_STRUCTURE_PLACEHOLDER_2	  = ( uint64_t )1 << 50,
+		COMPLEX_VOXEL_STRUCTURE_PLACEHOLDER_3	  = ( uint64_t )1 << 51,
+		COMPLEX_VOXEL_STRUCTURE_PLACEHOLDER_4	  = ( uint64_t )1 << 52,
+		COMPLEX_VOXEL_STRUCTURE_PLACEHOLDER_5	  = ( uint64_t )1 << 53,
+		COMPLEX_VOXEL_STRUCTURE_PLACEHOLDER_6	  = ( uint64_t )1 << 54,
+		COMPLEX_VOXEL_STRUCTURE_PLACEHOLDER_7	  = ( uint64_t )1 << 55,
+		COMPLEX_VOXEL_STRUCTURE_PLACEHOLDER_8	  = ( uint64_t )1 << 56,
+		COMPLEX_VOXEL_STRUCTURE_PLACEHOLDER_9	  = ( uint64_t )1 << 57,
+		COMPLEX_VOXEL_STRUCTURE_PLACEHOLDER_10	  = ( uint64_t )1 << 58,
+		COMPLEX_VOXEL_STRUCTURE_PLACEHOLDER_11	  = ( uint64_t )1 << 59,
+		COMPLEX_VOXEL_STRUCTURE_PLACEHOLDER_12	  = ( uint64_t )1 << 60,
+		COMPLEX_VOXEL_STRUCTURE_PLACEHOLDER_13	  = ( uint64_t )1 << 61,
+		COMPLEX_VOXEL_STRUCTURE_PLACEHOLDER_14	  = ( uint64_t )1 << 62,
+		COMPLEX_VOXEL_STRUCTURE_PLACEHOLDER_END	  = ( uint64_t )1 << 63
 	};
 
 protected:
 	uint64_t m_flags;
 
 public:
-	FlagVoxel() = default;
+	Voxel() = default;
 
-	FlagVoxel( unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255 );
+	Voxel( unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255 );
 
 	void setFlag( Flag flag, bool b );
 	bool getFlag( Flag flag ) const;
+
+	bool exists() const;
+
+	Core::Facing& getFacing();
+	const Core::Facing& getFacing() const;
 };
 
 } // namespace Game

@@ -12,7 +12,7 @@
 namespace Game
 {
 
-class VoxelGroup : public Core::Container3D< FlagVoxel >
+class VoxelGroup : protected Core::Container3D< Voxel >
 {
 private:
 	Core::AttributeBuffer m_vertices;
@@ -22,7 +22,15 @@ private:
 public:
 	VoxelGroup( const glm::uvec3& size );
 
-	void generateMesh();
+	void set( const glm::uvec3& pos, const Voxel& voxel, bool update = true );
+	Voxel& get( const glm::uvec3& pos );
+	const Voxel& get( const glm::uvec3& pos ) const;
+
+	Core::Facing findVisibleFaces( const glm::uvec3& pos ) const;
+
+	void updateFace( const glm::uvec3& pos );
+	void updateAllFaces();
+	void regenerateMesh();
 
 	Core::AttributeBuffer& getVertices();
 	Core::AttributeBuffer& getNormals();

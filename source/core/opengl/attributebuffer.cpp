@@ -27,11 +27,16 @@ void Core::AttributeBuffer::bind( GLuint vertexAttribIndex )
 {
 	cubix_assert( m_totalSize > 0, "Unable to bind buffer with no data uploaded" );
 	glBindBuffer( m_bufferTarget, m_id );
-	glVertexAttribPointer( vertexAttribIndex,
-						   m_attribute.getScalars(),
-						   m_attribute.getDataType(),
-						   GL_FALSE,
-						   0,
-						   nullptr );
+	gl_log_error( glVertexAttribPointer( vertexAttribIndex,
+										 m_attribute.getScalars(),
+										 m_attribute.getDataType(),
+										 m_attribute.getNormalize(),
+										 0,
+										 nullptr ) );
 	glEnableVertexAttribArray( vertexAttribIndex );
+}
+
+GLuint Core::AttributeBuffer::getVerticeAmount() const
+{
+	return m_vertices;
 }

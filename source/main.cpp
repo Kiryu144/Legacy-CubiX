@@ -12,6 +12,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/string_cast.hpp>
+#include <GLFW/glfw3.h>
 
 int main()
 {
@@ -24,6 +25,8 @@ int main()
 
 	Game::VoxelGroup voxelGroup( { 16, 16, 16 } );
 
+	glDisable( GL_CULL_FACE );
+
 	for( int x = 0; x < 16; ++x )
 	{
 		for( int y = 0; y < 16; ++y )
@@ -32,37 +35,21 @@ int main()
 			{
 				if( rand() % 100 < 50 )
 				{
-					voxelGroup[ { x, y, z } ] = Game::FlagVoxel( 255, 0, 255, 255 );
+					voxelGroup.set( { x, y, z }, { 128, 128, 64, 255 }, false );
 				}
 			}
 		}
 	}
 
-	voxelGroup.generateMesh();
-
-	glm::vec3 vertices[]
-		= { { -0.5f, -0.5f, -0.5f }, { 0.5f, -0.5f, -0.5f }, { 0.5f, 0.5f, -0.5f },
-			{ 0.5f, 0.5f, -0.5f },	 { -0.5f, 0.5f, -0.5f }, { -0.5f, -0.5f, -0.5f },
-			{ -0.5f, -0.5f, 0.5f },	 { 0.5f, -0.5f, 0.5f },	 { 0.5f, 0.5f, 0.5f },
-			{ 0.5f, 0.5f, 0.5f },	 { -0.5f, 0.5f, 0.5f },	 { -0.5f, -0.5f, 0.5f },
-			{ -0.5f, 0.5f, 0.5f },	 { -0.5f, 0.5f, -0.5f }, { -0.5f, -0.5f, -0.5f },
-			{ -0.5f, -0.5f, -0.5f }, { -0.5f, -0.5f, 0.5f }, { -0.5f, 0.5f, 0.5f },
-			{ 0.5f, 0.5f, 0.5f },	 { 0.5f, 0.5f, -0.5f },	 { 0.5f, -0.5f, -0.5f },
-			{ 0.5f, -0.5f, -0.5f },	 { 0.5f, -0.5f, 0.5f },	 { 0.5f, 0.5f, 0.5f },
-			{ -0.5f, -0.5f, -0.5f }, { 0.5f, -0.5f, -0.5f }, { 0.5f, -0.5f, 0.5f },
-			{ 0.5f, -0.5f, 0.5f },	 { -0.5f, -0.5f, 0.5f }, { -0.5f, -0.5f, -0.5f },
-			{ -0.5f, 0.5f, -0.5f },	 { 0.5f, 0.5f, -0.5f },	 { 0.5f, 0.5f, 0.5f },
-			{ 0.5f, 0.5f, 0.5f },	 { -0.5f, 0.5f, 0.5f },	 { -0.5f, 0.5f, -0.5f } };
-
-	Core::AttributeBuffer buffer( GL_ARRAY_BUFFER, Core::StandardVertexAttribute );
-	buffer.upload< glm::vec3 >( &vertices[ 0 ], 36 );
-	buffer.bind( 0 );
-
-	// voxelGroup.getVertices().bind(0);
+	voxelGroup.updateAllFaces();
+	voxelGroup.regenerateMesh();
 
 	glm::mat4 projection = glm::perspective(
 		70.0f, static_cast< float >( window.getWidth() ) / window.getHeight(), 0.1f, 100.0f );
 	glm::mat4 view( 1.0 );
+
+	Core::Transform transform;
+	transform.getPosition() += glm::vec3( 0.0f, 0.0f, -45.0f );
 
 	shader.bind();
 	shader.setUniform( "projection", projection );
@@ -73,23 +60,13 @@ int main()
 		Core::Window::Update();
 		window.swap();
 
-		for( int x = -1; x <= 1; ++x )
-		{
-			for( int y = -1; y <= 1; ++y )
-			{
-				for( int z = -1; z <= 1; ++z )
-				{
-					if( x == 0 && y == 0 && z == 0 )
-					{
-						continue;
-					}
-					glm::mat4 transformation = glm::translate(
-						glm::mat4( 1.0f ), glm::vec3( x * 50.0f, y * 50.0f, z * 50.0f ) );
-					shader.setUniform( "transformation", transformation );
-					glDrawArrays( GL_TRIANGLES, 0, 36 );
-				}
-			}
-		}
+		transform.getRotation() = glm::vec3{ glfwGetTime() / 2.0f, glfwGetTime() / 4.0f, 0.0f };
+		shader.setUniform( "transformation", transform.getMatrix() );
+
+		voxelGroup.getVertices().bind( 0 );
+		voxelGroup.getNormals().bind( 1 );
+		voxelGroup.getColors().bind( 2 );
+		glDrawArrays( GL_TRIANGLES, 0, voxelGroup.getVertices().getVerticeAmount() );
 	}
 
 	return 0;

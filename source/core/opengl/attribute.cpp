@@ -10,8 +10,8 @@
 namespace Core
 {
 
-Attribute::Attribute( GLenum dataType, unsigned char scalars )
-	: m_dataType( dataType ), m_scalars( scalars )
+Attribute::Attribute( GLenum dataType, unsigned char scalars, bool normalize )
+	: m_dataType( dataType ), m_scalars( scalars ), m_normalize( normalize )
 {
 	cubix_assert( scalars >= 0 && scalars <= 4, "Scalar out of range." );
 }
@@ -49,9 +49,15 @@ size_t Attribute::getTotalSize( size_t nVertices ) const
 {
 	return getDataTypeSize() * m_scalars * nVertices;
 }
+
 const GLenum Attribute::getDataType() const
 {
 	return m_dataType;
+}
+
+const bool Attribute::getNormalize() const
+{
+	return m_normalize;
 }
 
 } // namespace Core

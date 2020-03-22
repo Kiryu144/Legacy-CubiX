@@ -10,14 +10,10 @@ namespace Game
 Voxel::Voxel( unsigned char r, unsigned char g, unsigned char b, unsigned char a )
 	: Core::Color( r, g, b, a )
 {
-}
-
-FlagVoxel::FlagVoxel( unsigned char r, unsigned char g, unsigned char b, unsigned char a )
-{
 	setFlag( Flag::EXISTS, true );
 }
 
-void FlagVoxel::setFlag( FlagVoxel::Flag flag, bool b )
+void Voxel::setFlag( Voxel::Flag flag, bool b )
 {
 	if( b )
 	{
@@ -29,9 +25,24 @@ void FlagVoxel::setFlag( FlagVoxel::Flag flag, bool b )
 	}
 }
 
-bool FlagVoxel::getFlag( FlagVoxel::Flag flag ) const
+bool Voxel::getFlag( Voxel::Flag flag ) const
 {
 	return m_flags & static_cast< uint64_t >( flag );
+}
+
+Core::Facing& Voxel::getFacing()
+{
+	return reinterpret_cast< Core::Facing& >( m_flags );
+}
+
+const Core::Facing& Voxel::getFacing() const
+{
+	return reinterpret_cast< const Core::Facing& >( m_flags );
+}
+
+bool Voxel::exists() const
+{
+	return getFlag( EXISTS );
 }
 
 } // namespace Game
