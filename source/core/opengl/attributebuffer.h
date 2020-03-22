@@ -18,10 +18,10 @@ namespace Core
 class AttributeBuffer
 {
 private:
-	GLenum m_bufferTarget;
-	GLuint m_id;
-	GLuint m_vertices;
-	GLuint m_totalSize;
+	GLenum m_bufferTarget{ 0 };
+	GLuint m_id{ 0 };
+	GLuint m_vertices{ 0 };
+	GLuint m_totalSize{ 0 };
 	Attribute m_attribute;
 
 public:
