@@ -6,7 +6,6 @@
 
 int main()
 {
-
-	// Cubix game;
+	Cubix game;
 	return 0;
 }
