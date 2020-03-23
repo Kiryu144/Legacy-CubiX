@@ -4,7 +4,7 @@
 
 #include <glad/glad.h>
 
-#include "core/cubix_log.h"
+#include "core/cubix_assert.h"
 
 void __M_gl_clear_error()
 {
@@ -15,6 +15,7 @@ void __M_gl_log_error( const char* expr )
 {
 	if( GLenum error = glGetError() )
 	{
+		// TODO: Optimize
 		std::string errorStr;
 		switch( error )
 		{

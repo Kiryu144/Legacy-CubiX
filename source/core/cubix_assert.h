@@ -5,9 +5,10 @@
 #ifndef CUBIX_CUBIX_ASSERT_H
 #define CUBIX_CUBIX_ASSERT_H
 
+#include "defines.h"
 #include "cubix_log.h"
 
-#ifdef CUBIX_DEBUG
+#if CUBIX_ENABLE_ASSERT
 #include <cstring>
 #define __FILENAME__ ( strrchr( __FILE__, '\\' ) ? strrchr( __FILE__, '\\' ) + 1 : __FILE__ )
 #define cubix_assert( expr, msg )                             \

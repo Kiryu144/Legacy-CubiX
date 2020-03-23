@@ -12,13 +12,6 @@ Core::AttributeBuffer::AttributeBuffer( GLenum bufferTarget, Attribute attribute
 
 Core::AttributeBuffer::~AttributeBuffer()
 {
-	if( m_id == 0 )
-	{
-		return;
-	}
-
-	Core::Logger::Log( "Deleting " + std::to_string( m_attribute.getTotalSize( m_vertices ) )
-					   + "B from a " + Core::to_string( m_bufferTarget ) + " buffer" );
 	glDeleteBuffers( 1, &m_id );
 	m_id = 0;
 }

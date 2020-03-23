@@ -9,8 +9,22 @@
 #include <thread>
 
 Cubix::Cubix()
-	: m_window( 1440, 900, "CubiX" ), m_frameStartTime( getCurrentSystemTime() ), m_fpsCap( 240.0 )
+	: m_window( 1440, 900, "CubiX" ),
+	  m_world(),
+	  m_frameStartTime( getCurrentSystemTime() ),
+	  m_fpsCap( 240.0 )
 {
+	int range = 3;
+	for( int x = -range; x <= range; ++x )
+	{
+		for( int z = -range; z <= range; ++z )
+		{
+			m_world.loadOrCreate( { x, 0, z } );
+		}
+	}
+
+	m_view.getPosition() = { 0.0f, 20.0f, 0.0f };
+
 	while( !m_window.shouldClose() )
 	{
 		double now		 = getCurrentSystemTime();
@@ -24,6 +38,10 @@ void Cubix::update( double deltaTime )
 {
 	Core::Window::Update(); // Update glfw events
 	m_window.swap();		// Refresh frame
+
+	m_view.getRotation() += glm::vec3{ 0.0f, 0.001f * deltaTime, 0.0f };
+
+	m_world.draw( m_view, m_projection );
 
 	// Has to be at the end
 	waitForForFpsCap();

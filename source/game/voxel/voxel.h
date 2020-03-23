@@ -47,7 +47,6 @@ protected:
 
 public:
 	Voxel() = default;
-
 	Voxel( unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255 );
 
 	void setFlag( Flag flag, bool b );

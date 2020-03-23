@@ -5,6 +5,7 @@
 #ifndef CUBIX_CUBIX_H
 #define CUBIX_CUBIX_H
 
+#include "game/world/world.h"
 #include "core/container/transform.h"
 #include "core/opengl/window.h"
 #include "core/event.h"
@@ -13,6 +14,7 @@ struct Cubix : public Core::Listener< Core::EventWindowResize >
 {
 private:
 	Core::Window m_window;
+	Game::World m_world;
 
 	double m_frameStartTime;
 	double m_fpsCap;

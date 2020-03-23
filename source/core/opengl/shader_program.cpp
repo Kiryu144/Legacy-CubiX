@@ -6,6 +6,7 @@
 
 #include "core/opengl/openg_error.h"
 #include "core/opengl/opengl_helper.h"
+#include "core/cubix_log.h"
 
 #include <fstream>
 
@@ -14,7 +15,6 @@ namespace Core
 
 ShaderProgram::~ShaderProgram()
 {
-	Logger::Log( "Deleting shader program ID: " + std::to_string( m_program ) );
 	glDeleteProgram( m_program );
 	m_program = 0;
 }
@@ -33,8 +33,6 @@ ShaderProgram& ShaderProgram::compileShaderFromSource( const std::string& source
 
 	if( status == GL_TRUE )
 	{
-		Logger::Log( "Compiled " + Core::to_string( shaderType )
-					 + " shader ID: " + std::to_string( shader ) );
 		m_compiledShaders[ shaderType ] = shader;
 	}
 	else
@@ -90,11 +88,7 @@ ShaderProgram& ShaderProgram::link()
 	GLint status;
 	glGetProgramiv( m_program, GL_LINK_STATUS, &status );
 
-	if( status == GL_TRUE )
-	{
-		Logger::Log( "Linked shader program ID: " + std::to_string( m_program ) );
-	}
-	else
+	if( status == GL_FALSE )
 	{
 		GLint logLength = 0;
 		gl_log_error( glGetProgramiv( m_program, GL_INFO_LOG_LENGTH, &logLength ) );

@@ -36,8 +36,6 @@ public:
 		cubix_assert( sizeof( T ) == m_attribute.getTotalSize( 1 ), "Invalid datatype provided" );
 		m_vertices	= amount;
 		m_totalSize = m_attribute.getTotalSize( m_vertices );
-		Core::Logger::Log( "Uploading " + std::to_string( m_totalSize ) + "B data to a "
-						   + Core::to_string( m_bufferTarget ) + " buffer" );
 		gl_log_error( glBindBuffer( m_bufferTarget, m_id ) );
 		gl_log_error( glBufferData( m_bufferTarget, m_totalSize, data, GL_STATIC_DRAW ) );
 	}

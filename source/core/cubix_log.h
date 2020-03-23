@@ -5,6 +5,8 @@
 #ifndef CUBIX_CUBIX_LOG_H
 #define CUBIX_CUBIX_LOG_H
 
+// TODO: Rework
+
 #include <thread>
 #include <atomic>
 #include <mutex>

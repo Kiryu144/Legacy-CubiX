@@ -5,9 +5,9 @@
 #ifndef CUBIX_OPENG_ERROR_H
 #define CUBIX_OPENG_ERROR_H
 
-#include "core/cubix_assert.h"
+#include "defines.h"
 
-#ifdef CUBIX_DEBUG
+#ifdef CUBIX_ENABLE_GL_CLEAR_ERROR
 
 #define gl_clear_error()      \
 	do                        \
@@ -23,11 +23,14 @@
 	} while( false )
 
 #else
-#define gl_log_error( gl_call ) gl_call
-#define gl_clear_error()      \
-	do                        \
-	{                         \
-		__M_gl_clear_error(); \
+#define gl_log_error( gl_call ) \
+	do                          \
+	{                           \
+		gl_call                 \
+	} while( false )
+#define gl_clear_error() \
+	do                   \
+	{                    \
 	} while( false )
 #endif
 
