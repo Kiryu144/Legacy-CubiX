@@ -5,7 +5,7 @@
 #ifndef CUBIX_CUBIX_H
 #define CUBIX_CUBIX_H
 
-#include "game/world/world.h"
+#include "game/common/world/world.h"
 #include "core/container/transform.h"
 #include "game/client/moveable_view.h"
 #include "core/opengl/window.h"

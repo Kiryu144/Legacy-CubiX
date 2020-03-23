@@ -5,7 +5,7 @@
 #ifndef CUBIX_WORLD_H
 #define CUBIX_WORLD_H
 
-#include "game/world/world_chunk.h"
+#include "world_chunk.h"
 #include "core/opengl/shader_program.h"
 
 #include <map>

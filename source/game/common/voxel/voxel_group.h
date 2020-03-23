@@ -7,7 +7,7 @@
 
 #include "core/container/container3d.h"
 #include "core/opengl/attributebuffer.h"
-#include "game/voxel/voxel.h"
+#include "voxel.h"
 
 namespace Game
 {

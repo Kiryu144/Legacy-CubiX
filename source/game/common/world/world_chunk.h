@@ -5,7 +5,7 @@
 #ifndef CUBIX_WORLD_CHUNK_H
 #define CUBIX_WORLD_CHUNK_H
 
-#include "game/voxel/voxel_group.h"
+#include "game/common/voxel/voxel_group.h"
 #include "core/container/transform.h"
 
 namespace Game
