@@ -28,11 +28,11 @@ void World::loadOrCreate( const glm::uvec3& position )
 	}
 }
 
-void World::draw( Core::Transform& view, const glm::mat4& projection )
+void World::draw( const glm::mat4& view, const glm::mat4& projection )
 {
 	m_shaderProgram.bind();
 	m_shaderProgram.setUniform( "u_projection", projection );
-	m_shaderProgram.setUniform( "u_view", view.getMatrix() );
+	m_shaderProgram.setUniform( "u_view", view );
 	m_shaderProgram.setUniform( "u_ambientLightPower", 0.6f );
 	m_shaderProgram.setUniform( "u_directionalLightPower", 0.9f );
 	m_shaderProgram.setUniform( "u_directionalLightPosition", { 1000.0f, 0.0f, 0.0f } );

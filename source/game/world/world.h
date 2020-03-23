@@ -33,7 +33,7 @@ public:
 	World();
 
 	void loadOrCreate( const glm::uvec3& position );
-	void draw( Core::Transform& view, const glm::mat4& projection );
+	void draw( const glm::mat4& view, const glm::mat4& projection );
 };
 
 } // namespace Game

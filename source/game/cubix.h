@@ -7,6 +7,7 @@
 
 #include "game/world/world.h"
 #include "core/container/transform.h"
+#include "game/client/moveable_view.h"
 #include "core/opengl/window.h"
 #include "core/event.h"
 
@@ -20,7 +21,7 @@ private:
 	double m_fpsCap;
 
 	glm::mat4 m_projection;
-	Core::Transform m_view;
+	Game::MoveableView m_view;
 
 private:
 	double getCurrentSystemTime() const;

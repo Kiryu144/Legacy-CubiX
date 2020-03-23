@@ -39,7 +39,7 @@ public:
 
 	static glm::vec3 CreateDirection( const glm::vec3& rotation );
 
-private:
+protected:
 	glm::vec3 m_position{ 0.0f };
 	glm::vec3 m_rotation{ 0.0f };
 	glm::vec3 m_scale{ 1.0f };

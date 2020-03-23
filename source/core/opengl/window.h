@@ -6,6 +6,7 @@
 #define CUBIX_WINDOW_H
 
 #include <string>
+#include <vector>
 
 // Forward declaration
 struct GLFWwindow;
@@ -15,6 +16,7 @@ namespace Core
 
 class Window
 {
+
 private:
 	GLFWwindow* m_window{ nullptr };
 	GLFWwindow* m_parent{ nullptr };
@@ -38,6 +40,16 @@ public:
 struct EventWindowResize
 {
 	unsigned int w, h;
+};
+
+struct EventMouseMove
+{
+	double x, y;
+};
+
+struct EventKeyPressed
+{
+	int key;
 };
 
 } // namespace Core

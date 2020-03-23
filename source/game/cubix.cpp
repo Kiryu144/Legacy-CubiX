@@ -6,13 +6,14 @@
 
 #include <GLM/gtc/matrix_transform.hpp>
 #include <GLFW/glfw3.h>
+#include <glm/vec3.hpp>
 #include <thread>
 
 Cubix::Cubix()
 	: m_window( 1440, 900, "CubiX" ),
 	  m_world(),
 	  m_frameStartTime( getCurrentSystemTime() ),
-	  m_fpsCap( 240.0 )
+	  m_fpsCap( -1 )
 {
 	int range = 3;
 	for( int x = -range; x <= range; ++x )
@@ -38,10 +39,9 @@ void Cubix::update( double deltaTime )
 {
 	Core::Window::Update(); // Update glfw events
 	m_window.swap();		// Refresh frame
+	m_view.update( deltaTime );
 
-	m_view.getRotation() += glm::vec3{ 0.0f, 0.001f * deltaTime, 0.0f };
-
-	m_world.draw( m_view, m_projection );
+	m_world.draw( m_view.getViewMatrix(), m_projection );
 
 	// Has to be at the end
 	waitForForFpsCap();
@@ -50,7 +50,7 @@ void Cubix::update( double deltaTime )
 void Cubix::onEvent( const Core::EventWindowResize& eventType )
 {
 	m_projection = glm::perspective(
-		80.0f, static_cast< float >( eventType.w ) / eventType.h, 0.1f, 1000.0f );
+		glm::radians( 70.0f ), static_cast< float >( eventType.w ) / eventType.h, 0.1f, 1000.0f );
 }
 
 void Cubix::waitForForFpsCap()
