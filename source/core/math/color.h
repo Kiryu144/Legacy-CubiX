@@ -5,7 +5,7 @@
 #ifndef CUBIX_COLOR_H
 #define CUBIX_COLOR_H
 
-#include <GLM/vec4.hpp>
+#include <glm/vec4.hpp>
 
 namespace Core
 {

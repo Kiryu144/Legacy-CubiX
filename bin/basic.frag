@@ -13,7 +13,7 @@ uniform float u_ambientLightPower;
 void main(){
 	vec3 norm = normalize(in_normal);
 	float diff = max(dot(norm, normalize(u_directionalLightPosition - in_position)), 0.0);
-	vec4 result = vec4(vec3(u_ambientLightPower + diff), 1.0) * in_color;
+	vec4 result = vec4(vec3(clamp(u_ambientLightPower + diff, 0.0, 1.0)), 1.0) * in_color;
 
 	out_color = result;
 }

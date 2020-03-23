@@ -5,8 +5,8 @@
 #ifndef CUBIX_TRANSFORM_H
 #define CUBIX_TRANSFORM_H
 
-#include <GLM/vec4.hpp>
-#include <GLM/mat4x4.hpp>
+#include <glm/vec4.hpp>
+#include <glm/mat4x4.hpp>
 
 namespace Core
 {

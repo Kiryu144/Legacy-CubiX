@@ -5,7 +5,7 @@
 #ifndef CUBIX_VOXEL_GROUP_H
 #define CUBIX_VOXEL_GROUP_H
 
-#include "core/container/container3d.h"
+#include "core/data/container3d.h"
 #include "core/opengl/attributebuffer.h"
 #include "voxel.h"
 
@@ -18,6 +18,10 @@ private:
 	Core::AttributeBuffer m_vertices;
 	Core::AttributeBuffer m_normals;
 	Core::AttributeBuffer m_colors;
+
+	std::vector< glm::vec3 > m_verticeBuffer;
+	std::vector< glm::vec3 > m_normalBuffer;
+	std::vector< glm::tvec4< unsigned char > > m_colorBuffer;
 
 public:
 	VoxelGroup( const glm::uvec3& size );
@@ -32,6 +36,7 @@ public:
 	void updateFace( const glm::uvec3& pos );
 	void updateAllFaces();
 	void regenerateMesh();
+	void upload();
 
 	Core::AttributeBuffer& getVertices();
 	Core::AttributeBuffer& getNormals();

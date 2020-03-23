@@ -24,7 +24,8 @@ void World::loadOrCreate( const glm::uvec3& position )
 						  std::forward_as_tuple( position ),
 						  std::forward_as_tuple( position ) );
 		WorldChunk& chunk = m_chunks.find( position )->second;
-		chunk.generateFlat( 8 );
+		chunk.generateBasicNoise();
+		chunk.upload();
 	}
 }
 
@@ -33,9 +34,9 @@ void World::draw( const glm::mat4& view, const glm::mat4& projection )
 	m_shaderProgram.bind();
 	m_shaderProgram.setUniform( "u_projection", projection );
 	m_shaderProgram.setUniform( "u_view", view );
-	m_shaderProgram.setUniform( "u_ambientLightPower", 0.6f );
-	m_shaderProgram.setUniform( "u_directionalLightPower", 0.9f );
-	m_shaderProgram.setUniform( "u_directionalLightPosition", { 1000.0f, 0.0f, 0.0f } );
+	m_shaderProgram.setUniform( "u_ambientLightPower", 0.8f );
+	m_shaderProgram.setUniform( "u_directionalLightPower", 1.0f );
+	m_shaderProgram.setUniform( "u_directionalLightPosition", { 5000.0f, -100000.0f, 14400.0f } );
 
 	for( auto& key : m_chunks )
 	{

@@ -212,13 +212,13 @@ void VoxelGroup::regenerateMesh()
 		glm::vec3( 1.0, 0.0, 0.0 ),	 glm::vec3( 0.0, 1.0, 0.0 ),  glm::vec3( 0.0, -1.0, 0.0 )
 	};
 
-	std::vector< glm::vec3 > vertices;
-	std::vector< glm::vec3 > normals;
-	std::vector< glm::tvec4< unsigned char > > colors;
+	m_verticeBuffer.clear();
+	m_normalBuffer.clear();
+	m_colorBuffer.clear();
 
-	vertices.reserve( m_size.x * m_size.y * m_size.z );
-	normals.reserve( m_size.x * m_size.y * m_size.z );
-	colors.reserve( m_size.x * m_size.y * m_size.z );
+	m_verticeBuffer.reserve( m_size.x * m_size.y * m_size.z );
+	m_normalBuffer.reserve( m_size.x * m_size.y * m_size.z );
+	m_colorBuffer.reserve( m_size.x * m_size.y * m_size.z );
 
 	glm::vec3 halfSize{ m_size.x * 0.5f, m_size.y * 0.5f, m_size.z * 0.5f };
 
@@ -243,21 +243,28 @@ void VoxelGroup::regenerateMesh()
 						// float lightMul = light.getFace(i) / 255.0f;
 						for( int j = 0; j < 6; ++j )
 						{
-							vertices.push_back(
+							m_verticeBuffer.push_back(
 								s_vertices[ i * 6 + j ]
 								+ glm::vec3( x - halfSize.x, y - halfSize.y, z - halfSize.z ) );
-							normals.push_back( s_normals[ i ] );
-							colors.push_back( voxel );
+							m_normalBuffer.push_back( s_normals[ i ] );
+							m_colorBuffer.push_back( voxel );
 						}
 					}
 				}
 			}
 		}
 	}
+}
 
-	m_vertices.upload< glm::vec3 >( &vertices[ 0 ], vertices.size() );
-	m_normals.upload< glm::vec3 >( &normals[ 0 ], normals.size() );
-	m_colors.upload< glm::tvec4< unsigned char > >( &colors[ 0 ], colors.size() );
+void VoxelGroup::upload()
+{
+	m_vertices.upload< glm::vec3 >( &m_verticeBuffer[ 0 ], m_verticeBuffer.size() );
+	m_normals.upload< glm::vec3 >( &m_normalBuffer[ 0 ], m_normalBuffer.size() );
+	m_colors.upload< glm::tvec4< unsigned char > >( &m_colorBuffer[ 0 ], m_colorBuffer.size() );
+
+	m_verticeBuffer.clear();
+	m_normalBuffer.clear();
+	m_colorBuffer.clear();
 }
 
 Core::AttributeBuffer& VoxelGroup::getVertices()
