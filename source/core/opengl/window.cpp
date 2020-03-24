@@ -23,7 +23,6 @@ Window::Window( int width, int height, const std::string& title, GLFWwindow* par
 		m_window, "Created window '" + title + "'", "Unable to create GLFW Window" );
 	m_parent = parent;
 
-	glfwSwapInterval( 0 ); // Disable VSync
 	if( !parent )
 	{
 		glfwWindowHint( GLFW_DOUBLEBUFFER, true );
@@ -34,6 +33,8 @@ Window::Window( int width, int height, const std::string& title, GLFWwindow* par
 		cubix_log_or_assert( gladLoadGL(),
 							 "Created opengl context for window '" + title + "'",
 							 "Unable to load opengl" );
+
+		glfwSwapInterval( 0 ); // Disable VSync
 
 		glViewport( 0, 0, width, height );
 		glClearColor( 179 / 255.0f, 210 / 255.0f, 238 / 255.0f, 1.0 );

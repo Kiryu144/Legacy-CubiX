@@ -9,11 +9,7 @@
 #include <glm/vec3.hpp>
 #include <thread>
 
-Cubix::Cubix()
-	: m_window( 1440, 900, "CubiX" ),
-	  m_world(),
-	  m_frameStartTime( getCurrentSystemTime() ),
-	  m_fpsCap( -1 )
+Cubix::Cubix() : m_window( 1440, 900, "CubiX" ), m_world(), m_gameTime( 1000 )
 {
 	int range = 3;
 	for( int x = -range; x <= range; ++x )
@@ -24,49 +20,25 @@ Cubix::Cubix()
 		}
 	}
 
-	m_view.getPosition() = { 0.0f, 20.0f, 0.0f };
-
 	while( !m_window.shouldClose() )
 	{
-		double now		 = getCurrentSystemTime();
-		double delta	 = now - m_frameStartTime;
-		m_frameStartTime = now;
-		update( delta );
+		update();
 	}
 }
 
-void Cubix::update( double deltaTime )
+void Cubix::update()
 {
+	m_gameTime.update();
 	Core::Window::Update(); // Update glfw events
 	m_window.swap();		// Refresh frame
-	m_view.update( deltaTime );
+
+	m_view.update( m_gameTime.getDeltaTime() );
 
 	m_world.draw( m_view.getViewMatrix(), m_projection );
-
-	// Has to be at the end
-	waitForForFpsCap();
 }
 
 void Cubix::onEvent( const Core::EventWindowResize& eventType )
 {
 	m_projection = glm::perspective(
 		glm::radians( 70.0f ), static_cast< float >( eventType.w ) / eventType.h, 0.1f, 1000.0f );
-}
-
-void Cubix::waitForForFpsCap()
-{
-	if( m_fpsCap <= 0.0 )
-	{
-		return;
-	}
-
-	double frameTimeTillNow = m_frameStartTime - getCurrentSystemTime();
-	double minFrameTime		= 1000.0 / m_fpsCap;
-	std::this_thread::sleep_for(
-		std::chrono::milliseconds( static_cast< uint64_t >( minFrameTime - frameTimeTillNow ) ) );
-}
-
-double Cubix::getCurrentSystemTime() const
-{
-	return glfwGetTime() * 1000.0;
 }

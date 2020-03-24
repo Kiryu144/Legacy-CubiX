@@ -51,8 +51,8 @@ void MoveableView::update( double deltaTime )
 								m_moveDirection.y * 0.01 * deltaTime * m_moveSpeed,
 								m_moveDirection.z * 0.01 * deltaTime * m_moveSpeed };
 
-	getRotation() += glm::vec3{ m_turnDirection.x * 0.01 * deltaTime * m_turnSensitivity,
-								m_turnDirection.y * 0.01 * deltaTime * m_turnSensitivity,
+	getRotation() += glm::vec3{ m_turnDirection.x * 0.1 * m_turnSensitivity,
+								m_turnDirection.y * 0.1 * m_turnSensitivity,
 								0.0f };
 
 	m_moveDirection = { 0.0, 0.0, 0.0 };

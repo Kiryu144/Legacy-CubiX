@@ -10,24 +10,21 @@
 #include "game/client/moveable_view.h"
 #include "core/opengl/window.h"
 #include "core/event.h"
+#include "core/math/game_time.h"
 
 struct Cubix : public Core::Listener< Core::EventWindowResize >
 {
 private:
 	Core::Window m_window;
-	Game::World m_world;
-
-	double m_frameStartTime;
-	double m_fpsCap;
+	Core::GameTime m_gameTime;
 
 	glm::mat4 m_projection;
+
+	Game::World m_world;
 	Game::MoveableView m_view;
 
 private:
-	double getCurrentSystemTime() const;
-	void waitForForFpsCap();
-
-	void update( double deltaTime );
+	void update();
 	void onEvent( const Core::EventWindowResize& eventType ) override;
 
 public:
