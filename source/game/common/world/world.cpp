@@ -14,7 +14,7 @@ World::World()
 		.link();
 }
 
-void World::loadOrCreate( const glm::uvec3& position )
+void World::loadOrCreate( const glm::ivec3& position )
 {
 	auto it = m_chunks.find( position );
 	if( it == m_chunks.end() )

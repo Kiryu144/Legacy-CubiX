@@ -69,7 +69,7 @@ public:
 };
 
 template< typename EventType >
-std::set< typename Handler< EventType >::listener_t > Handler< EventType >::s_listener;
+std::set< typename Core::Handler< EventType >::listener_t > Handler< EventType >::s_listener;
 
 template< typename EventType >
 void Handler< EventType >::Fire( const EventType& event )

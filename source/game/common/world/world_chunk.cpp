@@ -11,12 +11,13 @@ namespace Game
 
 unsigned int WorldChunk::s_sideLength = 32;
 
-WorldChunk::WorldChunk( const glm::uvec3& chunkPosition )
+WorldChunk::WorldChunk( const glm::ivec3& chunkPosition )
 	: VoxelGroup( glm::uvec3{ s_sideLength, s_sideLength, s_sideLength } ),
 	  m_chunkPosition( chunkPosition )
 {
-	getPosition()
-		= { chunkPosition.x * m_size.x, chunkPosition.y * m_size.y, chunkPosition.z * m_size.z };
+	getPosition() = glm::ivec3{ chunkPosition.x * m_size.x,
+								chunkPosition.y * m_size.y,
+								chunkPosition.z * m_size.z };
 }
 
 void WorldChunk::generateFlat( unsigned int floorThickness )
@@ -41,7 +42,6 @@ void WorldChunk::generateFlat( unsigned int floorThickness )
 
 void WorldChunk::generateBasicNoise()
 {
-	static const float scale = 1.0f;
 	FastNoise noise;
 	noise.SetNoiseType( FastNoise::NoiseType::PerlinFractal );
 
@@ -50,7 +50,7 @@ void WorldChunk::generateBasicNoise()
 		for( int z = 0; z < m_size.z; ++z )
 		{
 			Voxel voxel( 73, 201 + ( rand() % 20 ), 98 );
-			glm::uvec2 worldPos{ m_chunkPosition.x * s_sideLength + x,
+			glm::ivec2 worldPos{ m_chunkPosition.x * s_sideLength + x,
 								 m_chunkPosition.z * s_sideLength + z };
 
 			auto n = ( noise.GetNoise( worldPos.x, worldPos.y ) + 1 ) / 2.0f;

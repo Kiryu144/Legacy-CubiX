@@ -15,10 +15,10 @@ class WorldChunk : public VoxelGroup, public Core::Transform
 {
 public:
 	static unsigned int s_sideLength;
-	const glm::uvec3 m_chunkPosition;
+	const glm::ivec3 m_chunkPosition;
 
 public:
-	WorldChunk( const glm::uvec3& chunkPosition );
+	WorldChunk( const glm::ivec3& chunkPosition );
 
 	void generateFlat( unsigned int floorThickness );
 	void generateBasicNoise();

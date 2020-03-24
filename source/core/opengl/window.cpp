@@ -36,7 +36,7 @@ Window::Window( int width, int height, const std::string& title, GLFWwindow* par
 							 "Unable to load opengl" );
 
 		glViewport( 0, 0, width, height );
-		glClearColor( 0.1, 0.1, 0.1, 1.0 );
+		glClearColor( 179 / 255.0f, 210 / 255.0f, 238 / 255.0f, 1.0 );
 		glEnable( GL_DEPTH_TEST );
 		glEnable( GL_BLEND );
 		glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
