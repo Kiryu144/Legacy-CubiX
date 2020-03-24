@@ -29,8 +29,8 @@ Cubix::Cubix() : m_window( 1440, 900, "CubiX" ), m_world(), m_gameTime( 1000 )
 void Cubix::update()
 {
 	m_gameTime.update();
-	Core::Window::Update(); // Update glfw events
-	m_window.swap();		// Refresh frame
+	Core::Window::Update();
+	m_window.swap();
 
 	m_view.update( m_gameTime.getDeltaTime() );
 
