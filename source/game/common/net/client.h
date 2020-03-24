@@ -5,7 +5,7 @@
 #ifndef CUBIX_CLIENT_H
 #define CUBIX_CLIENT_H
 
-#include "game/common/net_instance.h"
+#include "net_instance.h"
 
 namespace Game
 {
