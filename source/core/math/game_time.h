@@ -25,6 +25,8 @@ public:
 	void update();
 	float getFPS() const;
 	float getDeltaTime() const;
+
+	void setFPSLimit( unsigned int fpsLimit );
 };
 
 } // namespace Core

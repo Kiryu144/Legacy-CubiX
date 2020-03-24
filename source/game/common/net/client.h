@@ -13,7 +13,8 @@ namespace Game
 class Client : public NetInstance
 {
 protected:
-	ENetPeer* m_peer;
+	ENetPeer m_peer;
+	bool m_peerConnected{ false };
 
 public:
 	Client() = default;

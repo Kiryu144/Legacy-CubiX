@@ -40,4 +40,9 @@ float GameTime::getDeltaTime() const
 	return std::chrono::duration_cast< resolution >( m_deltaTime ).count() / 1000.0f;
 }
 
+void GameTime::setFPSLimit( unsigned int fpsLimit )
+{
+	m_minFrameTime = ( std::chrono::microseconds( 1000000 / fpsLimit ) );
+}
+
 } // namespace Core
