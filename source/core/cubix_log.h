@@ -11,6 +11,7 @@
 #include <atomic>
 #include <mutex>
 #include <list>
+#include <map>
 
 namespace Core
 {
@@ -21,16 +22,20 @@ public:
 	enum Loglevel
 	{
 		INFO,
-		WARNING,
-		ASSERT
+		WARNING
 	};
+
 	struct LogMessage
 	{
 		Loglevel loglevel;
 		std::string message;
+		std::thread::id threadID;
 	};
 
 private:
+	std::mutex m_threadIdentifierMutex;
+	std::map< std::thread::id, std::string > m_threadIdentifiers;
+
 	std::atomic_bool m_quit{ false };
 	std::list< LogMessage > m_messages;
 	std::thread m_workerThread;
@@ -42,10 +47,14 @@ private:
 	static Logger& getInstance();
 
 	void log( Loglevel loglevel, const std::string& message );
+	void registerThread( const std::string& name );
 
 public:
 	static void Log( Loglevel loglevel, const std::string& message );
 	static void Log( const std::string& message );
+
+	static void Register( const std::string& name );
+	static void UnRegister();
 };
 
 } // namespace Core

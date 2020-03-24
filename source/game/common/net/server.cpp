@@ -9,7 +9,10 @@
 namespace Game
 {
 
-Server::Server( int port ) : NetInstance( port ) {}
+Server::Server( int port ) : NetInstance( port )
+{
+	Core::Logger::Register( "SERVER" );
+}
 
 void Server::onNetworkingEvent( const ENetEvent& event )
 {

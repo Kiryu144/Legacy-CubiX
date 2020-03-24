@@ -37,7 +37,7 @@ void Logger::worker()
 	static const char* logLevelStrings[ 4 ] = { "[INFO]", "[WARNING]", "[ASSERT]", "[UNDEFINED]" };
 	static const char* format				= "[%H:%M:%S]";
 	char formattedTimeBuffer[ 64 ];
-	while( !m_quit )
+	do
 	{
 		std::list< LogMessage > messages;
 		{
@@ -60,8 +60,23 @@ void Logger::worker()
 				logLevelStrings[ message.loglevel ] :
 				logLevelStrings[ 3 ];
 
+			std::string threadPrefix = "";
+			{
+				std::lock_guard< std::mutex > lockGuard( m_messagesMutex );
+				auto it = m_threadIdentifiers.find( message.threadID );
+				if( it != m_threadIdentifiers.end() )
+				{
+					threadPrefix = it->second;
+				}
+			}
+
 			std::stringstream ss;
-			ss << formattedTimeBuffer << logLevelString << " " << message.message;
+			ss << formattedTimeBuffer << logLevelString;
+			if( !threadPrefix.empty() )
+			{
+				ss << "[" << threadPrefix << "]";
+			}
+			ss << " " << message.message;
 			std::string msg = ss.str();
 
 			std::cout << msg << std::endl;
@@ -69,8 +84,8 @@ void Logger::worker()
 		}
 		messages.clear();
 
-		std::this_thread::sleep_for( std::chrono::milliseconds( 250 ) );
-	}
+		std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
+	} while( !m_quit );
 
 	file << "============ PROGRAM STOP ===============" << std::endl;
 }
@@ -78,7 +93,20 @@ void Logger::worker()
 void Logger::log( Logger::Loglevel loglevel, const std::string& message )
 {
 	std::lock_guard< std::mutex > lockGuard( m_messagesMutex );
-	m_messages.push_back( { loglevel, message } );
+	m_messages.push_back( { loglevel, message, std::this_thread::get_id() } );
+}
+
+void Logger::registerThread( const std::string& name )
+{
+	std::lock_guard< std::mutex > guard( m_threadIdentifierMutex );
+	if( name.empty() )
+	{
+		m_threadIdentifiers.erase( std::this_thread::get_id() );
+	}
+	else
+	{
+		m_threadIdentifiers[ std::this_thread::get_id() ] = name;
+	}
 }
 
 void Logger::Log( Logger::Loglevel loglevel, const std::string& message )
@@ -89,6 +117,16 @@ void Logger::Log( Logger::Loglevel loglevel, const std::string& message )
 void Logger::Log( const std::string& message )
 {
 	Log( Loglevel::INFO, message );
+}
+
+void Logger::Register( const std::string& name )
+{
+	getInstance().registerThread( name );
+}
+
+void Logger::UnRegister()
+{
+	getInstance().registerThread( "" );
 }
 
 } // namespace Core

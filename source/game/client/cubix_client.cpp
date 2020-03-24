@@ -3,6 +3,7 @@
  */
 
 #include "cubix_client.h"
+#include "core/cubix_log.h"
 
 CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
 {

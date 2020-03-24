@@ -8,8 +8,12 @@
 int main()
 {
 	CubixServer server( 4444 );
-	std::thread thread( [&server]() { server.start(); } );
+	std::thread thread( [&server]() {
+		Core::Logger::Register( "SERVER" );
+		server.start();
+	} );
 
+	Core::Logger::Register( "CLIENT" );
 	CubixClient client;
 	client.start();
 

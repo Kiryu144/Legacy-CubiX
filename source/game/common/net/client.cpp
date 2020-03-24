@@ -11,6 +11,7 @@ namespace Game
 
 bool Client::connect( const std::string& name, int port )
 {
+	Core::Logger::Register( "CLIENT" );
 	ENetAddress address;
 	enet_address_set_host( &address, name.c_str() );
 	address.port = static_cast< enet_uint16 >( port );
