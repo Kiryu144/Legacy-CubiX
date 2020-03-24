@@ -7,17 +7,17 @@
 
 int main()
 {
-	CubixServer server( 4444 );
-	std::thread thread( [&server]() {
-		Core::Logger::Register( "SERVER" );
+	Cubix* c;
+	std::thread thread( [&c]() {
+		CubixServer server( 4444 );
+		c = &server;
 		server.start();
 	} );
 
-	Core::Logger::Register( "CLIENT" );
 	CubixClient client;
 	client.start();
 
-	server.quit();
+	c->quit();
 	thread.join();
 	return 0;
 }

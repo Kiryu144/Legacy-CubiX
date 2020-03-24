@@ -4,7 +4,7 @@
 
 #include "cubix.h"
 
-Cubix::Cubix() : m_gameTime( 30 ) {}
+Cubix::Cubix( Game::Proxy proxy ) : Game::ProxySided( proxy ), m_world( proxy ), m_gameTime( 30 ) {}
 
 void Cubix::update()
 {

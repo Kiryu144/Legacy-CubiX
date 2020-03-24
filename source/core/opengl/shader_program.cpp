@@ -15,8 +15,11 @@ namespace Core
 
 ShaderProgram::~ShaderProgram()
 {
-	glDeleteProgram( m_program );
-	m_program = 0;
+	if( m_program != 0 )
+	{
+		glDeleteProgram( m_program );
+		m_program = 0;
+	}
 }
 
 ShaderProgram& ShaderProgram::compileShaderFromSource( const std::string& source,

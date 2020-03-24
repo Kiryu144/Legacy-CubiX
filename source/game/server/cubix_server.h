@@ -13,8 +13,6 @@ class CubixServer : public Cubix
 private:
 	Game::Server m_server;
 
-	void update() override;
-
 public:
 	CubixServer( int port );
 };

@@ -8,7 +8,7 @@
 #include "core/math/game_time.h"
 #include "game/common/world/world.h"
 
-struct Cubix
+struct Cubix : public Game::ProxySided
 {
 private:
 	bool m_quit{ false };
@@ -17,10 +17,10 @@ private:
 
 protected:
 	Core::GameTime m_gameTime;
-	// Game::World m_world;
+	Game::World m_world;
 
 public:
-	Cubix();
+	Cubix( Game::Proxy proxy );
 
 	void start();
 	void quit();

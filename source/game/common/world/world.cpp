@@ -7,12 +7,7 @@
 namespace Game
 {
 
-World::World()
-{
-	m_shaderProgram.compileShaderFromFile( "basic.vert", Core::ShaderProgram::VERTEX_SHADER )
-		.compileShaderFromFile( "basic.frag", Core::ShaderProgram::FRAGMENT_SHADER )
-		.link();
-}
+World::World( Proxy proxy ) : ProxySided( proxy ) {}
 
 void World::loadOrCreate( const glm::ivec3& position )
 {
@@ -25,12 +20,13 @@ void World::loadOrCreate( const glm::ivec3& position )
 						  std::forward_as_tuple( position ) );
 		WorldChunk& chunk = m_chunks.find( position )->second;
 		chunk.generateBasicNoise();
-		chunk.upload();
 	}
 }
 
-void World::draw( const glm::mat4& view, const glm::mat4& projection )
+void World::draw( Core::ShaderProgram& shader, const glm::mat4& view, const glm::mat4& projection )
 {
+	cubix_assert( getProxy() == Proxy::CLIENT, "Invalid proxy" );
+
 	m_shaderProgram.bind();
 	m_shaderProgram.setUniform( "u_projection", projection );
 	m_shaderProgram.setUniform( "u_view", view );

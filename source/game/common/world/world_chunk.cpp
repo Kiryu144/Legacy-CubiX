@@ -35,9 +35,6 @@ void WorldChunk::generateFlat( unsigned int floorThickness )
 			}
 		}
 	}
-
-	updateAllFaces();
-	regenerateMesh();
 }
 
 void WorldChunk::generateBasicNoise()
@@ -61,9 +58,6 @@ void WorldChunk::generateBasicNoise()
 			}
 		}
 	}
-
-	updateAllFaces();
-	regenerateMesh();
 }
 
 } // namespace Game
