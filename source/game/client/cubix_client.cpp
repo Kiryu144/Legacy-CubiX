@@ -5,6 +5,8 @@
 #include "cubix_client.h"
 #include "core/cubix_log.h"
 
+#include "game/common/net/packet/packet_client_information.h"
+
 CubixClient::CubixClient() : Cubix( Game::Proxy::CLIENT ), m_window( 1440, 900, "CubiX" )
 {
 	m_gameTime.setFPSLimit( 240 );
@@ -13,11 +15,27 @@ CubixClient::CubixClient() : Cubix( Game::Proxy::CLIENT ), m_window( 1440, 900, 
 
 void CubixClient::update()
 {
+	Cubix::update();
 	Core::Window::Update();
+	pollNetworkEvents();
 	m_window.swap();
 
 	if( m_window.shouldClose() )
 	{
 		quit();
+	}
+}
+
+void CubixClient::onPacketReceive( enet_uint32 id, const std::unique_ptr< Game::Packet > packet )
+{
+	switch( packet->getType() )
+	{
+	case Game::PacketType::CLIENTBOUND_SERVER_INFORMATION:
+		m_serverInfo = *static_cast< Game::PacketServerInformation* >( packet.get() );
+		Core::Logger::Log( "Servername is '" + m_serverInfo.getServerName() + "'" );
+		send( id, Game::PacketClientInformation( "Kiryu144" ) );
+		break;
+	default:
+		break;
 	}
 }

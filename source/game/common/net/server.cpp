@@ -18,7 +18,6 @@ Server::Server( int port )
 	cubix_assert( m_host, "Unable to initialize server" );
 
 	Core::Logger::Log( "Net-Server created and listening on " + std::to_string( port ) );
-	startWorker();
 }
 
 void Server::onNetworkingEvent( const ENetEvent& event )

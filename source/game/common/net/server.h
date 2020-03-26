@@ -15,8 +15,6 @@ namespace Game
 class Server : public NetInstance
 {
 protected:
-	std::map< enet_uint32, ENetPeer > m_peers;
-
 	void onNetworkingEvent( const ENetEvent& event ) override;
 
 public:

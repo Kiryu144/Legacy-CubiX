@@ -16,8 +16,6 @@ Client::Client()
 
 	cubix_assert( m_host, "Unable to initialize client" );
 	Core::Logger::Log( "Net-Client created" );
-
-	startWorker();
 }
 
 bool Client::connect( const std::string& name, int port )

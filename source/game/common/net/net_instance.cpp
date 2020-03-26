@@ -13,11 +13,6 @@ namespace Game
 
 NetInstance::~NetInstance()
 {
-	m_quitWorker = true;
-	if( m_worker.joinable() )
-	{
-		m_worker.join();
-	}
 	enet_host_destroy( m_host );
 }
 
@@ -31,46 +26,42 @@ void NetInstance::initializeEnet()
 	}
 }
 
-void NetInstance::worker()
+void NetInstance::pollNetworkEvents()
 {
 	initializeEnet();
 	ENetEvent event;
-	while( !m_quitWorker )
+	while( enet_host_service( m_host, &event, 0 ) > 0 )
 	{
-		while( !m_quitWorker && enet_host_service( m_host, &event, 0 ) >= 0 )
+		if( event.type == ENET_EVENT_TYPE_CONNECT )
 		{
-			if( event.type != ENET_EVENT_TYPE_NONE )
-			{
-				onNetworkingEvent( event );
-			}
+			m_peers.insert( { event.peer->connectID, *event.peer } );
+		}
 
-			if( event.type == ENET_EVENT_TYPE_RECEIVE
-				&& event.packet->dataLength >= sizeof( PacketType ) )
-			{
-				PacketType type = *reinterpret_cast< PacketType* >(
-					event.packet->data + event.packet->dataLength - sizeof( PacketType ) );
-				Packet packet( event.packet, enet_packet_destroy );
-				onPacketReceive( type, std::move( packet ) );
-			}
+		if( event.type == ENET_EVENT_TYPE_DISCONNECT )
+		{
+			m_peers.erase( event.peer->connectID );
+		}
+
+		if( event.type == ENET_EVENT_TYPE_RECEIVE
+			&& event.packet->dataLength >= sizeof( PacketType ) )
+		{
+			PacketType type = *reinterpret_cast< PacketType* >(
+				event.packet->data + event.packet->dataLength - sizeof( PacketType ) );
+
+			cubix_assert( event.packet->dataLength >= sizeof( Packet ),
+						  "Invalid packet size received" );
+			std::unique_ptr< Packet > packet(
+				static_cast< Packet* >( malloc( event.packet->dataLength ) ) );
+			memcpy( packet.get(), event.packet->data, event.packet->dataLength );
+			onPacketReceive( event.peer->connectID, std::move( packet ) );
+			enet_packet_destroy( event.packet );
+		}
+
+		if( event.type != ENET_EVENT_TYPE_NONE )
+		{
+			onNetworkingEvent( event );
 		}
 	}
-}
-
-void NetInstance::startWorker()
-{
-	if( !m_worker.joinable() )
-	{
-		m_worker = std::thread( &NetInstance::worker, this );
-		Core::Logger::Register( "Net-" + Core::Logger::GetID(), m_worker.get_id() );
-	}
-}
-
-void NetInstance::broadcast( PacketType type, size_t size, void* data )
-{
-	ENetPacket* packet = enet_packet_create( data, size, ENET_PACKET_FLAG_RELIABLE );
-	enet_packet_resize( packet, size + sizeof( type ) );
-	memcpy( static_cast< char* >( data ) + size, &data, sizeof( type ) );
-	enet_host_broadcast( m_host, 0, packet );
 }
 
 } // namespace Game

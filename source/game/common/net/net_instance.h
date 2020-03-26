@@ -10,8 +10,10 @@
 #include <enet/enet.h>
 #include <thread>
 #include <atomic>
+#include <core/cubix_assert.h>
 
-#include "game/common/net/packet_type.h"
+#include "game/common/net/packet/packet_server_information.h"
+#include "game/common/net/packet.h"
 
 namespace Game
 {
@@ -19,25 +21,30 @@ namespace Game
 class NetInstance
 {
 protected:
-	typedef std::unique_ptr< ENetPacket, decltype( &enet_packet_destroy ) > Packet;
-
 	ENetHost* m_host;
-	std::thread m_worker;
-	std::atomic_bool m_quitWorker{ false };
+	std::map< enet_uint32, ENetPeer > m_peers;
 
 	void initializeEnet();
-	void worker();
-	void startWorker();
 
 	virtual void onNetworkingEvent( const ENetEvent& event ){};
-	virtual void onPacketReceive( PacketType type, Packet data ){};
+	virtual void onPacketReceive( enet_uint32 id, const std::unique_ptr< Packet > packet ){};
 
 public:
 	NetInstance()							= default;
 	NetInstance( const NetInstance& other ) = delete;
 	virtual ~NetInstance();
 
-	void broadcast( PacketType type, size_t size, void* data );
+	void pollNetworkEvents();
+
+	template< typename T >
+	void send( enet_uint32 id, const T& packet )
+	{
+		cubix_assert( sizeof( T ) >= sizeof( Packet ), "Invalid packet size" );
+		auto it = m_peers.find( id );
+		cubix_assert( it != m_peers.end(), "Unknown ID" );
+		ENetPacket* p = enet_packet_create( &packet, sizeof( T ), ENET_PACKET_FLAG_RELIABLE );
+		enet_peer_send( &it->second, 0, p );
+	}
 };
 
 } // namespace Game

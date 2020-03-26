@@ -13,11 +13,11 @@ struct Cubix : public Game::ProxySided
 private:
 	bool m_quit{ false };
 
-	virtual void update();
-
 protected:
 	Core::GameTime m_gameTime;
 	Game::World m_world;
+
+	virtual void update();
 
 public:
 	Cubix( Game::Proxy proxy );
