@@ -13,8 +13,10 @@ namespace Game
 class Client : public NetInstance
 {
 protected:
-	ENetPeer m_peer;
+	ENetPeer* m_peer;
 	bool m_peerConnected{ false };
+
+	void onNetworkingEvent( const ENetEvent& event ) override;
 
 public:
 	Client() = default;

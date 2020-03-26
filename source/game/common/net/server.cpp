@@ -20,9 +20,13 @@ void Server::onNetworkingEvent( const ENetEvent& event )
 	{
 	case ENET_EVENT_TYPE_CONNECT:
 		m_peers.insert( { event.peer->connectID, *event.peer } );
+		Core::Logger::Log( "Peer connected" );
 		break;
 	case ENET_EVENT_TYPE_DISCONNECT:
 		m_peers.erase( event.peer->connectID );
+		Core::Logger::Log( "Peer disconnected" );
+		break;
+	default:
 		break;
 	}
 }

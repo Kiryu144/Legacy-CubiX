@@ -8,6 +8,7 @@
 CubixClient::CubixClient() : Cubix( Game::Proxy::CLIENT ), m_window( 1440, 900, "CubiX" )
 {
 	m_gameTime.setFPSLimit( 240 );
+	connect( "127.0.0.1", 4444 );
 }
 
 void CubixClient::update()

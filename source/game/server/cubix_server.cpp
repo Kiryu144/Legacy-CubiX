@@ -4,7 +4,9 @@
 
 #include "cubix_server.h"
 
-CubixServer::CubixServer( int port ) : Cubix( Game::Proxy::SERVER ), m_server( port )
+CubixServer::CubixServer( int port ) : Cubix( Game::Proxy::SERVER ), Game::Server( port )
 {
 	m_gameTime.setFPSLimit( 30 );
 }
+
+void CubixServer::onPacketReceive( PacketType type, Game::NetInstance::Packet data ) {}

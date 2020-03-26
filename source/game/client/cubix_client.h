@@ -10,11 +10,10 @@
 #include "game/common/cubix.h"
 #include "game/common/net/client.h"
 
-class CubixClient : public Cubix
+class CubixClient : public Cubix, public Game::Client
 {
 private:
 	Core::Window m_window;
-	Game::Client m_netClient;
 
 	void update() override;
 

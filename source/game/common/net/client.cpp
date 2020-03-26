@@ -11,27 +11,15 @@ namespace Game
 
 bool Client::connect( const std::string& name, int port )
 {
-	Core::Logger::Register( "CLIENT" );
 	ENetAddress address;
-	enet_address_set_host( &address, name.c_str() );
 	address.port = static_cast< enet_uint16 >( port );
+	enet_address_set_host( &address, name.c_str() );
 
-	m_peer = *enet_host_connect( m_host, &address, 1, 0 );
+	m_peer = enet_host_connect( m_host, &address, 1, 0 );
 
-	ENetEvent event;
-	if( enet_host_service( m_host, &event, 5000 ) > 0 && event.type == ENET_EVENT_TYPE_CONNECT )
+	if( m_peer == nullptr )
 	{
-		Core::Logger::Log( "Client connected to " + name + ":" + std::to_string( port ) + " as "
-						   + std::to_string( m_peer.connectID ) );
-		m_peerConnected = true;
-		startWorker();
-	}
-	else
-	{
-		Core::Logger::Log( Core::Logger::WARNING,
-						   "Client was unable to connect to " + name + ":"
-							   + std::to_string( port ) );
-		enet_peer_reset( &m_peer );
+		Core::Logger::Log( Core::Logger::WARNING, "Invalid peer" );
 		return false;
 	}
 	return true;
@@ -41,7 +29,16 @@ Client::~Client()
 {
 	if( m_peerConnected )
 	{
-		enet_peer_reset( &m_peer );
+		enet_peer_reset( m_peer );
+	}
+}
+
+void Client::onNetworkingEvent( const ENetEvent& event )
+{
+	if( event.type == ENET_EVENT_TYPE_CONNECT )
+	{
+		Core::Logger::Log( "Connected to host" );
+		m_peerConnected = true;
 	}
 }
 

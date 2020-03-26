@@ -27,12 +27,12 @@ void World::draw( Core::ShaderProgram& shader, const glm::mat4& view, const glm:
 {
 	cubix_assert( getProxy() == Proxy::CLIENT, "Invalid proxy" );
 
-	m_shaderProgram.bind();
-	m_shaderProgram.setUniform( "u_projection", projection );
-	m_shaderProgram.setUniform( "u_view", view );
-	m_shaderProgram.setUniform( "u_ambientLightPower", 0.8f );
-	m_shaderProgram.setUniform( "u_directionalLightPower", 1.0f );
-	m_shaderProgram.setUniform( "u_directionalLightPosition", { 5000.0f, -100000.0f, 14400.0f } );
+	shader.bind();
+	shader.setUniform( "u_projection", projection );
+	shader.setUniform( "u_view", view );
+	shader.setUniform( "u_ambientLightPower", 0.8f );
+	shader.setUniform( "u_directionalLightPower", 1.0f );
+	shader.setUniform( "u_directionalLightPosition", { 5000.0f, -100000.0f, 14400.0f } );
 
 	for( auto& key : m_chunks )
 	{
@@ -43,13 +43,29 @@ void World::draw( Core::ShaderProgram& shader, const glm::mat4& view, const glm:
 			continue;
 		}
 
-		m_shaderProgram.setUniform( "u_transformation", chunk.getMatrix() );
+		shader.setUniform( "u_transformation", chunk.getMatrix() );
 
 		chunk.getVertices().bind( 0 );
 		chunk.getNormals().bind( 1 );
 		chunk.getColors().bind( 2 );
 
 		glDrawArrays( GL_TRIANGLES, 0, chunk.getVertices().getVerticeAmount() );
+	}
+}
+
+void World::update( float deltaTime )
+{
+	for( auto it = m_entities.begin(); it != m_entities.end(); ++it )
+	{
+		Entity* entity = it->get();
+
+		if( entity->isRemove() )
+		{
+			it = m_entities.erase( it );
+			continue;
+		}
+
+		entity->update( deltaTime );
 	}
 }
 
