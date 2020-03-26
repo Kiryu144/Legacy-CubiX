@@ -34,7 +34,7 @@ void NetInstance::pollNetworkEvents()
 	{
 		if( event.type == ENET_EVENT_TYPE_CONNECT )
 		{
-			m_peers.insert( { event.peer->connectID, *event.peer } );
+			m_peers.insert( { event.peer->connectID, event.peer } );
 		}
 
 		if( event.type == ENET_EVENT_TYPE_DISCONNECT )

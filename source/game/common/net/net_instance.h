@@ -22,7 +22,7 @@ class NetInstance
 {
 protected:
 	ENetHost* m_host;
-	std::map< enet_uint32, ENetPeer > m_peers;
+	std::map< enet_uint32, ENetPeer* > m_peers;
 
 	void initializeEnet();
 
@@ -43,7 +43,7 @@ public:
 		auto it = m_peers.find( id );
 		cubix_assert( it != m_peers.end(), "Unknown ID" );
 		ENetPacket* p = enet_packet_create( &packet, sizeof( T ), ENET_PACKET_FLAG_RELIABLE );
-		enet_peer_send( &it->second, 0, p );
+		enet_peer_send( it->second, 0, p );
 	}
 };
 

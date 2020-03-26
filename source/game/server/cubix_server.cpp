@@ -31,6 +31,7 @@ void CubixServer::update()
 	Cubix::update();
 	pollNetworkEvents();
 }
+
 void CubixServer::onNetworkingEvent( const ENetEvent& event )
 {
 	Server::onNetworkingEvent( event );
