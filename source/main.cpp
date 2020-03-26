@@ -9,11 +9,13 @@ int main()
 {
 	Cubix* c;
 	std::thread thread( [&c]() {
+		Core::Logger::Register( "Server" );
 		CubixServer server( 4444 );
 		c = &server;
 		server.start();
 	} );
 
+	Core::Logger::Register( "Client" );
 	CubixClient client;
 	client.start();
 

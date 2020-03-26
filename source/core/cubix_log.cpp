@@ -96,16 +96,16 @@ void Logger::log( Logger::Loglevel loglevel, const std::string& message )
 	m_messages.push_back( { loglevel, message, std::this_thread::get_id() } );
 }
 
-void Logger::registerThread( const std::string& name )
+void Logger::registerThread( const std::string& name, std::thread::id threadID )
 {
 	std::lock_guard< std::mutex > guard( m_threadIdentifierMutex );
 	if( name.empty() )
 	{
-		m_threadIdentifiers.erase( std::this_thread::get_id() );
+		m_threadIdentifiers.erase( threadID );
 	}
 	else
 	{
-		m_threadIdentifiers[ std::this_thread::get_id() ] = name;
+		m_threadIdentifiers[ threadID ] = name;
 	}
 }
 
@@ -119,14 +119,21 @@ void Logger::Log( const std::string& message )
 	Log( Loglevel::INFO, message );
 }
 
-void Logger::Register( const std::string& name )
+void Logger::Register( const std::string& name, std::thread::id threadID )
 {
-	getInstance().registerThread( name );
+	getInstance().registerThread( name, threadID );
 }
 
-void Logger::UnRegister()
+void Logger::UnRegister( std::thread::id threadID )
 {
-	getInstance().registerThread( "" );
+	getInstance().registerThread( "", threadID );
+}
+
+const std::string& Logger::GetID( std::thread::id threadID )
+{
+	static const std::string empty = "";
+	auto it						   = getInstance().m_threadIdentifiers.find( threadID );
+	return it != getInstance().m_threadIdentifiers.end() ? it->second : empty;
 }
 
 } // namespace Core

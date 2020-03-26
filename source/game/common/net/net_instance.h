@@ -33,8 +33,7 @@ protected:
 	virtual void onPacketReceive( PacketType type, Packet data ){};
 
 public:
-	NetInstance( int port ); // Server
-	NetInstance();			 // Client
+	NetInstance()							= default;
 	NetInstance( const NetInstance& other ) = delete;
 	virtual ~NetInstance();
 

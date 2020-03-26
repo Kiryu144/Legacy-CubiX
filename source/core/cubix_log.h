@@ -47,14 +47,17 @@ private:
 	static Logger& getInstance();
 
 	void log( Loglevel loglevel, const std::string& message );
-	void registerThread( const std::string& name );
+	void registerThread( const std::string& name,
+						 std::thread::id threadID = std::this_thread::get_id() );
 
 public:
 	static void Log( Loglevel loglevel, const std::string& message );
 	static void Log( const std::string& message );
 
-	static void Register( const std::string& name );
-	static void UnRegister();
+	static void Register( const std::string& name,
+						  std::thread::id threadID = std::this_thread::get_id() );
+	static void UnRegister( std::thread::id threadID = std::this_thread::get_id() );
+	static const std::string& GetID( std::thread::id threadID = std::this_thread::get_id() );
 };
 
 } // namespace Core

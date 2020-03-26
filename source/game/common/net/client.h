@@ -15,11 +15,12 @@ class Client : public NetInstance
 protected:
 	ENetPeer* m_peer;
 	bool m_peerConnected{ false };
+	std::string m_connectedName;
 
 	void onNetworkingEvent( const ENetEvent& event ) override;
 
 public:
-	Client() = default;
+	Client();
 	virtual ~Client();
 
 	bool connect( const std::string& name, int port );
