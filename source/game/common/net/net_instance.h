@@ -7,13 +7,16 @@
 
 #include "defines.h"
 
-#include <enet/enet.h>
-#include <thread>
-#include <atomic>
-#include <core/cubix_assert.h>
+#include "core/cubix_assert.h"
+#include "core/cubix_log.h"
 
-#include "game/common/net/packet/packet_server_information.h"
 #include "game/common/net/packet.h"
+#include "game/common/net/packet/packet_server_information.h"
+
+#include <atomic>
+#include <thread>
+
+#include <enet/enet.h>
 
 namespace Game
 {

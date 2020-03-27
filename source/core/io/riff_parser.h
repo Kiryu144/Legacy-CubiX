@@ -5,8 +5,8 @@
 #ifndef CUBIX_RIFF_PARSER_H
 #define CUBIX_RIFF_PARSER_H
 
-#include <string>
 #include <map>
+#include <string>
 #include <vector>
 
 namespace Core

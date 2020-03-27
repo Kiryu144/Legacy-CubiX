@@ -5,8 +5,8 @@
 #ifndef CUBIX_CUBIX_ASSERT_H
 #define CUBIX_CUBIX_ASSERT_H
 
-#include "defines.h"
 #include "cubix_log.h"
+#include "defines.h"
 
 #if CUBIX_ENABLE_ASSERT
 #include <cstring>

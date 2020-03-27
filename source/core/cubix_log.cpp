@@ -8,8 +8,8 @@
 
 #include <ctime>
 #include <fstream>
-#include <sstream>
 #include <iostream>
+#include <sstream>
 
 namespace Core
 {
@@ -39,6 +39,7 @@ void Logger::worker()
 	char formattedTimeBuffer[ 64 ];
 	do
 	{
+		std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
 		std::list< LogMessage > messages;
 		{
 			std::lock_guard< std::mutex > lockGuard( m_messagesMutex );
@@ -83,8 +84,6 @@ void Logger::worker()
 			file << msg << std::endl;
 		}
 		messages.clear();
-
-		std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
 	} while( !m_quit );
 
 	file << "============ PROGRAM STOP ===============" << std::endl;

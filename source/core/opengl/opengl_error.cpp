@@ -2,9 +2,9 @@
  * Copyright (c) 2020 David Klostermann.
  */
 
-#include <glad/glad.h>
-
 #include "core/cubix_assert.h"
+
+#include <glad/glad.h>
 
 void __M_gl_clear_error()
 {

@@ -5,8 +5,8 @@
 #ifndef CUBIX_EVENT_H
 #define CUBIX_EVENT_H
 
-#include <set>
 #include <memory>
+#include <set>
 
 namespace Core
 {

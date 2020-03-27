@@ -6,6 +6,7 @@
 #define CUBIX_CUBIX_H
 
 #include "core/math/game_time.h"
+
 #include "game/common/world/world.h"
 
 struct Cubix : public Game::ProxySided

@@ -43,6 +43,11 @@ void Client::onNetworkingEvent( const ENetEvent& event )
 		Core::Logger::Log( "Connected to " + m_connectedName );
 		m_peerConnected = true;
 	}
+	else if( event.type == ENET_EVENT_TYPE_DISCONNECT )
+	{
+		Core::Logger::Log( "Disconnected from the server" );
+		m_peerConnected = true;
+	}
 }
 
 Client::~Client()

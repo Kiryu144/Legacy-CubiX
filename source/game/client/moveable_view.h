@@ -5,8 +5,8 @@
 #ifndef CUBIX_MOVEABLE_VIEW_H
 #define CUBIX_MOVEABLE_VIEW_H
 
-#include "core/math/view.h"
 #include "core/event.h"
+#include "core/math/view.h"
 #include "core/opengl/window.h"
 
 namespace Game

@@ -7,11 +7,11 @@
 
 // TODO: Rework
 
-#include <thread>
 #include <atomic>
-#include <mutex>
 #include <list>
 #include <map>
+#include <mutex>
+#include <thread>
 
 namespace Core
 {

@@ -5,10 +5,11 @@
 #ifndef CUBIX_SHADER_PROGRAM_H
 #define CUBIX_SHADER_PROGRAM_H
 
-#include <string>
 #include <map>
-#include <glad/glad.h>
+#include <string>
+
 #include <GLM/mat4x4.hpp>
+#include <glad/glad.h>
 
 namespace Core
 {

@@ -11,6 +11,11 @@ World::World( Proxy proxy ) : ProxySided( proxy ) {}
 
 void World::loadOrCreate( const glm::ivec3& position )
 {
+	if( getProxy() != Proxy::SERVER )
+	{
+		return;
+	}
+
 	auto it = m_chunks.find( position );
 	if( it == m_chunks.end() )
 	{
@@ -18,8 +23,6 @@ void World::loadOrCreate( const glm::ivec3& position )
 		m_chunks.emplace( std::piecewise_construct,
 						  std::forward_as_tuple( position ),
 						  std::forward_as_tuple( position ) );
-		WorldChunk& chunk = m_chunks.find( position )->second;
-		chunk.generateBasicNoise();
 	}
 }
 

@@ -6,11 +6,14 @@
 #define CUBIX_WORLD_H
 
 #include "world_chunk.h"
+
 #include "core/math/glm_math.h"
 #include "core/opengl/shader_program.h"
-#include "game/proxy.h"
-#include "game/common/entity/entity.h"
 
+#include "game/common/entity/entity.h"
+#include "game/proxy.h"
+
+#include <atomic>
 #include <map>
 
 namespace Game

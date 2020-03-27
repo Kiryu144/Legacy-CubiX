@@ -5,11 +5,11 @@
 #ifndef CUBIX_GLM_MATH_H
 #define CUBIX_GLM_MATH_H
 
+#include <ostream>
+
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
-
-#include <ostream>
 
 // clang-format off
 template< typename T1, typename T2 >

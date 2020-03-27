@@ -6,9 +6,8 @@
 #define CUBIX_CUBIX_SERVER_H
 
 #include "game/common/cubix.h"
-#include "game/common/net/server.h"
-
 #include "game/common/net/packet/packet_client_information.h"
+#include "game/common/net/server.h"
 
 class CubixServer : public Cubix, public Game::Server
 {

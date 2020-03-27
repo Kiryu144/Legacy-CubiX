@@ -60,4 +60,14 @@ void WorldChunk::generateBasicNoise()
 	}
 }
 
+std::mutex& WorldChunk::getMutex()
+{
+	return m_mutex;
+}
+
+const std::mutex& WorldChunk::getMutex() const
+{
+	return m_mutex;
+}
+
 } // namespace Game

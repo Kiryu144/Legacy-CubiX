@@ -5,10 +5,11 @@
 #ifndef CUBIX_ENTITY_H
 #define CUBIX_ENTITY_H
 
-#include "core/opengl/shader_program.h"
 #include "core/math/transform.h"
-#include "game/proxy.h"
+#include "core/opengl/shader_program.h"
+
 #include "game/common/entity/entitytype.h"
+#include "game/proxy.h"
 
 namespace Game
 {

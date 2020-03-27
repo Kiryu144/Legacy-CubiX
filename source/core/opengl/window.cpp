@@ -8,8 +8,8 @@
 #include "core/cubix_log.h"
 #include "core/event.h"
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 namespace Core
 {

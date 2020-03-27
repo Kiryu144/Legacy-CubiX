@@ -5,9 +5,10 @@
 #ifndef CUBIX_VOXEL_GROUP_H
 #define CUBIX_VOXEL_GROUP_H
 
+#include "voxel.h"
+
 #include "core/data/container3d.h"
 #include "core/opengl/attributebuffer.h"
-#include "voxel.h"
 
 namespace Game
 {

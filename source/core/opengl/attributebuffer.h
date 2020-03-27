@@ -5,12 +5,12 @@
 #ifndef CUBIX_ATTRIBUTEBUFFER_H
 #define CUBIX_ATTRIBUTEBUFFER_H
 
-#include <glad/glad.h>
-
-#include "core/opengl/openg_error.h"
-#include "core/opengl/opengl_helper.h"
 #include "core/cubix_assert.h"
 #include "core/opengl/attribute.h"
+#include "core/opengl/openg_error.h"
+#include "core/opengl/opengl_helper.h"
+
+#include <glad/glad.h>
 
 namespace Core
 {

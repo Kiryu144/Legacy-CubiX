@@ -8,6 +8,7 @@
 #include "core/cubix_assert.h"
 
 #include <vector>
+
 #include <GLM/vec3.hpp>
 
 namespace Core

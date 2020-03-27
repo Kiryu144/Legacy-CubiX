@@ -4,9 +4,9 @@
 
 #include "voxel_group.h"
 
-#include <cmath>
-
 #include "core/io/riff_parser.h"
+
+#include <cmath>
 
 namespace Game
 {

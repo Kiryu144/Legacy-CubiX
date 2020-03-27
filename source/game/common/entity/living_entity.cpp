@@ -3,6 +3,7 @@
  */
 
 #include "living_entity.h"
+
 #include "game/common/world/world.h"
 
 namespace Game

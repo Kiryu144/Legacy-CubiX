@@ -3,6 +3,7 @@
  */
 
 #include "cubix_client.h"
+
 #include "core/cubix_log.h"
 
 #include "game/common/net/packet/packet_client_information.h"

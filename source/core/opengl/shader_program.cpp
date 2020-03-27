@@ -4,9 +4,9 @@
 
 #include "shader_program.h"
 
+#include "core/cubix_log.h"
 #include "core/opengl/openg_error.h"
 #include "core/opengl/opengl_helper.h"
-#include "core/cubix_log.h"
 
 #include <fstream>
 
