@@ -9,22 +9,27 @@
 
 #include "game/common/world/world.h"
 
-struct Cubix : public Game::ProxySided
+namespace Game
+{
+
+struct Cubix : public ProxySided
 {
 private:
 	bool m_quit{ false };
 
 protected:
 	Core::GameTime m_gameTime;
-	Game::World m_world;
+	World m_world;
 
 	virtual void update();
 
 public:
-	Cubix( Game::Proxy proxy );
+	Cubix( Proxy proxy );
 
 	void start();
 	void quit();
 };
+
+} // namespace Game
 
 #endif

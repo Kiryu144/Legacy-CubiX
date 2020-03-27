@@ -4,7 +4,10 @@
 
 #include "cubix.h"
 
-Cubix::Cubix( Game::Proxy proxy ) : Game::ProxySided( proxy ), m_world( proxy ), m_gameTime( 30 ) {}
+namespace Game
+{
+
+Cubix::Cubix( Proxy proxy ) : ProxySided( proxy ), m_world( proxy ), m_gameTime( 30 ) {}
 
 void Cubix::update()
 {
@@ -23,3 +26,5 @@ void Cubix::quit()
 {
 	m_quit = true;
 }
+
+} // namespace Game

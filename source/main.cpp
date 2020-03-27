@@ -9,6 +9,7 @@
 
 int main()
 {
+	using namespace Game;
 	Cubix* c;
 	std::thread thread( [&c]() {
 		Core::Logger::Register( "Server" );

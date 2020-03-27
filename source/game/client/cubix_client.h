@@ -11,7 +11,10 @@
 #include "game/common/net/client.h"
 #include "game/common/net/packet/packet_server_information.h"
 
-class CubixClient : public Cubix, public Game::Client
+namespace Game
+{
+
+class CubixClient : public Cubix, public Client
 {
 private:
 	Core::Window m_window;
@@ -20,10 +23,12 @@ private:
 	void update() override;
 
 protected:
-	void onPacketReceive( enet_uint32 id, const std::unique_ptr< Game::Packet > packet ) override;
+	void onPacketReceive( enet_uint32 id, const std::unique_ptr< Packet > packet ) override;
 
 public:
 	CubixClient();
 };
+
+} // namespace Game
 
 #endif
