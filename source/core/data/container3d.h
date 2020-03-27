@@ -17,10 +17,11 @@ namespace Core
 template< typename T >
 class Container3D
 {
-protected:
+private:
 	std::vector< T > m_data;
 	glm::uvec3 m_size;
 
+public:
 	inline size_t getIndexForPosition( size_t x, size_t y, size_t z ) const
 	{
 		return ( z * m_size.z * m_size.y ) + ( y * m_size.x ) + x;
@@ -33,6 +34,18 @@ protected:
 		int y = index / m_size.x;
 		int x = index % m_size.x;
 		return { x, y, z };
+	}
+
+	T& operator[]( size_t index )
+	{
+		cubix_assert( index < m_data.size(), "Index out of range" );
+		return m_data[ index ];
+	}
+
+	const T& operator[]( size_t index ) const
+	{
+		cubix_assert( index < m_data.size(), "Index out of range" );
+		return m_data[ index ];
 	}
 
 public:
@@ -59,6 +72,11 @@ public:
 		cubix_assert( pos.x < m_size.x && pos.y < m_size.y && pos.z < m_size.z,
 					  "Position out of range" );
 		return m_data[ getIndexForPosition( pos.x, pos.y, pos.z ) ];
+	}
+
+	const glm::uvec3& getSize() const
+	{
+		return m_size;
 	}
 };
 

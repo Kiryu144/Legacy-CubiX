@@ -5,6 +5,8 @@
 #include "game/client/cubix_client.h"
 #include "game/server/cubix_server.h"
 
+#include <iostream>
+
 int main()
 {
 	Cubix* c;

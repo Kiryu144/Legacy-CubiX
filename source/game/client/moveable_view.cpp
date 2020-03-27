@@ -20,7 +20,8 @@ void MoveableView::onEvent( const Core::EventMouseMove& eventType )
 void MoveableView::onEvent( const Core::EventKeyPressed& eventType )
 {
 	static const glm::vec3 s_up{ 0.0f, 1.0f, 0.0f };
-	glm::vec3 front = Core::Transform::CreateDirection( { 0.0f, m_rotation.y, m_rotation.z } );
+	glm::vec3 front
+		= Core::Transform::CreateDirection( { 0.0f, getRotation().y, getRotation().z } );
 
 	switch( eventType.key )
 	{

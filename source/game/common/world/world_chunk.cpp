@@ -15,20 +15,21 @@ WorldChunk::WorldChunk( const glm::ivec3& chunkPosition )
 	: VoxelGroup( glm::uvec3{ s_sideLength, s_sideLength, s_sideLength } ),
 	  m_chunkPosition( chunkPosition )
 {
-	getPosition() = glm::ivec3{ chunkPosition.x * m_size.x,
-								chunkPosition.y * m_size.y,
-								chunkPosition.z * m_size.z };
+	getPosition() = glm::ivec3{ chunkPosition.x * getSize().x,
+								chunkPosition.y * getSize().y,
+								chunkPosition.z * getSize().z };
 }
 
 void WorldChunk::generateFlat( unsigned int floorThickness )
 {
-	cubix_assert( floorThickness <= m_size.y, "Floor thickness is bigger than the chunk heigth" );
+	cubix_assert( floorThickness <= getSize().y,
+				  "Floor thickness is bigger than the chunk heigth" );
 
-	for( int x = 0; x < m_size.x; ++x )
+	for( int x = 0; x < getSize().x; ++x )
 	{
 		for( int y = 0; y < floorThickness; ++y )
 		{
-			for( int z = 0; z < m_size.z; ++z )
+			for( int z = 0; z < getSize().z; ++z )
 			{
 				Voxel voxel( 73, 201 + ( rand() % 20 ), 98 );
 				set( { x, y, z }, voxel, false );
@@ -42,9 +43,9 @@ void WorldChunk::generateBasicNoise()
 	FastNoise noise;
 	noise.SetNoiseType( FastNoise::NoiseType::PerlinFractal );
 
-	for( int x = 0; x < m_size.x; ++x )
+	for( int x = 0; x < getSize().x; ++x )
 	{
-		for( int z = 0; z < m_size.z; ++z )
+		for( int z = 0; z < getSize().z; ++z )
 		{
 			Voxel voxel( 73, 201 + ( rand() % 20 ), 98 );
 			glm::ivec2 worldPos{ m_chunkPosition.x * s_sideLength + x,

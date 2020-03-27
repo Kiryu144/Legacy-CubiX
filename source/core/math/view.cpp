@@ -11,15 +11,15 @@ namespace Core
 
 const glm::mat4& View::getViewMatrix()
 {
-	if( m_needsUpdate )
+	if( needsUpdate() )
 	{
-		glm::vec3 direction = CreateDirection( m_rotation );
-		glm::vec3 front		= { m_position.x + direction.x,
-							m_position.y + direction.y,
-							m_position.z + direction.z };
-		m_matrix			= glm::lookAt( m_position, front, glm::vec3( 0.0f, 1.0f, 0.0f ) );
+		glm::vec3 direction = CreateDirection( getRotation() );
+		glm::vec3 front		= { getPosition().x + direction.x,
+							getPosition().y + direction.y,
+							getPosition().z + direction.z };
+		getMutableMatrix()	= glm::lookAt( getPosition(), front, glm::vec3( 0.0f, 1.0f, 0.0f ) );
 	}
-	return m_matrix;
+	return getMatrix();
 }
 
 } // namespace Core

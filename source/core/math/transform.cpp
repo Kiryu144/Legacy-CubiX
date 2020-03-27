@@ -184,6 +184,11 @@ const glm::mat4& Transform::getMatrix()
 	return m_matrix;
 }
 
+glm::mat4& Transform::getMutableMatrix()
+{
+	return m_matrix;
+}
+
 const glm::vec3& Transform::getPosition() const
 {
 	return m_position;
@@ -197,6 +202,10 @@ const glm::vec3& Transform::getRotation() const
 const glm::vec3& Transform::getScale() const
 {
 	return m_scale;
+}
+bool Transform::needsUpdate() const
+{
+	return m_needsUpdate;
 }
 
 } // namespace Core

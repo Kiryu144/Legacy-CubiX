@@ -15,6 +15,7 @@ class GameTime
 protected:
 	typedef std::chrono::microseconds resolution;
 
+private:
 	std::chrono::time_point< std::chrono::high_resolution_clock > m_lastUpdate;
 	resolution m_deltaTime;
 	resolution m_minFrameTime;

@@ -160,11 +160,11 @@ Core::Facing VoxelGroup::findVisibleFaces( const glm::uvec3& pos ) const
 	using namespace Core;
 	Facing facing;
 	facing.setFace( Facing::LEFT,
-					( pos.x >= m_size.x - 1 || get( pos + glm::uvec3{ 1, 0, 0 } ).a < 255 ) );
+					( pos.x >= getSize().x - 1 || get( pos + glm::uvec3{ 1, 0, 0 } ).a < 255 ) );
 	facing.setFace( Facing::BACK,
-					( pos.z >= m_size.z - 1 || get( pos + glm::uvec3{ 0, 0, 1 } ).a < 255 ) );
+					( pos.z >= getSize().z - 1 || get( pos + glm::uvec3{ 0, 0, 1 } ).a < 255 ) );
 	facing.setFace( Facing::BOTTOM,
-					( pos.y >= m_size.y - 1 || get( pos + glm::uvec3{ 0, 1, 0 } ).a < 255 ) );
+					( pos.y >= getSize().y - 1 || get( pos + glm::uvec3{ 0, 1, 0 } ).a < 255 ) );
 	facing.setFace( Facing::RIGHT, ( pos.x <= 0 || get( pos + glm::uvec3{ -1, 0, 0 } ).a < 255 ) );
 	facing.setFace( Facing::FRONT, ( pos.z <= 0 || get( pos + glm::uvec3{ 0, 0, -1 } ).a < 255 ) );
 	facing.setFace( Facing::TOP, ( pos.y <= 0 || get( pos + glm::uvec3{ 0, -1, 0 } ).a < 255 ) );
@@ -178,11 +178,11 @@ void VoxelGroup::updateFace( const glm::uvec3& pos )
 
 void VoxelGroup::updateAllFaces()
 {
-	for( int x = 0; x < m_size.x; ++x )
+	for( int x = 0; x < getSize().x; ++x )
 	{
-		for( int y = 0; y < m_size.y; ++y )
+		for( int y = 0; y < getSize().y; ++y )
 		{
-			for( int z = 0; z < m_size.z; ++z )
+			for( int z = 0; z < getSize().z; ++z )
 			{
 				operator[]( { x, y, z } ).getFacing() = findVisibleFaces( { x, y, z } );
 			}
@@ -216,17 +216,17 @@ void VoxelGroup::regenerateMesh()
 	m_normalBuffer.clear();
 	m_colorBuffer.clear();
 
-	m_verticeBuffer.reserve( m_size.x * m_size.y * m_size.z );
-	m_normalBuffer.reserve( m_size.x * m_size.y * m_size.z );
-	m_colorBuffer.reserve( m_size.x * m_size.y * m_size.z );
+	m_verticeBuffer.reserve( getSize().x * getSize().y * getSize().z );
+	m_normalBuffer.reserve( getSize().x * getSize().y * getSize().z );
+	m_colorBuffer.reserve( getSize().x * getSize().y * getSize().z );
 
-	glm::vec3 halfSize{ m_size.x * 0.5f, m_size.y * 0.5f, m_size.z * 0.5f };
+	glm::vec3 halfSize{ getSize().x * 0.5f, getSize().y * 0.5f, getSize().z * 0.5f };
 
-	for( int x = 0; x < m_size.x; ++x )
+	for( int x = 0; x < getSize().x; ++x )
 	{
-		for( int y = 0; y < m_size.y; ++y )
+		for( int y = 0; y < getSize().y; ++y )
 		{
-			for( int z = 0; z < m_size.z; ++z )
+			for( int z = 0; z < getSize().z; ++z )
 			{
 				const Voxel& voxel = operator[]( { x, y, z } );
 				if( voxel.a == 0 )
