@@ -5,6 +5,8 @@
 #ifndef CUBIX_PACKET_SERVER_INFORMATION_H
 #define CUBIX_PACKET_SERVER_INFORMATION_H
 
+#include "core/data/static_string.h"
+
 #include "game/common/net/packet.h"
 
 #include <string>
@@ -15,12 +17,12 @@ namespace Game
 class PacketServerInformation : public Packet
 {
 protected:
-	std::string m_serverName;
+	Core::StaticString< 32 > m_name;
 
 public:
 	PacketServerInformation( const std::string& serverName );
 
-	const std::string& getServerName() const;
+	const Core::StaticString< 32 >& getName() const;
 };
 
 } // namespace Game

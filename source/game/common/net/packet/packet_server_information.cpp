@@ -8,13 +8,13 @@ namespace Game
 {
 
 PacketServerInformation::PacketServerInformation( const std::string& playerName )
-	: Packet( PacketType::CLIENTBOUND_SERVER_INFORMATION ), m_serverName( playerName )
+	: Packet( PacketType::CLIENTBOUND_SERVER_INFORMATION ), m_name( playerName )
 {
 }
 
-const std::string& PacketServerInformation::getServerName() const
+const Core::StaticString< 32 >& PacketServerInformation::getName() const
 {
-	return m_serverName;
+	return m_name;
 }
 
 } // namespace Game

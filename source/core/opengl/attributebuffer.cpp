@@ -7,13 +7,15 @@
 Core::AttributeBuffer::AttributeBuffer( GLenum bufferTarget, Attribute attribute )
 	: m_bufferTarget( bufferTarget ), m_attribute( attribute )
 {
-	glGenBuffers( 1, &m_id );
 }
 
 Core::AttributeBuffer::~AttributeBuffer()
 {
-	glDeleteBuffers( 1, &m_id );
-	m_id = 0;
+	if( m_id > 0 )
+	{
+		glDeleteBuffers( 1, &m_id );
+		m_id = 0;
+	}
 }
 
 void Core::AttributeBuffer::bind( GLuint vertexAttribIndex )

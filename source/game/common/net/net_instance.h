@@ -23,6 +23,9 @@ namespace Game
 
 class NetInstance
 {
+public:
+	typedef std::unique_ptr< Packet, decltype( free )* > PacketPtr;
+
 protected:
 	ENetHost* m_host;
 	std::map< enet_uint32, ENetPeer* > m_peers;
@@ -30,7 +33,7 @@ protected:
 	void initializeEnet();
 
 	virtual void onNetworkingEvent( const ENetEvent& event ){};
-	virtual void onPacketReceive( enet_uint32 id, const std::unique_ptr< Packet > packet ){};
+	virtual void onPacketReceive( enet_uint32 id, const PacketPtr packet ){};
 
 public:
 	NetInstance()							= default;

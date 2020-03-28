@@ -21,6 +21,7 @@ void CubixClient::update()
 	Core::Window::Update();
 	pollNetworkEvents();
 	m_window.swap();
+	m_world.update( m_gameTime.getDeltaTime() );
 
 	if( m_window.shouldClose() )
 	{
@@ -28,15 +29,18 @@ void CubixClient::update()
 	}
 }
 
-void CubixClient::onPacketReceive( enet_uint32 id, const std::unique_ptr< Packet > packet )
+void CubixClient::onPacketReceive( enet_uint32 id, const NetInstance::PacketPtr packet )
 {
 	switch( packet->getType() )
 	{
 	case PacketType::CLIENTBOUND_SERVER_INFORMATION:
+	{
 		m_serverInfo = *static_cast< PacketServerInformation* >( packet.get() );
-		Core::Logger::Log( "Servername is '" + m_serverInfo.getServerName() + "'" );
-		send( id, PacketClientInformation( "Kiryu144" ) );
+		Core::Logger::Log( std::string( "Servername is '" ) + m_serverInfo.getName().get() + "'" );
+		PacketClientInformation test( "Kiryu144" );
+		send( id, test );
 		break;
+	}
 	default:
 		break;
 	}

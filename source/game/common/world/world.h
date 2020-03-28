@@ -13,8 +13,11 @@
 #include "game/common/entity/entity.h"
 #include "game/proxy.h"
 
-#include <atomic>
-#include <map>
+#include <set>
+#include <unordered_map>
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/hash.hpp>
 
 namespace Game
 {
@@ -24,16 +27,13 @@ class Entity;
 class World : public ProxySided
 {
 protected:
-	std::map< glm::ivec3, WorldChunk, Vec2Functor< int > > m_chunks;
-
+	std::unordered_map< glm::ivec3, std::shared_ptr< WorldChunk > > m_chunks;
 	std::list< std::unique_ptr< Game::Entity > > m_entities;
 
 public:
-	World( Proxy proxy );
-
-	void loadOrCreate( const glm::ivec3& position );
-	void update( float deltaTime );
-	void draw( Core::ShaderProgram& shader, const glm::mat4& view, const glm::mat4& projection );
+	World( const Proxy& proxy );
+	virtual ~World() = default;
+	virtual void update( float deltaTime );
 };
 
 } // namespace Game

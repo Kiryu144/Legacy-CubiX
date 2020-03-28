@@ -7,6 +7,7 @@
 
 #include "core/opengl/window.h"
 
+#include "game/client/world/world_client.h"
 #include "game/common/cubix.h"
 #include "game/common/net/client.h"
 #include "game/common/net/packet/packet_server_information.h"
@@ -18,12 +19,14 @@ class CubixClient : public Cubix, public Client
 {
 private:
 	Core::Window m_window;
-	Game::PacketServerInformation m_serverInfo{ "" };
+	PacketServerInformation m_serverInfo{ "" };
+
+	WorldClient m_world;
 
 	void update() override;
 
 protected:
-	void onPacketReceive( enet_uint32 id, const std::unique_ptr< Packet > packet ) override;
+	void onPacketReceive( enet_uint32 id, const NetInstance::PacketPtr packet ) override;
 
 public:
 	CubixClient();

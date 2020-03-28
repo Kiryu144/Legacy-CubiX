@@ -10,6 +10,7 @@ namespace Game
 
 enum class PacketType
 {
+	UNINITIALIZED = 0, // Has to be zero
 	PACKET_PING,
 	CLIENTBOUND_SERVER_INFORMATION,
 	SERVERBOUND_PLAYER_INFORMATION,

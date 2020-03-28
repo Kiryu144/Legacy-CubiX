@@ -12,7 +12,7 @@ CubixServer::CubixServer( int port ) : Cubix( Proxy::SERVER ), Server( port )
 	m_gameTime.setFPSLimit( 30 );
 }
 
-void CubixServer::onPacketReceive( enet_uint32 id, const std::unique_ptr< Packet > packet )
+void CubixServer::onPacketReceive( enet_uint32 id, const NetInstance::PacketPtr packet )
 {
 	switch( packet->getType() )
 	{
@@ -21,7 +21,8 @@ void CubixServer::onPacketReceive( enet_uint32 id, const std::unique_ptr< Packet
 		PacketClientInformation* clientInformation
 			= static_cast< PacketClientInformation* >( packet.get() );
 		m_connections.insert( { id, *clientInformation } );
-		Core::Logger::Log( "Player " + clientInformation->getPlayerName() + " connected" );
+		Core::Logger::Log( std::string( "Player " ) + clientInformation->getName().get()
+						   + " connected" );
 		break;
 	}
 	default:
@@ -33,6 +34,7 @@ void CubixServer::update()
 {
 	Cubix::update();
 	pollNetworkEvents();
+	m_world.update( m_gameTime.getDeltaTime() );
 }
 
 void CubixServer::onNetworkingEvent( const ENetEvent& event )

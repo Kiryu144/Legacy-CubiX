@@ -19,7 +19,6 @@ private:
 
 protected:
 	Core::GameTime m_gameTime;
-	World m_world;
 
 	virtual void update();
 

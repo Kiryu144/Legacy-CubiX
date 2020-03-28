@@ -34,6 +34,12 @@ public:
 	void upload( T* data, size_t amount )
 	{
 		cubix_assert( sizeof( T ) == m_attribute.getTotalSize( 1 ), "Invalid datatype provided" );
+
+		if( m_id == 0 )
+		{
+			glGenBuffers( 1, &m_id );
+		}
+
 		m_vertices	= amount;
 		m_totalSize = m_attribute.getTotalSize( m_vertices );
 		gl_log_error( glBindBuffer( m_bufferTarget, m_id ) );

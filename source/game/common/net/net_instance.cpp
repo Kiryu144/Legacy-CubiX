@@ -45,13 +45,11 @@ void NetInstance::pollNetworkEvents()
 		if( event.type == ENET_EVENT_TYPE_RECEIVE
 			&& event.packet->dataLength >= sizeof( PacketType ) )
 		{
-			PacketType type = *reinterpret_cast< PacketType* >(
-				event.packet->data + event.packet->dataLength - sizeof( PacketType ) );
-
+			PacketType type = *reinterpret_cast< PacketType* >( event.packet->data );
+			cubix_assert( type != PacketType::UNINITIALIZED, "Received packet is not initialized" );
 			cubix_assert( event.packet->dataLength >= sizeof( Packet ),
 						  "Invalid packet size received" );
-			std::unique_ptr< Packet > packet(
-				static_cast< Packet* >( malloc( event.packet->dataLength ) ) );
+			PacketPtr packet( static_cast< Packet* >( malloc( event.packet->dataLength ) ), free );
 			memcpy( packet.get(), event.packet->data, event.packet->dataLength );
 			onPacketReceive( event.peer->connectID, std::move( packet ) );
 			enet_packet_destroy( event.packet );
