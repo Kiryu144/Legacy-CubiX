@@ -2,23 +2,19 @@
  * Copyright (c) 2020 David Klostermann.
  */
 
-#include "client.h"
-
-#include "core/cubix_assert.h"
-
+#include "net_client.h"
 namespace Game
 {
 
-Client::Client()
+NetClient::NetClient()
 {
-	initializeEnet();
 	m_host = enet_host_create( nullptr, 1, 1, 0, 0 );
 
 	cubix_assert( m_host, "Unable to initialize client" );
 	Core::Logger::Log( "Net-Client created" );
 }
 
-bool Client::connect( const std::string& name, int port )
+bool NetClient::connect( const std::string& name, int port )
 {
 	ENetAddress address;
 	address.port = static_cast< enet_uint16 >( port );
@@ -29,28 +25,14 @@ bool Client::connect( const std::string& name, int port )
 
 	if( m_peer == nullptr )
 	{
-		Core::Logger::Log( Core::Logger::WARNING, "Invalid peer" );
+		Core::Logger::Warn( "Invalid peer" );
 		return false;
 	}
 
 	return true;
 }
 
-void Client::onNetworkingEvent( const ENetEvent& event )
-{
-	if( event.type == ENET_EVENT_TYPE_CONNECT )
-	{
-		Core::Logger::Log( "Connected to " + m_connectedName );
-		m_peerConnected = true;
-	}
-	else if( event.type == ENET_EVENT_TYPE_DISCONNECT )
-	{
-		Core::Logger::Log( "Disconnected from the server" );
-		m_peerConnected = true;
-	}
-}
-
-Client::~Client()
+NetClient::~NetClient()
 {
 	if( m_peerConnected )
 	{
