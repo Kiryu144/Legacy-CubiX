@@ -7,7 +7,7 @@
 namespace Game
 {
 
-Cubix::Cubix( Proxy proxy ) : ProxySided( proxy ), m_gameTime( 30 ) {}
+Cubix::Cubix() : m_gameTime( 30 ) {}
 
 void Cubix::update()
 {

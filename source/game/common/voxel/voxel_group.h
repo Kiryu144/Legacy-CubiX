@@ -15,7 +15,7 @@ namespace Game
 
 class VoxelGroup : protected Core::Container3D< Voxel >
 {
-private:
+protected:
 	Core::AttributeBuffer m_vertices;
 	Core::AttributeBuffer m_normals;
 	Core::AttributeBuffer m_colors;
@@ -23,6 +23,9 @@ private:
 	std::vector< glm::vec3 > m_verticeBuffer;
 	std::vector< glm::vec3 > m_normalBuffer;
 	std::vector< glm::tvec4< unsigned char > > m_colorBuffer;
+
+	void serialize( std::ostream& out ) const override;
+	void deserialize( std::istream& in ) override;
 
 public:
 	VoxelGroup( const glm::uvec3& size );

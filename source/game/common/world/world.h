@@ -7,10 +7,10 @@
 
 #include "world_chunk.h"
 
+#include "core/data/memory.h"
 #include "core/math/glm_math.h"
-#include "core/opengl/shader_program.h"
 
-#include "game/common/entity/entity.h"
+#include "game/common/world/chunk_worker.h"
 #include "game/proxy.h"
 
 #include <set>
@@ -22,20 +22,25 @@
 namespace Game
 {
 
-class Entity;
-
-class World : public ProxySided
+class World
 {
+public:
+	typedef std::unordered_map< glm::ivec3, std::shared_ptr< WorldChunk > > ChunkMap;
+
 protected:
-	std::unordered_map< glm::ivec3, std::shared_ptr< WorldChunk > > m_chunks;
-	std::list< std::unique_ptr< Game::Entity > > m_entities;
+	// All chunks loaded in the world
+	ChunkMap m_chunks;
+	ChunkWorker m_chunkWorker;
 
 public:
-	World( const Proxy& proxy );
+	World();
 	virtual ~World() = default;
-	virtual void update( float deltaTime );
+	virtual void update( float deltaTime ){};
 
-	virtual void spawn( Entity* entity );
+	void loadChunk( const glm::ivec3& chunkPosition );
+
+	ChunkMap& getChunks();
+	const ChunkMap& getChunks() const;
 };
 
 } // namespace Game

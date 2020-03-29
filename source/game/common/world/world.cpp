@@ -7,27 +7,25 @@
 namespace Game
 {
 
-World::World( const Proxy& proxy ) : ProxySided( proxy ) {}
+World::World() : m_chunkWorker( 1 ) {}
 
-void World::update( float deltaTime )
+void World::loadChunk( const glm::ivec3& chunkPosition )
 {
-	for( auto it = m_entities.begin(); it != m_entities.end(); ++it )
-	{
-		Entity* entity = it->get();
-
-		if( entity->isRemove() )
-		{
-			it = m_entities.erase( it );
-			continue;
-		}
-
-		entity->update( deltaTime );
-	}
+	std::shared_ptr< WorldChunk > chunk( new WorldChunk( chunkPosition ) );
+	m_chunks.insert( { chunkPosition, chunk } );
+	m_chunkWorker.queue( chunk, ChunkWorker::GENERATE_TERRAIN );
+	m_chunkWorker.queue( chunk, ChunkWorker::GENERATE_FACES );
+	m_chunkWorker.queue( chunk, ChunkWorker::GENERATE_MESH );
 }
 
-void World::spawn( Entity* entity )
+World::ChunkMap& World::getChunks()
 {
-	m_entities.emplace_back( entity );
+	return m_chunks;
+}
+
+const World::ChunkMap& World::getChunks() const
+{
+	return m_chunks;
 }
 
 } // namespace Game

@@ -258,6 +258,11 @@ void VoxelGroup::regenerateMesh()
 
 void VoxelGroup::upload()
 {
+	if( m_verticeBuffer.empty() )
+	{
+		return;
+	}
+
 	m_vertices.upload< glm::vec3 >( &m_verticeBuffer[ 0 ], m_verticeBuffer.size() );
 	m_normals.upload< glm::vec3 >( &m_normalBuffer[ 0 ], m_normalBuffer.size() );
 	m_colors.upload< glm::tvec4< unsigned char > >( &m_colorBuffer[ 0 ], m_colorBuffer.size() );
@@ -280,6 +285,16 @@ Core::AttributeBuffer& VoxelGroup::getNormals()
 Core::AttributeBuffer& VoxelGroup::getColors()
 {
 	return m_colors;
+}
+
+void VoxelGroup::serialize( std::ostream& out ) const
+{
+	Container3D::serialize( out );
+}
+
+void VoxelGroup::deserialize( std::istream& in )
+{
+	Container3D::deserialize( in );
 }
 
 } // namespace Game

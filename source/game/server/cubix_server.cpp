@@ -10,7 +10,7 @@
 namespace Game
 {
 
-CubixServer::CubixServer( int port ) : Cubix( Proxy::SERVER ), NetServer( port )
+CubixServer::CubixServer( int port ) : NetServer( port )
 {
 	m_gameTime.setFPSLimit( 30 );
 }

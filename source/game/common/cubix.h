@@ -14,18 +14,19 @@
 namespace Game
 {
 
-struct Cubix : public ProxySided, public virtual Core::NetInstance
+struct Cubix : public virtual Core::NetInstance
 {
 private:
 	bool m_quit{ false };
 
 protected:
 	Core::GameTime m_gameTime;
+	World m_world;
 
 	virtual void update();
 
 public:
-	Cubix( Proxy proxy );
+	Cubix();
 
 	void start();
 	void quit();

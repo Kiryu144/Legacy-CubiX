@@ -6,6 +6,7 @@
 #define CUBIX_CONTAINER3D_H
 
 #include "core/cubix_assert.h"
+#include "core/data/serializeable.h"
 
 #include <vector>
 
@@ -15,7 +16,7 @@ namespace Core
 {
 
 template< typename T >
-class Container3D
+class Container3D : public Serializeable
 {
 private:
 	std::vector< T > m_data;
@@ -77,6 +78,20 @@ public:
 	const glm::uvec3& getSize() const
 	{
 		return m_size;
+	}
+
+	void serialize( std::ostream& out ) const override
+	{
+		out.write( reinterpret_cast< const char* >( &m_size ), sizeof( decltype( m_size ) ) );
+		out.write( reinterpret_cast< const char* >( &m_data.at( 0 ) ),
+				   sizeof( T ) * m_data.size() );
+	}
+
+	void deserialize( std::istream& in ) override
+	{
+		in.read( reinterpret_cast< char* >( &m_size ), sizeof( decltype( m_size ) ) );
+		initialize( m_size );
+		in.read( reinterpret_cast< char* >( &m_data.at( 0 ) ), sizeof( T ) * m_data.size() );
 	}
 };
 

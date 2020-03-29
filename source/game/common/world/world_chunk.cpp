@@ -4,8 +4,6 @@
 
 #include "world_chunk.h"
 
-#include "fast_noise/FastNoise.h"
-
 namespace Game
 {
 
@@ -20,55 +18,32 @@ WorldChunk::WorldChunk( const glm::ivec3& chunkPosition )
 								chunkPosition.z * getSize().z };
 }
 
-void WorldChunk::generateFlat( unsigned int floorThickness )
+void WorldChunk::serialize( std::ostream& out ) const
 {
-	cubix_assert( floorThickness <= getSize().y,
-				  "Floor thickness is bigger than the chunk heigth" );
-
-	for( int x = 0; x < getSize().x; ++x )
-	{
-		for( int y = 0; y < floorThickness; ++y )
-		{
-			for( int z = 0; z < getSize().z; ++z )
-			{
-				Voxel voxel( 73, 201 + ( rand() % 20 ), 98 );
-				set( { x, y, z }, voxel, false );
-			}
-		}
-	}
+	VoxelGroup::serialize( out );
+	out.write( reinterpret_cast< const char* >( &m_chunkPosition ),
+			   sizeof( decltype( m_chunkPosition ) ) );
 }
 
-void WorldChunk::generateBasicNoise()
+void WorldChunk::deserialize( std::istream& in )
 {
-	FastNoise noise;
-	noise.SetNoiseType( FastNoise::NoiseType::PerlinFractal );
-
-	for( int x = 0; x < getSize().x; ++x )
-	{
-		for( int z = 0; z < getSize().z; ++z )
-		{
-			Voxel voxel( 73, 201 + ( rand() % 20 ), 98 );
-			glm::ivec2 worldPos{ m_chunkPosition.x * s_sideLength + x,
-								 m_chunkPosition.z * s_sideLength + z };
-
-			auto n = ( noise.GetNoise( worldPos.x, worldPos.y ) + 1 ) / 2.0f;
-
-			for( int y = n * ( s_sideLength - 1 ); y >= 0; --y )
-			{
-				set( { x, y, z }, voxel, false );
-			}
-		}
-	}
+	VoxelGroup::deserialize( in );
+	in.read( reinterpret_cast< char* >( &m_chunkPosition ), sizeof( decltype( m_chunkPosition ) ) );
 }
 
-std::mutex& WorldChunk::getMutex()
+unsigned int WorldChunk::getSideLength()
 {
-	return m_mutex;
+	return s_sideLength;
 }
 
-const std::mutex& WorldChunk::getMutex() const
+const glm::ivec3& WorldChunk::getChunkPosition() const
 {
-	return m_mutex;
+	return m_chunkPosition;
+}
+
+void WorldChunk::setChunkPosition( const glm::ivec3& chunkPosition )
+{
+	m_chunkPosition = chunkPosition;
 }
 
 } // namespace Game

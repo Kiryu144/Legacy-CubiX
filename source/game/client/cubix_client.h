@@ -8,22 +8,28 @@
 #include "core/net/net_client.h"
 #include "core/opengl/window.h"
 
-#include "game/client/world/world_client.h"
+#include "game/client/moveable_view.h"
+#include "game/client/renderer.h"
 #include "game/common/cubix.h"
 
 namespace Game
 {
 
-class CubixClient : public Cubix, public Core::NetClient
+class CubixClient : public Cubix,
+					public Core::NetClient,
+					public Core::Listener< Core::EventWindowResize >
 {
 private:
 	Core::Window m_window;
-	WorldClient m_world;
+	Renderer m_renderer;
+
+	MoveableView m_moveableView;
 
 	void update() override;
 
 protected:
 	void onPacketReceive( Core::PeerID id, std::istream& istream ) override;
+	void onEvent( const Core::EventWindowResize& eventType ) override;
 
 public:
 	CubixClient();

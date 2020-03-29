@@ -10,10 +10,20 @@
 namespace Game
 {
 
-CubixClient::CubixClient() : Cubix( Proxy::CLIENT ), m_window( 1440, 900, "CubiX" )
+CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
 {
 	m_gameTime.setFPSLimit( 240 );
 	connect( "127.0.0.1", 4444 );
+	m_renderer.loadShaders();
+
+	int range = 6;
+	for( int x = -range; x <= range; ++x )
+	{
+		for( int z = -range; z <= range; ++z )
+		{
+			m_world.loadChunk( { x, 0, z } );
+		}
+	}
 }
 
 void CubixClient::update()
@@ -21,12 +31,15 @@ void CubixClient::update()
 	Cubix::update();
 	Core::Window::Update();
 	m_window.swap();
-	m_world.update( m_gameTime.getDeltaTime() );
 
 	if( m_window.shouldClose() )
 	{
 		quit();
 	}
+
+	m_moveableView.update( m_gameTime.getDeltaTime() );
+	m_renderer.setView( m_moveableView.getViewMatrix() );
+	m_renderer.render( m_world );
 }
 
 void CubixClient::onPacketReceive( Core::PeerID id, std::istream& istream )
@@ -45,6 +58,13 @@ void CubixClient::onPacketReceive( Core::PeerID id, std::istream& istream )
 		send( id, &packetClientInformation );
 		break;
 	}
+}
+
+void CubixClient::onEvent( const Core::EventWindowResize& eventType )
+{
+	glm::mat4 projection = glm::perspective(
+		glm::radians( 70.0f ), static_cast< float >( eventType.w ) / eventType.h, 0.1f, 1000.0f );
+	m_renderer.setProjection( projection );
 }
 
 } // namespace Game

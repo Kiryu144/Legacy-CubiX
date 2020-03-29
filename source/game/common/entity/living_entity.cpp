@@ -38,10 +38,7 @@ bool LivingEntity::isAlive() const
 void LivingEntity::update( float deltaTime )
 {
 	Entity::update( deltaTime );
-	if( m_world->getProxy() == Proxy::SERVER )
-	{
-		getPosition() += m_velocity * glm::vec3( deltaTime );
-	}
+	getPosition() += m_velocity * glm::vec3( deltaTime );
 }
 
 } // namespace Game
