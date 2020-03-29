@@ -4,7 +4,8 @@
 
 #include "cubix_client.h"
 
-#include "game/common/net/packet/packet_client_information.h"
+#include "game/common/packet/packet_client_information.h"
+#include "game/common/packet/packet_server_information.h"
 
 namespace Game
 {
@@ -19,7 +20,6 @@ void CubixClient::update()
 {
 	Cubix::update();
 	Core::Window::Update();
-	pollNetworkEvents();
 	m_window.swap();
 	m_world.update( m_gameTime.getDeltaTime() );
 
@@ -29,19 +29,20 @@ void CubixClient::update()
 	}
 }
 
-void CubixClient::onPacketReceive( enet_uint32 id, const NetInstance::PacketPtr packet )
+void CubixClient::onPacketReceive( Core::PeerID id, std::istream& istream )
 {
-	switch( packet->getType() )
+	PacketType type;
+	istream.read( reinterpret_cast< char* >( &type ), sizeof( decltype( type ) ) );
+
+	switch( type )
 	{
 	case PacketType::CLIENTBOUND_SERVER_INFORMATION:
-	{
-		m_serverInfo = *static_cast< PacketServerInformation* >( packet.get() );
-		Core::Logger::Log( std::string( "Servername is '" ) + m_serverInfo.getName().get() + "'" );
-		PacketClientInformation test( "Kiryu144" );
-		send( id, test );
-		break;
-	}
-	default:
+		PacketServerInformation packetServerInformation( "" );
+		packetServerInformation.deserialize( istream );
+		Core::Logger::Log( std::string( "Connected to " )
+						   + packetServerInformation.getName().get() );
+		PacketClientInformation packetClientInformation( "Kiryu" );
+		send( id, &packetClientInformation );
 		break;
 	}
 }

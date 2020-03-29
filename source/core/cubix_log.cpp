@@ -135,4 +135,9 @@ const std::string& Logger::GetID( std::thread::id threadID )
 	return it != getInstance().m_threadIdentifiers.end() ? it->second : empty;
 }
 
+void Logger::Warn( const std::string& message )
+{
+	Log( Loglevel::WARNING, message );
+}
+
 } // namespace Core

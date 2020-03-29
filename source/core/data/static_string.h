@@ -25,7 +25,7 @@ public:
 		{
 			return;
 		}
-		memcpy( this, &str.at( 0 ), std::min( str.size(), N ) );
+		memcpy( this, &str.at( 0 ), std::min( str.size() + 1, N ) );
 	}
 
 	StaticString( const char* str )

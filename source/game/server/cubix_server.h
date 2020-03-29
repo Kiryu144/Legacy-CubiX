@@ -6,22 +6,21 @@
 #define CUBIX_CUBIX_SERVER_H
 
 #include "game/common/cubix.h"
-#include "game/common/net/packet/packet_client_information.h"
-#include "game/common/net/server.h"
+#include "game/server/connected_client.h"
 #include "game/server/world/world_server.h"
 
 namespace Game
 {
 
-class CubixServer : public Cubix, public Server
+class CubixServer : public Cubix, public Core::NetServer
 {
 protected:
-	std::map< enet_uint32, PacketClientInformation > m_connections;
+	std::map< enet_uint32, ConnectedClient > m_connections;
 
 	WorldServer m_world;
 
-	void onPacketReceive( enet_uint32 id, const NetInstance::PacketPtr packet ) override;
 	void onNetworkingEvent( const ENetEvent& event ) override;
+	void onPacketReceive( Core::PeerID id, std::istream& istream ) override;
 
 private:
 	void update() override;

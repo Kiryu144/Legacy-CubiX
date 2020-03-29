@@ -4,19 +4,21 @@
 
 #include "world_server.h"
 
+#include "game/common/entity/player.h"
+
 namespace Game
 {
 
 WorldServer::WorldServer() : World( Proxy::SERVER )
 {
-	// spawnWorker( 4 );
+	spawnWorker( 4 );
 
 	int range = 10;
 	for( int x = -range; x <= range; ++x )
 	{
 		for( int z = -range; z <= range; ++z )
 		{
-			// loadOrCreate( { x, 0, z } );
+			loadOrCreate( { x, 0, z } );
 		}
 	}
 }
@@ -57,12 +59,11 @@ void WorldServer::spawnWorker( size_t amount )
 
 void WorldServer::worker()
 {
-	Core::Logger::Register( "SERVER-CHUNK-WORKER" );
 	while( !m_quit )
 	{
 		std::this_thread::sleep_for( std::chrono::milliseconds( 20 ) );
 		std::list< std::weak_ptr< WorldChunk > >::iterator it;
-		std::shared_ptr< WorldChunk > chunkWorld( nullptr );
+		std::shared_ptr< WorldChunk > worldChunk( nullptr );
 		{
 			std::lock_guard< std::mutex > guard1( m_generationQueueMutex );
 			if( m_generationQueue.empty() )
@@ -77,13 +78,12 @@ void WorldServer::worker()
 				m_generationQueue.erase( it );
 				continue;
 			}
-			chunkWorld = it->lock();
+			worldChunk = it->lock();
 			m_generationQueue.erase( it );
 		}
 
-		std::lock_guard< std::mutex > guard2( chunkWorld->getMutex() );
-		chunkWorld->generateBasicNoise();
-		Core::Logger::Log( "Created chunk." );
+		std::lock_guard< std::mutex > guard2( worldChunk->getMutex() );
+		worldChunk->generateBasicNoise();
 	}
 	Core::Logger::UnRegister();
 }

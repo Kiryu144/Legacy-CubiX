@@ -34,6 +34,8 @@ public:
 	World( const Proxy& proxy );
 	virtual ~World() = default;
 	virtual void update( float deltaTime );
+
+	virtual void spawn( Entity* entity );
 };
 
 } // namespace Game

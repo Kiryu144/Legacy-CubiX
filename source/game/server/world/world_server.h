@@ -5,6 +5,8 @@
 #ifndef CUBIX_WORLD_SERVER_H
 #define CUBIX_WORLD_SERVER_H
 
+#include "core/net/net_server.h"
+
 #include "game/common/world/world.h"
 
 namespace Game

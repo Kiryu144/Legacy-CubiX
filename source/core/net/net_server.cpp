@@ -4,7 +4,7 @@
 
 #include "net_server.h"
 
-namespace Game
+namespace Core
 {
 
 NetServer::NetServer( int port )
@@ -14,7 +14,7 @@ NetServer::NetServer( int port )
 
 	cubix_assert( m_host, "Unable to initialize server" );
 
-	Core::Logger::Log( "Net-NetServer created and listening on " + std::to_string( port ) );
+	Core::Logger::Log( "NetServer created and listening on " + std::to_string( port ) );
 }
 
-} // namespace Game
+} // namespace Core

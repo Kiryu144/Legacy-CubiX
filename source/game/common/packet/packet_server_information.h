@@ -5,9 +5,9 @@
 #ifndef CUBIX_PACKET_SERVER_INFORMATION_H
 #define CUBIX_PACKET_SERVER_INFORMATION_H
 
-#include "core/data/static_string.h"
+#include "packet.h"
 
-#include "game/common/net/packet.h"
+#include "core/data/static_string.h"
 
 #include <string>
 
@@ -23,6 +23,9 @@ public:
 	PacketServerInformation( const std::string& serverName );
 
 	const Core::StaticString< 32 >& getName() const;
+
+	void serialize( std::ostream& out ) const override;
+	void deserialize( std::istream& in ) override;
 };
 
 } // namespace Game

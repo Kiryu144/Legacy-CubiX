@@ -13,12 +13,12 @@ namespace Game
 class Player : public LivingEntity
 {
 protected:
-	std::string m_name;
+	unsigned int m_id;
 
 public:
-	Player( World& world, const std::string& name );
+	Player( World& world, unsigned int id );
 
-	const std::string& getName() const;
+	unsigned int getId() const;
 };
 
 } // namespace Game

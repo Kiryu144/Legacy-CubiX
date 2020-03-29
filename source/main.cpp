@@ -12,7 +12,7 @@ int main()
 	using namespace Game;
 	Cubix* c;
 	std::thread thread( [&c]() {
-		Core::Logger::Register( "Server" );
+		Core::Logger::Register( "NetServer" );
 		CubixServer server( 4444 );
 		c = &server;
 		server.start();

@@ -12,6 +12,7 @@ Cubix::Cubix( Proxy proxy ) : ProxySided( proxy ), m_gameTime( 30 ) {}
 void Cubix::update()
 {
 	m_gameTime.update();
+	pollNetworkEvents();
 }
 
 void Cubix::start()

@@ -4,45 +4,46 @@
 
 #include "cubix_server.h"
 
+#include "game/common/packet/packet_client_information.h"
+#include "game/common/packet/packet_server_information.h"
+
 namespace Game
 {
 
-CubixServer::CubixServer( int port ) : Cubix( Proxy::SERVER ), Server( port )
+CubixServer::CubixServer( int port ) : Cubix( Proxy::SERVER ), NetServer( port )
 {
 	m_gameTime.setFPSLimit( 30 );
-}
-
-void CubixServer::onPacketReceive( enet_uint32 id, const NetInstance::PacketPtr packet )
-{
-	switch( packet->getType() )
-	{
-	case PacketType::SERVERBOUND_PLAYER_INFORMATION:
-	{
-		PacketClientInformation* clientInformation
-			= static_cast< PacketClientInformation* >( packet.get() );
-		m_connections.insert( { id, *clientInformation } );
-		Core::Logger::Log( std::string( "Player " ) + clientInformation->getName().get()
-						   + " connected" );
-		break;
-	}
-	default:
-		break;
-	}
 }
 
 void CubixServer::update()
 {
 	Cubix::update();
-	pollNetworkEvents();
+	Core::NetServer::pollNetworkEvents();
 	m_world.update( m_gameTime.getDeltaTime() );
 }
 
 void CubixServer::onNetworkingEvent( const ENetEvent& event )
 {
-	Server::onNetworkingEvent( event );
 	if( event.type == ENET_EVENT_TYPE_CONNECT )
 	{
-		send( event.peer->connectID, PacketServerInformation{ "Servername" } );
+		PacketServerInformation packet( "Servername" );
+		send( event.peer->connectID, &packet );
+	}
+}
+
+void CubixServer::onPacketReceive( Core::PeerID id, std::istream& istream )
+{
+	PacketType type;
+	istream.read( reinterpret_cast< char* >( &type ), sizeof( decltype( type ) ) );
+
+	switch( type )
+	{
+	case PacketType::SERVERBOUND_PLAYER_INFORMATION:
+		PacketClientInformation packetClientInformation;
+		packetClientInformation.deserialize( istream );
+		Core::Logger::Log( std::string( "Player " ) + packetClientInformation.getName().get()
+						   + " joined the game" );
+		break;
 	}
 }
 

@@ -17,22 +17,21 @@
 
 #include <enet/enet.h>
 
-namespace Game
+namespace Core
 {
+
+typedef enet_uint32 PeerID;
 
 class NetInstance : public Core::NoCopy
 {
-public:
-	typedef std::unique_ptr< void, decltype( free )* > ReceivedPacketPtr;
-
 protected:
 	ENetHost* m_host;
-	std::map< enet_uint32, ENetPeer* > m_peers;
+	std::map< PeerID, ENetPeer* > m_peers;
 
 	void initializeEnet();
 
 	virtual void onNetworkingEvent( const ENetEvent& event ){};
-	virtual void onPacketReceive( enet_uint32 id, const ReceivedPacketPtr packet ){};
+	virtual void onPacketReceive( PeerID id, std::istream& istream ){};
 
 public:
 	NetInstance();
@@ -40,10 +39,10 @@ public:
 
 	void pollNetworkEvents();
 
-	ENetPeer* getPeerForID( enet_uint32 id ) const;
-	void send( enet_uint32 id, const Core::Serializeable* serializeable );
+	ENetPeer* getPeerForID( PeerID id ) const;
+	void send( PeerID id, const Core::Serializeable* serializeable );
 };
 
-} // namespace Game
+} // namespace Core
 
 #endif

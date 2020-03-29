@@ -53,6 +53,7 @@ private:
 public:
 	static void Log( Loglevel loglevel, const std::string& message );
 	static void Log( const std::string& message );
+	static void Warn( const std::string& message );
 
 	static void Register( const std::string& name,
 						  std::thread::id threadID = std::this_thread::get_id() );

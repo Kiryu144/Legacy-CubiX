@@ -7,10 +7,10 @@
 
 #include "net_instance.h"
 
-namespace Game
+namespace Core
 {
 
-class NetClient : public NetInstance
+class NetClient : public virtual NetInstance
 {
 protected:
 	ENetPeer* m_peer;
@@ -24,6 +24,6 @@ public:
 	bool connect( const std::string& name, int port );
 };
 
-} // namespace Game
+} // namespace Core
 
 #endif

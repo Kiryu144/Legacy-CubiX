@@ -5,6 +5,10 @@
 #ifndef CUBIX_PACKET_H
 #define CUBIX_PACKET_H
 
+#include "core/data/serializeable.h"
+
+#include <c++/4.8.3/iosfwd>
+
 namespace Game
 {
 
@@ -19,7 +23,7 @@ enum class PacketType
 	CLIENTBOUND_FULL_CHUNK
 };
 
-class Packet
+class Packet : public Core::Serializeable
 {
 protected:
 	PacketType m_type; // This has to be first place

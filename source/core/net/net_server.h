@@ -7,15 +7,15 @@
 
 #include "net_instance.h"
 
-namespace Game
+namespace Core
 {
 
-class NetServer : public NetInstance
+class NetServer : public virtual NetInstance
 {
 public:
 	NetServer( int port );
 };
 
-} // namespace Game
+} // namespace Core
 
 #endif

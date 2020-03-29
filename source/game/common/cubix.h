@@ -6,13 +6,15 @@
 #define CUBIX_CUBIX_H
 
 #include "core/math/game_time.h"
+#include "core/net/net_instance.h"
 
+#include "game/common/packet/packet.h"
 #include "game/common/world/world.h"
 
 namespace Game
 {
 
-struct Cubix : public ProxySided
+struct Cubix : public ProxySided, public virtual Core::NetInstance
 {
 private:
 	bool m_quit{ false };

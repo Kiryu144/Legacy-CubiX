@@ -5,11 +5,10 @@
 #ifndef CUBIX_PACKET_CLIENT_INFORMATION_H
 #define CUBIX_PACKET_CLIENT_INFORMATION_H
 
+#include "packet.h"
+
 #include "core/data/static_string.h"
 
-#include "game/common/net/packet.h"
-
-#include <array>
 #include <string>
 
 namespace Game
@@ -21,9 +20,12 @@ protected:
 	Core::StaticString< 32 > m_name;
 
 public:
-	PacketClientInformation( const std::string& playerName );
+	PacketClientInformation( const std::string& serverName = "" );
 
 	const Core::StaticString< 32 >& getName() const;
+
+	void serialize( std::ostream& out ) const override;
+	void deserialize( std::istream& in ) override;
 };
 
 } // namespace Game

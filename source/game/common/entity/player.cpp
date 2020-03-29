@@ -7,15 +7,14 @@
 namespace Game
 {
 
-Player::Player( World& world, const std::string& name )
-	: LivingEntity( world, 100.0f ), m_name( name )
+Player::Player( World& world, unsigned int id ) : LivingEntity( world, 100.0f ), m_id( id )
 {
 	m_entityType = EntityType::PLAYER;
 }
 
-const std::string& Player::getName() const
+unsigned int Player::getId() const
 {
-	return m_name;
+	return m_id;
 }
 
 } // namespace Game

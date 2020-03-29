@@ -25,4 +25,9 @@ void World::update( float deltaTime )
 	}
 }
 
+void World::spawn( Entity* entity )
+{
+	m_entities.emplace_back( entity );
+}
+
 } // namespace Game

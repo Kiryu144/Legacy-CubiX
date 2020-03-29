@@ -3,14 +3,14 @@
  */
 
 #include "net_client.h"
-namespace Game
+namespace Core
 {
 
 NetClient::NetClient()
 {
 	m_host = enet_host_create( nullptr, 1, 1, 0, 0 );
 
-	cubix_assert( m_host, "Unable to initialize client" );
+	cubix_assert( m_host, "Unable to initialize Net-Client" );
 	Core::Logger::Log( "Net-Client created" );
 }
 
@@ -40,4 +40,4 @@ NetClient::~NetClient()
 	}
 }
 
-} // namespace Game
+} // namespace Core
