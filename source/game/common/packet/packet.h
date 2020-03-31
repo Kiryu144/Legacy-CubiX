@@ -7,8 +7,6 @@
 
 #include "core/data/serializeable.h"
 
-#include <c++/4.8.3/iosfwd>
-
 namespace Game
 {
 

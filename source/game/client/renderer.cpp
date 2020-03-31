@@ -4,7 +4,7 @@
 
 #include "renderer.h"
 
-#include <glm/gtc/matrix_transform.hpp>
+#include "game/common/world/world_chunk.h"
 
 namespace Game
 {
@@ -26,9 +26,14 @@ void Renderer::render( World& world )
 	m_chunkShader.setUniform( "u_directionalLightPosition",
 							  glm::vec3{ 5000.0f, -100000.0f, 14400.0f } );
 
-	for( auto& chunkIt : world.getChunks() )
+	for( auto& chunkIt : world.getAllChunk() )
 	{
-		WorldChunk* chunk = chunkIt.second.get();
+		if( chunkIt.expired() )
+		{
+			continue;
+		}
+
+		auto chunk = chunkIt.lock();
 		std::lock_guard< std::mutex > guard( *chunk );
 
 		chunk->upload();

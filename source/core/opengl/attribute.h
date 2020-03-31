@@ -5,6 +5,8 @@
 #ifndef CUBIX_ATTRIBUTE_H
 #define CUBIX_ATTRIBUTE_H
 
+#include "core/cubix_macro.h"
+
 #include <glad/glad.h>
 
 namespace Core
@@ -25,9 +27,9 @@ public:
 	size_t getDataTypeSize() const;
 	size_t getTotalSize( size_t nVertices = 1 ) const;
 
-	const GLenum getDataType() const;
-	const unsigned char getScalars() const;
-	const bool getNormalize() const;
+	CUBIX_GET_CR( m_dataType, DataType );
+	CUBIX_GET_CR( m_scalars, Scalars );
+	CUBIX_GET_CR( m_normalize, Normalized );
 };
 
 static const Attribute StandardVertexAttribute{ GL_FLOAT, 3, false };

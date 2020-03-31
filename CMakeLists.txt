@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.15)
 project(CubiX)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
@@ -109,7 +110,7 @@ set(SOURCE_FILES
         source/game/server/connected_client.h
         source/core/data/serializeable.h
         source/core/data/no_copy.h
-        source/core/data/memory.h source/game/client/renderer.cpp source/game/client/renderer.h source/game/common/world/chunk_worker.cpp source/game/common/world/chunk_worker.h)
+        source/core/data/memory.h source/game/client/renderer.cpp source/game/client/renderer.h source/game/common/world/chunk_worker.cpp source/game/common/world/chunk_worker.h source/game/common/worldgenerator/world_generator.cpp source/game/common/worldgenerator/world_generator.h source/game/common/worldgenerator/world_generator_perlin.cpp source/game/common/worldgenerator/world_generator_perlin.h source/game/common/world/world_chunk_column.cpp source/game/common/world/world_chunk_column.h source/core/data/container2d.h source/core/cubix_macro.h)
 
 
 add_executable(CubiX ${SOURCE_FILES} resources.rc)

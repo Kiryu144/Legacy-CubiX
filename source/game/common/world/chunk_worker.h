@@ -7,14 +7,15 @@
 
 #include "core/data/no_copy.h"
 
-#include "game/common/world/world_chunk.h"
-
 #include <atomic>
 #include <list>
+#include <mutex>
 #include <thread>
 
 namespace Game
 {
+
+class WorldChunk;
 
 class ChunkWorker : Core::NoCopy
 {

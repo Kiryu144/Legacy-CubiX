@@ -21,7 +21,7 @@ CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
 	{
 		for( int z = -range; z <= range; ++z )
 		{
-			m_world.loadChunk( { x, 0, z } );
+			m_world.generateChunk( { x, 0, z } );
 		}
 	}
 }

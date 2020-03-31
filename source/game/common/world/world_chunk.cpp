@@ -9,9 +9,11 @@ namespace Game
 
 unsigned int WorldChunk::s_sideLength = 32;
 
-WorldChunk::WorldChunk( const glm::ivec3& chunkPosition )
+WorldChunk::WorldChunk( World& world, const glm::ivec3& chunkPosition )
 	: VoxelGroup( glm::uvec3{ s_sideLength, s_sideLength, s_sideLength } ),
-	  m_chunkPosition( chunkPosition )
+	  m_chunkPosition( chunkPosition ),
+	  m_world( world ),
+	  m_yLevelLimits( { s_sideLength, s_sideLength } )
 {
 	getPosition() = glm::ivec3{ chunkPosition.x * getSize().x,
 								chunkPosition.y * getSize().y,
@@ -44,6 +46,23 @@ const glm::ivec3& WorldChunk::getChunkPosition() const
 void WorldChunk::setChunkPosition( const glm::ivec3& chunkPosition )
 {
 	m_chunkPosition = chunkPosition;
+}
+
+const glm::ivec3 WorldChunk::getWorldPosition() const
+{
+	return { m_chunkPosition.x * s_sideLength,
+			 m_chunkPosition.y * s_sideLength,
+			 m_chunkPosition.z * s_sideLength };
+}
+
+World& WorldChunk::getWorld() const
+{
+	return m_world;
+}
+
+Core::Container2D< glm::ivec2 >& WorldChunk::getYLevelLimits()
+{
+	return m_yLevelLimits;
 }
 
 } // namespace Game

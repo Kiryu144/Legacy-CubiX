@@ -4,7 +4,6 @@
 
 #include "moveable_view.h"
 
-#include <c++/4.8.3/iostream>
 #include <glfw/glfw3.h>
 
 namespace Game

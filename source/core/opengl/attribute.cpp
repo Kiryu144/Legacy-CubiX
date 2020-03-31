@@ -40,24 +40,9 @@ size_t Attribute::getDataTypeSize() const
 	return 1;
 }
 
-const unsigned char Attribute::getScalars() const
-{
-	return m_scalars;
-}
-
 size_t Attribute::getTotalSize( size_t nVertices ) const
 {
 	return getDataTypeSize() * m_scalars * nVertices;
-}
-
-const GLenum Attribute::getDataType() const
-{
-	return m_dataType;
-}
-
-const bool Attribute::getNormalize() const
-{
-	return m_normalize;
 }
 
 } // namespace Core

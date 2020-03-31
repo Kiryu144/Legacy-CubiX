@@ -25,7 +25,7 @@ void Core::AttributeBuffer::bind( GLuint vertexAttribIndex )
 	gl_log_error( glVertexAttribPointer( vertexAttribIndex,
 										 m_attribute.getScalars(),
 										 m_attribute.getDataType(),
-										 m_attribute.getNormalize(),
+										 m_attribute.getNormalized(),
 										 0,
 										 nullptr ) );
 	glEnableVertexAttribArray( vertexAttribIndex );

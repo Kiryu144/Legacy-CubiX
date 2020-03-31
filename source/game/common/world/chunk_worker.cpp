@@ -4,6 +4,10 @@
 
 #include "chunk_worker.h"
 
+#include "game/common/world/world_chunk.h"
+#include "game/common/worldgenerator/world_generator.h"
+#include "game/common/worldgenerator/world_generator_perlin.h"
+
 namespace Game
 {
 
@@ -17,6 +21,7 @@ ChunkWorker::ChunkWorker( unsigned int threadAmount )
 
 void ChunkWorker::worker()
 {
+	WorldGeneratorPerlin worldGenerator;
 	auto sleepTime = std::chrono::milliseconds( 20 );
 	while( !m_quit )
 	{
@@ -45,22 +50,7 @@ void ChunkWorker::worker()
 		switch( operation.m_operationType )
 		{
 		case GENERATE_TERRAIN:
-			for( int x = 0; x < chunk->getSideLength(); ++x )
-			{
-				for( int y = 0; y < chunk->getSideLength(); ++y )
-				{
-					for( int z = 0; z < chunk->getSideLength(); ++z )
-					{
-						float fac = 255.0f / chunk->getSideLength();
-						chunk->set( { x, y, z },
-									{ static_cast< unsigned char >( x * fac ),
-									  0,
-									  static_cast< unsigned char >( z * fac ),
-									  255 },
-									false );
-					}
-				}
-			}
+			worldGenerator.generateHeight( *chunk );
 			break;
 		case GENERATE_FACES:
 			chunk->updateAllFaces();
