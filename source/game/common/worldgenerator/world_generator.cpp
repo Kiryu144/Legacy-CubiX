@@ -30,14 +30,24 @@ void WorldGenerator::generateHeight( WorldChunk& chunk )
 {
 	prepareForChunk( chunk.getChunkPosition() );
 	glm::ivec3 worldPosition = chunk.getWorldPosition();
+	bool generateChunkOnTop{ false };
+	bool generateChunkOnBottom{ false };
 	for( int x = 0; x < chunk.getSideLength(); ++x )
 	{
 		for( int z = 0; z < chunk.getSideLength(); ++z )
 		{
 			int y = getHeight( { chunk.getChunkPosition().x * chunk.getSideLength() + x,
 								 chunk.getChunkPosition().z * chunk.getSideLength() + z } );
-			if( y >= ( worldPosition.y + chunk.getSideLength() ) || y < worldPosition.y )
+
+			if( y < worldPosition.y )
 			{
+				generateChunkOnBottom = true;
+				continue;
+			}
+
+			if( y >= ( worldPosition.y + static_cast< int >( chunk.getSideLength() ) ) )
+			{
+				generateChunkOnTop = true;
 				continue;
 			}
 
@@ -47,6 +57,15 @@ void WorldGenerator::generateHeight( WorldChunk& chunk )
 				setVoxel( chunk.get( { x, _y, z } ), depth++ );
 			}
 		}
+	}
+
+	if( generateChunkOnTop )
+	{
+		chunk.getWorld().generateChunk( chunk.getChunkPosition() + glm::ivec3{ 0, 1, 0 } );
+	}
+	if( generateChunkOnBottom )
+	{
+		chunk.getWorld().generateChunk( chunk.getChunkPosition() + glm::ivec3{ 0, -1, 0 } );
 	}
 }
 

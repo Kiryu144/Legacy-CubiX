@@ -110,7 +110,7 @@ set(SOURCE_FILES
         source/game/server/connected_client.h
         source/core/data/serializeable.h
         source/core/data/no_copy.h
-        source/core/data/memory.h source/game/client/renderer.cpp source/game/client/renderer.h source/game/common/world/chunk_worker.cpp source/game/common/world/chunk_worker.h source/game/common/worldgenerator/world_generator.cpp source/game/common/worldgenerator/world_generator.h source/game/common/worldgenerator/world_generator_perlin.cpp source/game/common/worldgenerator/world_generator_perlin.h source/game/common/world/world_chunk_column.cpp source/game/common/world/world_chunk_column.h source/core/data/container2d.h source/core/cubix_macro.h)
+        source/core/data/memory.h source/game/client/renderer.cpp source/game/client/renderer.h source/game/common/world/chunk_worker.cpp source/game/common/world/chunk_worker.h source/game/common/worldgenerator/world_generator.cpp source/game/common/worldgenerator/world_generator.h source/game/common/worldgenerator/world_generator_perlin.cpp source/game/common/worldgenerator/world_generator_perlin.h source/game/common/world/world_chunk_column.cpp source/game/common/world/world_chunk_column.h source/core/data/container2d.h source/core/cubix_macro.h source/core/data/lockable.h)
 
 
 add_executable(CubiX ${SOURCE_FILES} resources.rc)

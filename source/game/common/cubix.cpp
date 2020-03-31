@@ -13,6 +13,7 @@ void Cubix::update()
 {
 	m_gameTime.update();
 	pollNetworkEvents();
+	m_world.update( m_gameTime.getDeltaTime() );
 }
 
 void Cubix::start()

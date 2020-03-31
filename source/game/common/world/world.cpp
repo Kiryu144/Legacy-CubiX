@@ -13,6 +13,12 @@ World::World() : m_chunkWorker( 1 ) {}
 
 void World::generateChunk( const glm::ivec3& chunkPosition )
 {
+	auto lock( m_chunksToGenerate.lockGuard() );
+	m_chunksToGenerate.insert( chunkPosition );
+}
+
+void World::_generateChunk( const glm::ivec3& chunkPosition )
+{
 	auto chunk = createEmptyChunkIfAbsent( chunkPosition );
 	if( chunk != nullptr )
 	{
@@ -57,6 +63,14 @@ WorldChunkColumn::ColumnMap::mapped_type World::createEmptyChunkIfAbsent(
 
 void World::update( float deltaTime )
 {
+	{
+		auto lock( m_chunksToGenerate.lockGuard() );
+		for( auto& chunkPosition : m_chunksToGenerate )
+		{
+			_generateChunk( chunkPosition );
+		}
+	}
+
 	for( auto it = m_weakChunkReference.begin(); it != m_weakChunkReference.end(); )
 	{
 		if( it->expired() )
