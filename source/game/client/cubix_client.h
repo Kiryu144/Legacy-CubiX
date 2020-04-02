@@ -25,6 +25,8 @@ private:
 
 	MoveableView m_moveableView;
 
+	int m_viewDistance{ 6 };
+
 	void update() override;
 
 protected:

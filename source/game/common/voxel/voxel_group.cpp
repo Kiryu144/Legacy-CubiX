@@ -132,17 +132,13 @@ VoxelGroup::VoxelGroup( const std::string& voxFilePath )
 		voxel.g = palette[ ( i * 4 ) + 1 ];
 		voxel.b = palette[ ( i * 4 ) + 2 ];
 		voxel.a = palette[ ( i * 4 ) + 3 ];
-		set( pos, voxel, false );
+		set( pos, voxel );
 	}
 }
 
-void VoxelGroup::set( const glm::uvec3& pos, const Voxel& voxel, bool update )
+void VoxelGroup::set( const glm::uvec3& pos, const Voxel& voxel )
 {
 	operator[]( pos ) = voxel;
-	if( update )
-	{
-		VoxelGroup::updateFace( pos );
-	}
 }
 
 Voxel& VoxelGroup::get( const glm::uvec3& pos )
@@ -171,25 +167,6 @@ Core::Facing VoxelGroup::findVisibleFaces( const glm::uvec3& pos ) const
 	return facing;
 }
 
-void VoxelGroup::updateFace( const glm::uvec3& pos )
-{
-	get( pos ).getFacing() = findVisibleFaces( pos );
-}
-
-void VoxelGroup::updateAllFaces()
-{
-	for( int x = 0; x < getSize().x; ++x )
-	{
-		for( int y = 0; y < getSize().y; ++y )
-		{
-			for( int z = 0; z < getSize().z; ++z )
-			{
-				operator[]( { x, y, z } ).getFacing() = findVisibleFaces( { x, y, z } );
-			}
-		}
-	}
-}
-
 void VoxelGroup::regenerateMesh()
 {
 	static const glm::vec3 s_vertices[ 6 * 6 ]{
@@ -211,6 +188,19 @@ void VoxelGroup::regenerateMesh()
 		glm::vec3( 0.0, 0.0, -1.0 ), glm::vec3( -1.0, 0.0, 0.0 ), glm::vec3( 0.0, 0.0, 1.0 ),
 		glm::vec3( 1.0, 0.0, 0.0 ),	 glm::vec3( 0.0, 1.0, 0.0 ),  glm::vec3( 0.0, -1.0, 0.0 )
 	};
+
+	Core::Container3D< Core::Facing > faces( m_size );
+
+	for( int x = 0; x < getSize().x; ++x )
+	{
+		for( int y = 0; y < getSize().y; ++y )
+		{
+			for( int z = 0; z < getSize().z; ++z )
+			{
+				faces[ { x, y, z } ] = findVisibleFaces( { x, y, z } );
+			}
+		}
+	}
 
 	m_verticeBuffer.clear();
 	m_normalBuffer.clear();
@@ -234,7 +224,7 @@ void VoxelGroup::regenerateMesh()
 					continue;
 				}
 
-				const Core::Facing& visible = voxel.getFacing();
+				const Core::Facing& visible = faces[ { x, y, z } ];
 				// MultipleFacingData<uint8_t> light = voxel.getLightLevel();
 				for( int i = 0; i < 6; ++i )
 				{

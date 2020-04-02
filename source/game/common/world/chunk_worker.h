@@ -23,7 +23,6 @@ public:
 	enum OperationType
 	{
 		GENERATE_TERRAIN,
-		GENERATE_FACES,
 		GENERATE_MESH
 	};
 

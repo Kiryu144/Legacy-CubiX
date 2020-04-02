@@ -23,7 +23,6 @@ void World::_generateChunk( const glm::ivec3& chunkPosition )
 	if( chunk != nullptr )
 	{
 		m_chunkWorker.queue( chunk, ChunkWorker::GENERATE_TERRAIN );
-		m_chunkWorker.queue( chunk, ChunkWorker::GENERATE_FACES );
 		m_chunkWorker.queue( chunk, ChunkWorker::GENERATE_MESH );
 	}
 }
@@ -148,7 +147,6 @@ void World::insert( const VoxelGroup& voxelGroup, glm::ivec3 position )
 			{
 				auto& chunk = affectedChunks[ { x, y, z } ];
 				chunk->WorldChunk::unlock();
-				m_chunkWorker.queue( chunk, ChunkWorker::GENERATE_FACES );
 				m_chunkWorker.queue( chunk, ChunkWorker::GENERATE_MESH );
 			}
 		}

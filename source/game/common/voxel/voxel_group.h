@@ -31,14 +31,12 @@ public:
 	VoxelGroup( const glm::uvec3& size );
 	VoxelGroup( const std::string& voxFilePath );
 
-	void set( const glm::uvec3& pos, const Voxel& voxel, bool update = true );
+	void set( const glm::uvec3& pos, const Voxel& voxel );
 	Voxel& get( const glm::uvec3& pos );
 	const Voxel& get( const glm::uvec3& pos ) const;
 
 	Core::Facing findVisibleFaces( const glm::uvec3& pos ) const;
 
-	void updateFace( const glm::uvec3& pos );
-	void updateAllFaces();
 	void regenerateMesh();
 	void upload();
 

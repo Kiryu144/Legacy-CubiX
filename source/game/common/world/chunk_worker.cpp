@@ -53,9 +53,6 @@ void ChunkWorker::worker()
 			worldGenerator.generateHeight( *chunk );
 			chunk->setTerrainGenerated( true );
 			break;
-		case GENERATE_FACES:
-			chunk->updateAllFaces();
-			break;
 		case GENERATE_MESH:
 			chunk->regenerateMesh();
 			chunk->setAllowDrawing( true );

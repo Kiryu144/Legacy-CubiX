@@ -18,7 +18,7 @@ namespace Core
 template< typename T >
 class Container3D : public Serializeable
 {
-private:
+protected:
 	std::vector< T > m_data;
 	glm::uvec3 m_size;
 
