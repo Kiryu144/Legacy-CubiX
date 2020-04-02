@@ -26,7 +26,7 @@ void Renderer::render( World& world )
 	m_chunkShader.setUniform( "u_directionalLightPosition",
 							  glm::vec3{ 5000.0f, -100000.0f, 14400.0f } );
 
-	for( auto& chunkIt : world.getAllChunk() )
+	for( auto& chunkIt : world.getAllChunks() )
 	{
 		if( chunkIt.expired() )
 		{
@@ -34,7 +34,11 @@ void Renderer::render( World& world )
 		}
 
 		auto chunk = chunkIt.lock();
-		std::lock_guard< std::mutex > guard( *chunk );
+
+		if( !chunk->getAllowDrawing() || chunk->getMillisecondsNotSeen() > 0 )
+		{
+			continue;
+		}
 
 		chunk->upload();
 

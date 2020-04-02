@@ -10,6 +10,7 @@
 #include "core/data/memory.h"
 #include "core/math/glm_math.h"
 
+#include "game/common/voxel/voxel_group.h"
 #include "game/common/world/chunk_worker.h"
 #include "game/common/world/world_chunk_column.h"
 #include "game/proxy.h"
@@ -44,11 +45,18 @@ public:
 	virtual ~World() = default;
 	virtual void update( float deltaTime );
 
-	CUBIX_GET_R_CR( m_weakChunkReference, AllChunk );
+	CUBIX_GET_R_CR( m_weakChunkReference, AllChunks );
+	CUBIX_GET_R_CR( m_chunkWorker, ChunkWorker );
 
 	WorldChunkColumn::ColumnMap::mapped_type getChunk( const glm::ivec3& position );
 	const WorldChunkColumn::ColumnMap::mapped_type getChunk( const glm::ivec3& position ) const;
 	WorldChunkColumn::ColumnMap::mapped_type createEmptyChunkIfAbsent( const glm::ivec3& position );
+	ChunkMap::mapped_type getChunkColumn( const glm::ivec2& position );
+	void deleteChunk( const glm::ivec3& chunkPosition );
+
+	void insert( const VoxelGroup& voxelGroup, glm::ivec3 position );
+
+	void updateForPlayer( const glm::ivec2& chunkPosition );
 
 	// Thread safe
 	void generateChunk( const glm::ivec3& chunkPosition );

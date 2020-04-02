@@ -42,4 +42,14 @@ WorldChunkColumn::ColumnMap::mapped_type WorldChunkColumn::createEmptyChunkIfAbs
 	return chunk;
 }
 
+void WorldChunkColumn::deleteChunk( int yLevel )
+{
+	m_column.erase( yLevel );
+}
+
+size_t WorldChunkColumn::size() const
+{
+	return m_column.size();
+}
+
 } // namespace Game

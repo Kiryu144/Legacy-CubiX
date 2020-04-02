@@ -7,5 +7,6 @@
 
 #define CUBIX_ENABLE_GL_CLEAR_ERROR 1
 #define CUBIX_ENABLE_ASSERT 1
+#define CUBIX_IMGUI 1
 
 #endif // CUBIX_DEFINES_H

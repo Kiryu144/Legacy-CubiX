@@ -124,8 +124,8 @@ VoxelGroup::VoxelGroup( const std::string& voxFilePath )
 	{
 		glm::uvec3 pos;
 		pos.x = *reinterpret_cast< int8_t* >( xyzi + 4 + ( n * 4 ) + 0 );
-		pos.z = *reinterpret_cast< int8_t* >( xyzi + 4 + ( n * 4 ) + 1 );
-		pos.y = *reinterpret_cast< int8_t* >( xyzi + 4 + ( n * 4 ) + 2 );
+		pos.y = *reinterpret_cast< int8_t* >( xyzi + 4 + ( n * 4 ) + 1 );
+		pos.z = *reinterpret_cast< int8_t* >( xyzi + 4 + ( n * 4 ) + 2 );
 		Voxel voxel;
 		int i	= int( *reinterpret_cast< uint8_t* >( xyzi + 4 + ( n * 4 ) + 3 ) ) - 1;
 		voxel.r = palette[ ( i * 4 ) + 0 ];

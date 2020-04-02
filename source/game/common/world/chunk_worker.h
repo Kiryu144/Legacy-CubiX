@@ -46,9 +46,11 @@ public:
 	ChunkWorker( unsigned int threadAmount );
 	~ChunkWorker();
 
-	void queue( std::shared_ptr< WorldChunk >& chunk,
+	void queue( std::shared_ptr< WorldChunk > chunk,
 				OperationType operationType,
 				bool priority = false );
+
+	size_t size();
 };
 
 } // namespace Game

@@ -13,7 +13,7 @@
 namespace Game
 {
 
-class VoxelGroup : protected Core::Container3D< Voxel >
+class VoxelGroup : public Core::Container3D< Voxel >
 {
 protected:
 	Core::AttributeBuffer m_vertices;

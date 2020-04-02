@@ -37,13 +37,16 @@
 	}
 
 // Inline setter that takes a const refrence
-#define CUBIX_SET_R( x, n )                 \
+#define CUBIX_SET_CR( x, n )                \
 	void set##n( const decltype( x )& _in ) \
 	{                                       \
 		x = _in;                            \
 	}
 
 // Inline getter & setter that take and return const references
-#define CUBIX_GET_SET_R_CR( x, n ) CUBIX_GET_R_CR( x, n ) CUBIX_SET_R( x, n )
+#define CUBIX_GET_SET_R_CR( x, n ) CUBIX_GET_R_CR( x, n ) CUBIX_SET_CR( x, n )
+
+// Inline getter & setter that take and return const references
+#define CUBIX_GET_SET_CR_CR( x, n ) CUBIX_GET_CR( x, n ) CUBIX_SET_CR( x, n )
 
 #endif // CUBIX_CUBIX_MACRO_H

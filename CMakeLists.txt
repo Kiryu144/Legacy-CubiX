@@ -31,7 +31,7 @@ set(LINKER_TARGETS winmm ws2_32 glfw3 gdi32 opengl32)
 # List of all the source files to compile
 
 set(SOURCE_FILES lib/enet/callbacks.c lib/enet/compress.c lib/enet/host.c lib/enet/list.c lib/enet/packet.c lib/enet/peer.c lib/enet/protocol.c lib/enet/unix.c lib/enet/win32.c)
-set(SOURCE_FILES ${SOURCE_FILES} lib/fast_noise/FastNoise.cpp)
+set(SOURCE_FILES ${SOURCE_FILES} lib/fast_noise/FastNoise.cpp lib/imgui/imgui.cpp lib/imgui/imgui_demo.cpp lib/imgui/imgui_draw.cpp lib/imgui/imgui_widgets.cpp lib/imgui/imgui_impl_glfw.cpp lib/imgui/imgui_impl_opengl3.cpp)
 
 set(SOURCE_FILES
         ${SOURCE_FILES}
@@ -110,7 +110,7 @@ set(SOURCE_FILES
         source/game/server/connected_client.h
         source/core/data/serializeable.h
         source/core/data/no_copy.h
-        source/core/data/memory.h source/game/client/renderer.cpp source/game/client/renderer.h source/game/common/world/chunk_worker.cpp source/game/common/world/chunk_worker.h source/game/common/worldgenerator/world_generator.cpp source/game/common/worldgenerator/world_generator.h source/game/common/worldgenerator/world_generator_perlin.cpp source/game/common/worldgenerator/world_generator_perlin.h source/game/common/world/world_chunk_column.cpp source/game/common/world/world_chunk_column.h source/core/data/container2d.h source/core/cubix_macro.h source/core/data/lockable.h)
+        source/core/data/memory.h source/game/client/renderer.cpp source/game/client/renderer.h source/game/common/world/chunk_worker.cpp source/game/common/world/chunk_worker.h source/game/common/worldgenerator/world_generator.cpp source/game/common/worldgenerator/world_generator.h source/game/common/worldgenerator/world_generator_perlin.cpp source/game/common/worldgenerator/world_generator_perlin.h source/game/common/world/world_chunk_column.cpp source/game/common/world/world_chunk_column.h source/core/data/container2d.h source/core/cubix_macro.h source/core/data/lockable.h source/core/io/user_input_handler.cpp source/core/io/user_input_handler.h)
 
 
 add_executable(CubiX ${SOURCE_FILES} resources.rc)

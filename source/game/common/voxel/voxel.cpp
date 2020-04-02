@@ -45,4 +45,15 @@ bool Voxel::exists() const
 	return getFlag( EXISTS );
 }
 
+void Voxel::setComplexStructureID( uint8_t id )
+{
+	( *reinterpret_cast< uint8_t* >( reinterpret_cast< char* >( &m_flags ) + 2 ) ) = id;
+}
+
+uint8_t Voxel::getComplexStructureID() const
+{
+	return (
+		*reinterpret_cast< const uint8_t* >( reinterpret_cast< const char* >( &m_flags ) + 2 ) );
+}
+
 } // namespace Game

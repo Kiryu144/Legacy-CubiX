@@ -9,7 +9,7 @@
 namespace Game
 {
 
-World::World() : m_chunkWorker( 1 ) {}
+World::World() : m_chunkWorker( 4 ) {}
 
 void World::generateChunk( const glm::ivec3& chunkPosition )
 {
@@ -69,6 +69,7 @@ void World::update( float deltaTime )
 		{
 			_generateChunk( chunkPosition );
 		}
+		m_chunksToGenerate.clear();
 	}
 
 	for( auto it = m_weakChunkReference.begin(); it != m_weakChunkReference.end(); )
@@ -79,7 +80,112 @@ void World::update( float deltaTime )
 		}
 		else
 		{
+			auto chunk = it->lock();
+			chunk->setMillisecondsNotSeen( chunk->getMillisecondsNotSeen() + deltaTime );
+
+			if( chunk->getMillisecondsNotSeen() > 1000 )
+			{
+				deleteChunk( chunk->getChunkPosition() );
+			}
+
 			++it;
+		}
+	}
+}
+
+void World::insert( const VoxelGroup& voxelGroup, glm::ivec3 position )
+{
+	glm::ivec3 lowestChunkPos = position / glm::ivec3( WorldChunk::s_sideLength );
+	Core::Container3D< std::shared_ptr< WorldChunk > > affectedChunks(
+		( glm::ivec3( voxelGroup.getSize() ) / glm::ivec3( WorldChunk::s_sideLength ) )
+		+ glm::ivec3( 2 ) );
+	for( int x = 0; x < affectedChunks.getSize().x; ++x )
+	{
+		for( int y = 0; y < affectedChunks.getSize().y; ++y )
+		{
+			for( int z = 0; z < affectedChunks.getSize().z; ++z )
+			{
+				glm::ivec3 chunkPos = lowestChunkPos + glm::ivec3{ x, y, z };
+				auto chunk			= getChunk( chunkPos );
+				if( chunk == nullptr )
+				{
+					chunk = createEmptyChunkIfAbsent( chunkPos );
+				}
+
+				affectedChunks[ { x, y, z } ] = chunk;
+				affectedChunks[ { x, y, z } ]->WorldChunk::lock();
+			}
+		}
+	}
+
+	std::unordered_set< glm::ivec3 > chunksToReload;
+	for( unsigned int x = 0; x < voxelGroup.getSize().x; ++x )
+	{
+		for( unsigned int y = 0; y < voxelGroup.getSize().y; ++y )
+		{
+			for( unsigned int z = 0; z < voxelGroup.getSize().z; ++z )
+			{
+				auto& voxel = voxelGroup.get( { x, y, z } );
+				if( voxel.a == 0 )
+				{
+					continue;
+				}
+
+				glm::ivec3 worldPos = position + glm::ivec3{ x, y, z };
+				glm::ivec3 chunkPos = worldPos / glm::ivec3( WorldChunk::s_sideLength );
+				glm::ivec3 insideChunkPos
+					= worldPos - ( chunkPos * glm::ivec3( WorldChunk::s_sideLength ) );
+				affectedChunks[ chunkPos ]->set( insideChunkPos, voxel );
+			}
+		}
+	}
+
+	for( int x = 0; x < affectedChunks.getSize().x; ++x )
+	{
+		for( int y = 0; y < affectedChunks.getSize().y; ++y )
+		{
+			for( int z = 0; z < affectedChunks.getSize().z; ++z )
+			{
+				auto& chunk = affectedChunks[ { x, y, z } ];
+				chunk->WorldChunk::unlock();
+				m_chunkWorker.queue( chunk, ChunkWorker::GENERATE_FACES );
+				m_chunkWorker.queue( chunk, ChunkWorker::GENERATE_MESH );
+			}
+		}
+	}
+}
+
+void World::updateForPlayer( const glm::ivec2& chunkPosition )
+{
+	auto chunkColumn = getChunkColumn( chunkPosition );
+	if( chunkColumn == nullptr )
+	{
+		generateChunk( { chunkPosition.x, 0, chunkPosition.y } );
+	}
+	else
+	{
+		for( auto it : chunkColumn->getChunks() )
+		{
+			it.second->setMillisecondsNotSeen( 0 );
+		}
+	}
+}
+
+std::shared_ptr< WorldChunkColumn > World::getChunkColumn( const glm::ivec2& position )
+{
+	auto it = m_chunks.find( position );
+	return it != m_chunks.end() ? it->second : nullptr;
+}
+
+void World::deleteChunk( const glm::ivec3& chunkPosition )
+{
+	auto chunkColumn = getChunkColumn( { chunkPosition.x, chunkPosition.z } );
+	if( chunkColumn )
+	{
+		chunkColumn->deleteChunk( chunkPosition.y );
+		if( chunkColumn->size() == 0 )
+		{
+			m_chunks.erase( { chunkPosition.x, chunkPosition.z } );
 		}
 	}
 }

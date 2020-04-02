@@ -26,6 +26,7 @@ public:
 	void update();
 	float getFPS() const;
 	float getDeltaTime() const;
+	double getTimeSinceEpoch() const;
 
 	void setFPSLimit( unsigned int fpsLimit );
 };

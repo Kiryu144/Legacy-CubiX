@@ -5,12 +5,14 @@
 #include "window.h"
 
 #include "core/cubix_assert.h"
-#include "core/cubix_log.h"
 #include "core/event.h"
 
 // clang-format off
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_opengl3.h>
+#include <imgui/imgui_impl_glfw.h>
 // clang-format on
 
 namespace Core
@@ -19,44 +21,20 @@ namespace Core
 Window::Window( int width, int height, const std::string& title, GLFWwindow* parent )
 {
 	cubix_assert( width > 0 && height > 0, "Invalid window size" );
-	cubix_log_or_assert( glfwInit(), "Initialized GLFW", "Unable to initialize GLFW" );
-	m_window = glfwCreateWindow( width, height, title.c_str(), nullptr, parent );
-	cubix_log_or_assert(
-		m_window, "Created window '" + title + "'", "Unable to create GLFW Window" );
+	cubix_log_or_assert( glfwInit(), "Initialized GLFW3", "Unable to initialize GLFW" );
+	m_window	  = glfwCreateWindow( width, height, title.c_str(), nullptr, parent );
+	m_windowTitle = title;
+	cubix_log_or_assert( m_window, "Created window", "Unable to create GLFW Window" );
 	m_parent = parent;
 
-	if( !parent )
-	{
-		glfwWindowHint( GLFW_DOUBLEBUFFER, true );
-		glfwWindowHint( GLFW_SAMPLES, 2 );
-		glfwMakeContextCurrent( m_window );
+	m_userInputHandler.reset( new UserInputHandler( m_window ) );
 
-		gladLoadGLLoader( ( GLADloadproc )glfwGetProcAddress );
-		cubix_log_or_assert( gladLoadGL(),
-							 "Created opengl context for window '" + title + "'",
-							 "Unable to load opengl" );
+	setupGLFW();
+	setupOpenGL();
 
-		glfwSwapInterval( 0 ); // Disable VSync
-
-		glViewport( 0, 0, width, height );
-		glClearColor( 179 / 255.0f, 210 / 255.0f, 238 / 255.0f, 1.0 );
-		glEnable( GL_DEPTH_TEST );
-		glEnable( GL_BLEND );
-		glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-	}
-
-	if( glfwRawMouseMotionSupported() )
-	{
-		glfwSetInputMode( m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
-		glfwSetInputMode( m_window, GLFW_STICKY_KEYS, GLFW_TRUE );
-		// glfwSetInputMode( m_window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE );
-	}
-	else
-	{
-		Logger::Log(
-			Logger::WARNING,
-			"Raw Mouse Motion is not supported. This can result in glitchy mouse movement." );
-	}
+#if CUBIX_IMGUI
+	setupImGui();
+#endif
 
 	glfwSetWindowSizeCallback( m_window, []( GLFWwindow* window, int w, int h ) {
 		EventWindowResize resize{ static_cast< unsigned int >( w ),
@@ -64,20 +42,49 @@ Window::Window( int width, int height, const std::string& title, GLFWwindow* par
 		Handler< EventWindowResize >::Fire( resize );
 	} );
 
-	glfwSetCursorPosCallback( m_window, []( GLFWwindow* window, double x, double y ) {
-		EventMouseMove move{ x, y };
-		Handler< EventMouseMove >::Fire( move );
-	} );
-
-	glfwSetKeyCallback( m_window,
-						[]( GLFWwindow* window, int key, int scancode, int action, int mods ) {
-							EventKeyPressed keyPressed{ key };
-							Handler< EventKeyPressed >::Fire( keyPressed );
-						} );
-
 	EventWindowResize resize{ static_cast< unsigned int >( width ),
 							  static_cast< unsigned int >( height ) };
 	Handler< EventWindowResize >::Fire( resize );
+
+	setVSync( false );
+}
+
+void Window::setupGLFW()
+{
+	glfwWindowHint( GLFW_DOUBLEBUFFER, true );
+	glfwWindowHint( GLFW_SAMPLES, 2 );
+	glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
+	glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
+
+	glfwSetInputMode( m_window, GLFW_STICKY_KEYS, GLFW_TRUE );
+}
+
+void Window::setupOpenGL()
+{
+	glfwMakeContextCurrent( m_window );
+	gladLoadGLLoader( ( GLADloadproc )glfwGetProcAddress );
+
+	cubix_log_or_assert( gladLoadGL(), "Initialized OpenGL", "Unable to load opengl" );
+
+	auto size = getSize();
+	glViewport( 0, 0, size.x, size.y );
+	glClearColor( 179 / 255.0f, 210 / 255.0f, 238 / 255.0f, 1.0 );
+	glEnable( GL_DEPTH_TEST );
+	glEnable( GL_BLEND );
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+}
+
+void Window::setupImGui()
+{
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	( void )io;
+
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL( m_window, true );
+	ImGui_ImplOpenGL3_Init( "#version 410" );
+
+	Logger::Log( "Initialized ImGui" );
 }
 
 Window::~Window()
@@ -92,46 +99,53 @@ void Window::Update()
 
 bool Window::shouldClose() const
 {
-	return glfwWindowShouldClose( m_window );
+	return static_cast< bool >( glfwWindowShouldClose( m_window ) );
 }
 
 void Window::swap()
 {
+#if CUBIX_IMGUI
+	static bool firstFrame = true;
+	if( !firstFrame )
+	{
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
+	}
+	firstFrame = false;
+#endif
+
 	glfwSwapBuffers( m_window );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	static const std::vector< int > s_keys
-		= { 32,	 39,  44,  45,	46,	 47,  48,  49,	50,	 51,  52,  53,	54,	 55,  56,
-			57,	 59,  61,  65,	66,	 67,  68,  69,	70,	 71,  72,  73,	74,	 75,  76,
-			77,	 78,  79,  80,	81,	 82,  83,  84,	85,	 86,  87,  88,	89,	 90,  91,
-			92,	 93,  96,  161, 162, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265,
-			266, 267, 268, 269, 280, 281, 282, 283, 284, 290, 291, 292, 293, 294, 295,
-			296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310,
-			311, 312, 313, 314, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330,
-			331, 332, 333, 334, 335, 336, 340, 341, 342, 343, 344, 345, 346, 347, 348 };
+	m_userInputHandler->update();
 
-	for( int key : s_keys )
-	{
-		if( glfwGetKey( m_window, key ) == GLFW_PRESS )
-		{
-			EventKeyPressed keyPressed{ key };
-			Handler< EventKeyPressed >::Fire( keyPressed );
-		}
-	}
+#if CUBIX_IMGUI
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+#endif
 }
 
-int Window::getWidth() const
+const glm::ivec2& Window::getSize() const
 {
-	int w, h;
-	glfwGetWindowSize( m_window, &w, &h );
-	return w;
+	static glm::ivec2 size;
+	glfwGetWindowSize( m_window, &size.x, &size.y );
+	return size;
 }
 
-int Window::getHeight() const
+void Window::setSize( const glm::ivec2& size )
 {
-	int w, h;
-	glfwGetWindowSize( m_window, &w, &h );
-	return h;
+	glfwSetWindowSize( m_window, size.x, size.y );
+}
+
+void Window::setTitle( const std::string& title )
+{
+	glfwSetWindowTitle( m_window, title.c_str() );
+}
+
+void Window::setVSync( bool enable )
+{
+	glfwSwapInterval( enable );
 }
 
 } // namespace Core

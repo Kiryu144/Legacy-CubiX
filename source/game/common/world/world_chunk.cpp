@@ -13,7 +13,8 @@ WorldChunk::WorldChunk( World& world, const glm::ivec3& chunkPosition )
 	: VoxelGroup( glm::uvec3{ s_sideLength, s_sideLength, s_sideLength } ),
 	  m_chunkPosition( chunkPosition ),
 	  m_world( world ),
-	  m_yLevelLimits( { s_sideLength, s_sideLength } )
+	  m_yLevelLimits( { s_sideLength, s_sideLength } ),
+	  m_millisecondsNotSeen( 0 )
 {
 	getPosition() = glm::ivec3{ chunkPosition.x * getSize().x,
 								chunkPosition.y * getSize().y,
@@ -36,16 +37,6 @@ void WorldChunk::deserialize( std::istream& in )
 unsigned int WorldChunk::getSideLength()
 {
 	return s_sideLength;
-}
-
-const glm::ivec3& WorldChunk::getChunkPosition() const
-{
-	return m_chunkPosition;
-}
-
-void WorldChunk::setChunkPosition( const glm::ivec3& chunkPosition )
-{
-	m_chunkPosition = chunkPosition;
 }
 
 const glm::ivec3 WorldChunk::getWorldPosition() const

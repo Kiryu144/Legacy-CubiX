@@ -22,7 +22,7 @@ ChunkWorker::ChunkWorker( unsigned int threadAmount )
 void ChunkWorker::worker()
 {
 	WorldGeneratorPerlin worldGenerator;
-	auto sleepTime = std::chrono::milliseconds( 20 );
+	auto sleepTime = std::chrono::milliseconds( 50 );
 	while( !m_quit )
 	{
 		std::this_thread::sleep_for( sleepTime );
@@ -32,7 +32,7 @@ void ChunkWorker::worker()
 			std::lock_guard< std::mutex > guard( m_queueMutex );
 			if( m_queue.empty() )
 			{
-				sleepTime = std::chrono::milliseconds( 50 );
+				sleepTime = std::chrono::milliseconds( 100 );
 				continue;
 			}
 			operation = m_queue.front();
@@ -51,12 +51,15 @@ void ChunkWorker::worker()
 		{
 		case GENERATE_TERRAIN:
 			worldGenerator.generateHeight( *chunk );
+			chunk->setTerrainGenerated( true );
 			break;
 		case GENERATE_FACES:
 			chunk->updateAllFaces();
 			break;
 		case GENERATE_MESH:
 			chunk->regenerateMesh();
+			chunk->setAllowDrawing( true );
+			break;
 		}
 	}
 }
@@ -73,7 +76,7 @@ ChunkWorker::~ChunkWorker()
 	}
 }
 
-void ChunkWorker::queue( std::shared_ptr< WorldChunk >& chunk,
+void ChunkWorker::queue( std::shared_ptr< WorldChunk > chunk,
 						 ChunkWorker::OperationType operationType,
 						 bool priority )
 {
@@ -86,6 +89,12 @@ void ChunkWorker::queue( std::shared_ptr< WorldChunk >& chunk,
 	{
 		m_queue.push_back( { chunk, operationType } );
 	}
+}
+
+size_t ChunkWorker::size()
+{
+	std::lock_guard< std::mutex > guard( m_queueMutex );
+	return m_queue.size();
 }
 
 } // namespace Game

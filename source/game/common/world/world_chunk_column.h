@@ -34,10 +34,13 @@ public:
 
 	CUBIX_GET_R_CR( m_world, World );
 	CUBIX_GET_CR( m_chunkPosition, ChunkPosition );
+	CUBIX_GET_R_CR( m_column, Chunks );
 
 	ColumnMap::mapped_type getChunk( int yLevel );
 	const ColumnMap::mapped_type getChunk( int yLevel ) const;
 	ColumnMap::mapped_type createEmptyChunkIfAbsent( int yLevel );
+	void deleteChunk( int yLevel );
+	size_t size() const;
 };
 
 } // namespace Game

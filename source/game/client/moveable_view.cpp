@@ -4,49 +4,75 @@
 
 #include "moveable_view.h"
 
-#include <glfw/glfw3.h>
-
 namespace Game
 {
 
-void MoveableView::onEvent( const Core::EventMouseMove& eventType )
+void MoveableView::onEvent( const Core::UserInputHandler::EventUpdate& event )
 {
-	glm::vec2 offset{ eventType.x - m_lastMousePosition.x, eventType.y - m_lastMousePosition.y };
-	m_turnDirection		= glm::vec2{ -offset.y, offset.x };
-	m_lastMousePosition = { eventType.x, eventType.y };
-}
+	if( event.instance.isKeyDown( Core::UserInputHandler::F1 ) )
+	{
+		m_active = !m_active;
+		event.instance.lockCursor( m_active );
 
-void MoveableView::onEvent( const Core::EventKeyPressed& eventType )
-{
+		if( m_active )
+		{
+			m_lastMousePosition = event.instance.getMousePosition();
+		}
+	}
+
+	if( !m_active )
+	{
+		return;
+	}
+
+	glm::vec2 offset{ event.instance.getMousePosition().x - m_lastMousePosition.x,
+					  event.instance.getMousePosition().y - m_lastMousePosition.y };
+	m_turnDirection = glm::vec2{ -offset.y, offset.x };
+	m_lastMousePosition
+		= { event.instance.getMousePosition().x, event.instance.getMousePosition().y };
+
 	static const glm::vec3 s_up{ 0.0f, 1.0f, 0.0f };
 	glm::vec3 front
 		= Core::Transform::CreateDirection( { 0.0f, getRotation().y, getRotation().z } );
 
-	switch( eventType.key )
+	if( event.instance.isKeyPressed( Core::UserInputHandler::D ) )
 	{
-	case GLFW_KEY_D:
 		m_moveDirection += glm::normalize( glm::cross( front, s_up ) );
-		break;
-	case GLFW_KEY_A:
+	}
+
+	if( event.instance.isKeyPressed( Core::UserInputHandler::A ) )
+	{
 		m_moveDirection -= glm::normalize( glm::cross( front, s_up ) );
-		break;
-	case GLFW_KEY_W:
+	}
+
+	if( event.instance.isKeyPressed( Core::UserInputHandler::W ) )
+	{
 		m_moveDirection += front;
-		break;
-	case GLFW_KEY_S:
+	}
+
+	if( event.instance.isKeyPressed( Core::UserInputHandler::S ) )
+	{
 		m_moveDirection -= front;
-		break;
-	case GLFW_KEY_LEFT_SHIFT:
+	}
+
+	if( event.instance.isKeyPressed( Core::UserInputHandler::LEFT_SHIFT ) )
+	{
 		m_moveDirection += glm::vec3{ 0.0f, -1.0f, 0.0f };
-		break;
-	case GLFW_KEY_SPACE:
+	}
+
+	if( event.instance.isKeyPressed( Core::UserInputHandler::SPACE ) )
+	{
 		m_moveDirection += glm::vec3{ 0.0f, 1.0f, 0.0f };
-		break;
 	}
 }
 
 void MoveableView::update( double deltaTime )
 {
+	if( !m_active )
+	{
+		return;
+	}
+
 	getPosition() += glm::vec3{ m_moveDirection.x * 0.01 * deltaTime * m_moveSpeed,
 								m_moveDirection.y * 0.01 * deltaTime * m_moveSpeed,
 								m_moveDirection.z * 0.01 * deltaTime * m_moveSpeed };

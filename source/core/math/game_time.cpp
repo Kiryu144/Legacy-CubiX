@@ -45,4 +45,9 @@ void GameTime::setFPSLimit( unsigned int fpsLimit )
 	m_minFrameTime = ( std::chrono::microseconds( 1000000 / fpsLimit ) );
 }
 
+double GameTime::getTimeSinceEpoch() const
+{
+	return m_lastUpdate.time_since_epoch().count() / 1000.0f;
+}
+
 } // namespace Core
