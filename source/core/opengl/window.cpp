@@ -71,6 +71,7 @@ void Window::setupOpenGL()
 	glClearColor( 179 / 255.0f, 210 / 255.0f, 238 / 255.0f, 1.0 );
 	glEnable( GL_DEPTH_TEST );
 	glEnable( GL_BLEND );
+	glEnable( GL_CULL_FACE );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 }
 

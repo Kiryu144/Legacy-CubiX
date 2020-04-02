@@ -14,7 +14,7 @@
 namespace Game
 {
 
-CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
+CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" ), m_tree1( "vox\\Schwanenfarn.vox" )
 {
 	m_gameTime.setFPSLimit( 140 );
 	connect( "127.0.0.1", 4444 );
@@ -89,6 +89,14 @@ void CubixClient::onEvent( const Core::EventWindowResize& eventType )
 	glm::mat4 projection = glm::perspective(
 		glm::radians( 70.0f ), static_cast< float >( eventType.w ) / eventType.h, 0.1f, 1000.0f );
 	m_renderer.setProjection( projection );
+}
+
+void CubixClient::onEvent( const Core::UserInputHandler::EventUpdate& eventType )
+{
+	if( eventType.instance.isKeyDown( Core::UserInputHandler::F ) )
+	{
+		m_world.insert( m_tree1, m_moveableView.getPosition() );
+	}
 }
 
 } // namespace Game

@@ -17,7 +17,8 @@ namespace Game
 
 class CubixClient : public Cubix,
 					public Core::NetClient,
-					public Core::Listener< Core::EventWindowResize >
+					public Core::Listener< Core::EventWindowResize >,
+					public Core::Listener< Core::UserInputHandler::EventUpdate >
 {
 private:
 	Core::Window m_window;
@@ -25,13 +26,17 @@ private:
 
 	MoveableView m_moveableView;
 
-	int m_viewDistance{ 6 };
+	VoxelGroup m_tree1;
+
+	int m_viewDistance{ 12 };
 
 	void update() override;
 
 protected:
 	void onPacketReceive( Core::PeerID id, std::istream& istream ) override;
 	void onEvent( const Core::EventWindowResize& eventType ) override;
+	void onEvent( const Core::UserInputHandler::EventUpdate& eventType ) override;
+
 
 public:
 	CubixClient();
