@@ -5,7 +5,7 @@
 #ifndef CUBIX_CUBIX_H
 #define CUBIX_CUBIX_H
 
-#include "core/math/game_time.h"
+#include "core/logic/game_time.h"
 #include "core/net/net_instance.h"
 
 #include "game/common/packet/packet.h"

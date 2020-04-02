@@ -7,7 +7,7 @@
 
 #include "core/cubix_assert.h"
 #include "core/cubix_macro.h"
-#include "core/data/serializeable.h"
+#include "core/logic/serializeable.h"
 
 #include <vector>
 

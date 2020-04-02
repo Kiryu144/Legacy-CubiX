@@ -6,8 +6,8 @@
 #define CUBIX_RENDERER_H
 
 #include "core/event.h"
+#include "core/io/window.h"
 #include "core/opengl/shader_program.h"
-#include "core/opengl/window.h"
 
 #include "game/common/world/world.h"
 

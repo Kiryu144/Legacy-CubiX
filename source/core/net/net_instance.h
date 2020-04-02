@@ -9,8 +9,8 @@
 
 #include "core/cubix_assert.h"
 #include "core/cubix_log.h"
-#include "core/data/no_copy.h"
-#include "core/data/serializeable.h"
+#include "core/logic/no_copy.h"
+#include "core/logic/serializeable.h"
 
 #include <atomic>
 #include <thread>

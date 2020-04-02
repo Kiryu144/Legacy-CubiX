@@ -5,7 +5,7 @@
 #ifndef CUBIX_PACKET_H
 #define CUBIX_PACKET_H
 
-#include "core/data/serializeable.h"
+#include "core/logic/serializeable.h"
 
 namespace Game
 {

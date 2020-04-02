@@ -5,8 +5,8 @@
 #ifndef CUBIX_CUBIX_CLIENT_H
 #define CUBIX_CUBIX_CLIENT_H
 
+#include "core/io/window.h"
 #include "core/net/net_client.h"
-#include "core/opengl/window.h"
 
 #include "game/client/moveable_view.h"
 #include "game/client/renderer.h"

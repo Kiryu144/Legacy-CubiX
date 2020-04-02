@@ -5,7 +5,7 @@
 #ifndef CUBIX_CHUNK_WORKER_H
 #define CUBIX_CHUNK_WORKER_H
 
-#include "core/data/no_copy.h"
+#include "core/logic/no_copy.h"
 
 #include <atomic>
 #include <list>

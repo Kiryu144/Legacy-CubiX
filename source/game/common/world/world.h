@@ -6,8 +6,8 @@
 #define CUBIX_WORLD_H
 
 #include "core/cubix_macro.h"
-#include "core/data/lockable.h"
-#include "core/data/memory.h"
+#include "core/logic/lockable.h"
+#include "core/logic/memory.h"
 #include "core/math/glm_math.h"
 
 #include "game/common/voxel/voxel_group.h"

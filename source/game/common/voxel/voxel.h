@@ -5,8 +5,8 @@
 #ifndef CUBIX_VOXEL_H
 #define CUBIX_VOXEL_H
 
+#include "core/data/color.h"
 #include "core/data/facing.h"
-#include "core/math/color.h"
 
 namespace Game
 {

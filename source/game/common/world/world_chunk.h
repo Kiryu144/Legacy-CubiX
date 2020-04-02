@@ -6,8 +6,8 @@
 #define CUBIX_WORLD_CHUNK_H
 
 #include "core/data/container2d.h"
-#include "core/data/memory.h"
-#include "core/data/serializeable.h"
+#include "core/logic/memory.h"
+#include "core/logic/serializeable.h"
 #include "core/math/transform.h"
 
 #include "game/common/voxel/voxel_group.h"
