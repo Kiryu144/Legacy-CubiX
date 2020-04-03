@@ -5,8 +5,13 @@
 #ifndef CUBIX_SHADER_PROGRAM_H
 #define CUBIX_SHADER_PROGRAM_H
 
+#include "core/cubix_macro.h"
+#include "core/logic/no_copy.h"
+#include "core/opengl/opengl_helper.h"
+
 #include <map>
 #include <string>
+#include <vector>
 
 #include <GLM/mat4x4.hpp>
 #include <glad/glad.h>
@@ -14,15 +19,15 @@
 namespace Core
 {
 
-class ShaderProgram
+class ShaderProgram : Core::NoCopy
 {
-private:
-	std::map< GLenum, GLuint > m_compiledShaders;
-
 protected:
-	GLuint m_program;
+	typedef DestructibleGLuint< ProgramDeleter > Program;
+	typedef DestructibleGLuint< ShaderDeleter > Shader;
 
 public:
+	typedef GLuint UniformLocation;
+
 	enum ShaderType
 	{
 		VERTEX_SHADER	= GL_VERTEX_SHADER,
@@ -30,17 +35,21 @@ public:
 		GEOMETRY_SHADER = GL_GEOMETRY_SHADER
 	};
 
-	ShaderProgram()								= default;
-	ShaderProgram( const ShaderProgram& other ) = delete;
-	~ShaderProgram();
+protected:
+	std::map< GLenum, Shader > m_compiledShaders;
+	Program m_program;
 
+	std::map< std::string, UniformLocation > m_uniformLocations;
+
+	void cacheUniformLocations();
+
+public:
 	ShaderProgram& compileShaderFromSource( const std::string& source,
 											const ShaderType& shaderType );
 	ShaderProgram& compileShaderFromFile( const std::string& file, const ShaderType& shaderType );
-	ShaderProgram& link();
 
-	ShaderProgram& bind();
-	void bind() const;
+	bool link();
+	void bind();
 
 	int getUniformLocation( const std::string& uniformName ) const;
 	ShaderProgram& setUniform( const std::string& uniform, float value );

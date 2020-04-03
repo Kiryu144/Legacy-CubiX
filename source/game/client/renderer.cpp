@@ -22,7 +22,6 @@ void Renderer::render( World& world )
 	m_chunkShader.setUniform( "u_projection", m_projection );
 	m_chunkShader.setUniform( "u_view", m_view );
 	m_chunkShader.setUniform( "u_ambientLightPower", 0.8f );
-	m_chunkShader.setUniform( "u_directionalLightPower", 1.0f );
 	m_chunkShader.setUniform( "u_directionalLightPosition",
 							  glm::vec3{ 5000.0f, -100000.0f, 14400.0f } );
 

@@ -1866,4 +1866,20 @@ const std::string& to_string( GLenum e )
 
 std::string __initialize = to_string( 0 );
 
+void ShaderDeleter( GLuint shader )
+{
+	if( shader != 0 )
+	{
+		glDeleteShader( shader );
+	}
+};
+
+void ProgramDeleter( GLuint program )
+{
+	if( program != 0 )
+	{
+		glDeleteProgram( program );
+	}
+};
+
 } // namespace Core

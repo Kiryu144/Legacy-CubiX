@@ -7,7 +7,6 @@ layout (location = 2) in vec4 in_color;
 out vec4 out_color;
 
 uniform vec3 u_directionalLightPosition;
-uniform float u_directionalLightPower;
 uniform float u_ambientLightPower;
 
 void main(){
