@@ -32,7 +32,8 @@ void GameTime::update()
 
 float GameTime::getFPS() const
 {
-	return 1000000.0f / std::chrono::duration_cast< resolution >( m_deltaTime ).count();
+	return static_cast< float >(
+		1000000.0 / std::chrono::duration_cast< resolution >( m_deltaTime ).count() );
 }
 
 float GameTime::getDeltaTime() const

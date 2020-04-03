@@ -50,8 +50,6 @@ void Renderer::render( World& world )
 		m_chunkShader.setUniform( "u_transformation", chunk->getMatrix() );
 
 		chunk->getVertices().bind( 0 );
-		chunk->getNormals().bind( 1 );
-		chunk->getColors().bind( 2 );
 
 		glDrawArrays( GL_TRIANGLES, 0, chunk->getVertices().getVerticeAmount() );
 	}

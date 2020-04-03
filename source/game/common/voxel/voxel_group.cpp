@@ -13,17 +13,13 @@ namespace Game
 
 VoxelGroup::VoxelGroup( const glm::uvec3& size )
 	: Core::Container3D< Voxel >( size ),
-	  m_vertices( GL_ARRAY_BUFFER, Core::StandardVertexAttribute ),
-	  m_normals( GL_ARRAY_BUFFER, Core::StandardNormalAttribute ),
-	  m_colors( GL_ARRAY_BUFFER, Core::StandardColorByteAttribute )
+	  m_vertices( GL_ARRAY_BUFFER, Core::InterleavedVertNormColAttribute )
 {
 }
 
 VoxelGroup::VoxelGroup( const std::string& voxFilePath )
 	: Core::Container3D< Voxel >( { 1, 1, 1 } ),
-	  m_vertices( GL_ARRAY_BUFFER, Core::StandardVertexAttribute ),
-	  m_normals( GL_ARRAY_BUFFER, Core::StandardNormalAttribute ),
-	  m_colors( GL_ARRAY_BUFFER, Core::StandardColorByteAttribute )
+	  m_vertices( GL_ARRAY_BUFFER, Core::InterleavedVertNormColAttribute )
 {
 	Core::RiffParser vox( voxFilePath );
 
@@ -203,12 +199,7 @@ void VoxelGroup::regenerateMesh()
 	}
 
 	m_verticeBuffer.clear();
-	m_normalBuffer.clear();
-	m_colorBuffer.clear();
-
-	m_verticeBuffer.reserve( getSize().x * getSize().y * getSize().z );
-	m_normalBuffer.reserve( getSize().x * getSize().y * getSize().z );
-	m_colorBuffer.reserve( getSize().x * getSize().y * getSize().z );
+	m_verticeBuffer.reserve( getSize().x * getSize().y * getSize().z * 6 );
 
 	glm::vec3 halfSize{ getSize().x * 0.5f, getSize().y * 0.5f, getSize().z * 0.5f };
 
@@ -230,14 +221,15 @@ void VoxelGroup::regenerateMesh()
 				{
 					if( visible.hasFace( static_cast< Core::Facing::Face >( pow( 2.0, i ) ) ) )
 					{
+						Vertice vertice;
+						vertice.m_color = voxel;
 						// float lightMul = light.getFace(i) / 255.0f;
 						for( int j = 0; j < 6; ++j )
 						{
-							m_verticeBuffer.push_back(
-								s_vertices[ i * 6 + j ]
-								+ glm::vec3( x - halfSize.x, y - halfSize.y, z - halfSize.z ) );
-							m_normalBuffer.push_back( s_normals[ i ] );
-							m_colorBuffer.push_back( voxel );
+							vertice.m_position = s_vertices[ i * 6 + j ]
+								+ glm::vec3( x - halfSize.x, y - halfSize.y, z - halfSize.z );
+							vertice.m_normal = s_normals[ i ];
+							m_verticeBuffer.push_back( vertice );
 						}
 					}
 				}
@@ -253,28 +245,14 @@ void VoxelGroup::upload()
 		return;
 	}
 
-	m_vertices.upload< glm::vec3 >( &m_verticeBuffer[ 0 ], m_verticeBuffer.size() );
-	m_normals.upload< glm::vec3 >( &m_normalBuffer[ 0 ], m_normalBuffer.size() );
-	m_colors.upload< glm::tvec4< unsigned char > >( &m_colorBuffer[ 0 ], m_colorBuffer.size() );
+	m_vertices.upload( &m_verticeBuffer[ 0 ], m_verticeBuffer.size() * sizeof( Vertice ) );
 
 	m_verticeBuffer.clear();
-	m_normalBuffer.clear();
-	m_colorBuffer.clear();
 }
 
 Core::AttributeBuffer& VoxelGroup::getVertices()
 {
 	return m_vertices;
-}
-
-Core::AttributeBuffer& VoxelGroup::getNormals()
-{
-	return m_normals;
-}
-
-Core::AttributeBuffer& VoxelGroup::getColors()
-{
-	return m_colors;
 }
 
 void VoxelGroup::serialize( std::ostream& out ) const

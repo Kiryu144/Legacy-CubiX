@@ -16,7 +16,7 @@ namespace Game
 
 CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" ), m_tree1( "vox\\Schwanenfarn.vox" )
 {
-	m_gameTime.setFPSLimit( 140 );
+	m_gameTime.setFPSLimit( 10000 );
 	connect( "127.0.0.1", 4444 );
 	m_renderer.loadShaders();
 	m_moveableView.setSpeed( 3 );

@@ -22,26 +22,24 @@ private:
 	GLuint m_id{ 0 };
 	GLuint m_vertices{ 0 };
 	GLuint m_totalSize{ 0 };
-	Attribute m_attribute;
+	std::shared_ptr<Attribute> m_attribute;
 
 public:
-	AttributeBuffer( GLenum bufferTarget, Attribute attribute );
+	AttributeBuffer( GLenum bufferTarget, std::shared_ptr<Attribute> attribute );
 	AttributeBuffer( const AttributeBuffer& other ) = delete;
 	~AttributeBuffer();
 	AttributeBuffer& operator=( AttributeBuffer& other ) = delete;
 
 	template< typename T >
-	void upload( T* data, size_t amount )
+	void upload( T* data, size_t size )
 	{
-		cubix_assert( sizeof( T ) == m_attribute.getTotalSize( 1 ), "Invalid datatype provided" );
-
 		if( m_id == 0 )
 		{
 			glGenBuffers( 1, &m_id );
 		}
 
-		m_vertices	= amount;
-		m_totalSize = m_attribute.getTotalSize( m_vertices );
+		m_vertices = size / m_attribute->getTotalSize(1);
+		m_totalSize = m_attribute->getTotalSize( m_vertices );
 		gl_log_error( glBindBuffer( m_bufferTarget, m_id ) );
 		gl_log_error( glBufferData( m_bufferTarget, m_totalSize, data, GL_STATIC_DRAW ) );
 	}

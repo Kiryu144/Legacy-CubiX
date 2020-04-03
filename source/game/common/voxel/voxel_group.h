@@ -17,12 +17,15 @@ class VoxelGroup : public Core::Container3D< Voxel >
 {
 protected:
 	Core::AttributeBuffer m_vertices;
-	Core::AttributeBuffer m_normals;
-	Core::AttributeBuffer m_colors;
 
-	std::vector< glm::vec3 > m_verticeBuffer;
-	std::vector< glm::vec3 > m_normalBuffer;
-	std::vector< glm::tvec4< unsigned char > > m_colorBuffer;
+	struct Vertice
+	{
+		glm::vec3 m_position;
+		glm::vec3 m_normal;
+		glm::tvec4< unsigned char > m_color;
+	};
+
+	std::vector< Vertice > m_verticeBuffer;
 
 	void serialize( std::ostream& out ) const override;
 	void deserialize( std::istream& in ) override;
@@ -41,8 +44,6 @@ public:
 	void upload();
 
 	Core::AttributeBuffer& getVertices();
-	Core::AttributeBuffer& getNormals();
-	Core::AttributeBuffer& getColors();
 };
 
 } // namespace Game
