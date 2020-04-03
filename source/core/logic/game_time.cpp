@@ -4,36 +4,41 @@
 
 #include "game_time.h"
 
+#include "core/cubix_log.h"
+
+#include <string>
 #include <thread>
 
 namespace Core
 {
 
 GameTime::GameTime( unsigned int fpsLimit )
-	: m_lastUpdate( std::chrono::high_resolution_clock::now() ),
-	  m_minFrameTime( std::chrono::microseconds( 1000000 / fpsLimit ) )
+	: m_lastUpdate( std::chrono::steady_clock::now() ),
+	  m_minFrameTime( std::chrono::microseconds( 1000000 / fpsLimit ) ),
+	  m_lastFPScheck( m_lastUpdate )
 {
 }
 
 void GameTime::update()
 {
-	auto now		= std::chrono::high_resolution_clock::now();
-	m_deltaTime		= std::chrono::duration_cast< resolution >( now - m_lastUpdate );
-	auto sleep_time = m_minFrameTime - m_deltaTime;
-
-	if( sleep_time.count() > 0 )
+	std::this_thread::sleep_for( m_minFrameTime
+								 - ( std::chrono::steady_clock::now() - m_lastUpdate ) );
+	auto now	 = std::chrono::steady_clock::now();
+	m_deltaTime	 = std::chrono::duration_cast< resolution >( now - m_lastUpdate );
+	m_lastUpdate = now;
+	++m_frameCounter;
+	if( std::chrono::duration_cast< std::chrono::milliseconds >( now - m_lastFPScheck ).count()
+		>= 1000 )
 	{
-		std::this_thread::sleep_for( sleep_time );
-		m_deltaTime += sleep_time;
+		m_fps		   = m_frameCounter;
+		m_frameCounter = 0;
+		m_lastFPScheck = now;
 	}
-
-	m_lastUpdate = std::chrono::high_resolution_clock::now();
 }
 
-float GameTime::getFPS() const
+unsigned int GameTime::getFPS() const
 {
-	return static_cast< float >(
-		1000000.0 / std::chrono::duration_cast< resolution >( m_deltaTime ).count() );
+	return m_fps;
 }
 
 float GameTime::getDeltaTime() const

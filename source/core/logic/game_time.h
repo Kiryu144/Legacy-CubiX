@@ -14,17 +14,22 @@ class GameTime
 {
 protected:
 	typedef std::chrono::microseconds resolution;
+	typedef std::chrono::time_point< std::chrono::steady_clock > timepoint;
 
 private:
-	std::chrono::time_point< std::chrono::high_resolution_clock > m_lastUpdate;
+	timepoint m_lastUpdate;
 	resolution m_deltaTime;
 	resolution m_minFrameTime;
+
+	timepoint m_lastFPScheck;
+	unsigned int m_fps;
+	unsigned int m_frameCounter{ 0 };
 
 public:
 	GameTime( unsigned int fpsLimit );
 
 	void update();
-	float getFPS() const;
+	unsigned int getFPS() const;
 	float getDeltaTime() const;
 	double getTimeSinceEpoch() const;
 

@@ -15,7 +15,7 @@ int main()
 		Core::Logger::Register( "NetServer" );
 		CubixServer server( 4444 );
 		c = &server;
-		server.start();
+		//server.start();
 	} );
 
 	Core::Logger::Register( "Client" );
