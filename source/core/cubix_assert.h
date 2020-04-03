@@ -36,10 +36,12 @@
 #define cubix_assert( expr, msg ) \
 	do                            \
 	{                             \
+		expr;                     \
 	} while( false )
 #define cubix_log_or_assert( expr, successful, error ) \
 	do                                                 \
 	{                                                  \
+		expr;                                          \
 	} while( false )
 #endif
 
