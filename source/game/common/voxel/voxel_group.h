@@ -26,6 +26,7 @@ protected:
 	};
 
 	std::vector< Vertice > m_verticeBuffer;
+	size_t m_voxelCount{ 0 };
 
 	void serialize( std::ostream& out ) const override;
 	void deserialize( std::istream& in ) override;
@@ -42,6 +43,8 @@ public:
 
 	void regenerateMesh();
 	void upload();
+
+	CUBIX_GET_V( m_voxelCount, VoxelCount );
 
 	Core::AttributeBuffer& getVertices();
 };

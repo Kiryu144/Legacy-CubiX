@@ -203,6 +203,7 @@ void VoxelGroup::regenerateMesh()
 
 	glm::vec3 halfSize{ getSize().x * 0.5f, getSize().y * 0.5f, getSize().z * 0.5f };
 
+	m_voxelCount = 0;
 	for( int x = 0; x < getSize().x; ++x )
 	{
 		for( int y = 0; y < getSize().y; ++y )
@@ -210,10 +211,11 @@ void VoxelGroup::regenerateMesh()
 			for( int z = 0; z < getSize().z; ++z )
 			{
 				const Voxel& voxel = operator[]( { x, y, z } );
-				if( voxel.a == 0 )
+				if( voxel.a == 0 || !voxel.exists() )
 				{
 					continue;
 				}
+				++m_voxelCount;
 
 				const Core::Facing& visible = faces[ { x, y, z } ];
 				// MultipleFacingData<uint8_t> light = voxel.getLightLevel();

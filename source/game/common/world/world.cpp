@@ -71,6 +71,15 @@ void World::update( float deltaTime )
 		m_chunksToGenerate.clear();
 	}
 
+	{
+		auto lock( m_chunksToDelete.lockGuard() );
+		for( auto& chunkPosition : m_chunksToDelete )
+		{
+			_deleteChunk( chunkPosition );
+		}
+		m_chunksToDelete.clear();
+	}
+
 	for( auto it = m_weakChunkReference.begin(); it != m_weakChunkReference.end(); )
 	{
 		if( it->expired() )
@@ -82,7 +91,7 @@ void World::update( float deltaTime )
 			auto chunk = it->lock();
 			chunk->setMillisecondsNotSeen( chunk->getMillisecondsNotSeen() + deltaTime );
 
-			if( chunk->getMillisecondsNotSeen() > 1000 )
+			if( chunk->getMillisecondsNotSeen() > 2500 )
 			{
 				deleteChunk( chunk->getChunkPosition() );
 			}
@@ -175,7 +184,7 @@ std::shared_ptr< WorldChunkColumn > World::getChunkColumn( const glm::ivec2& pos
 	return it != m_chunks.end() ? it->second : nullptr;
 }
 
-void World::deleteChunk( const glm::ivec3& chunkPosition )
+void World::_deleteChunk( const glm::ivec3& chunkPosition )
 {
 	auto chunkColumn = getChunkColumn( { chunkPosition.x, chunkPosition.z } );
 	if( chunkColumn )
@@ -186,6 +195,12 @@ void World::deleteChunk( const glm::ivec3& chunkPosition )
 			m_chunks.erase( { chunkPosition.x, chunkPosition.z } );
 		}
 	}
+}
+
+void World::deleteChunk( const glm::ivec3& chunkPosition )
+{
+	auto lock( m_chunksToDelete.lockGuard() );
+	m_chunksToDelete.insert( chunkPosition );
 }
 
 } // namespace Game

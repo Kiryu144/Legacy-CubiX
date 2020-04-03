@@ -55,7 +55,14 @@ void ChunkWorker::worker()
 			break;
 		case GENERATE_MESH:
 			chunk->regenerateMesh();
-			chunk->setAllowDrawing( true );
+			if( chunk->getVoxelCount() == 0 )
+			{
+				chunk->getWorld().deleteChunk( chunk->getChunkPosition() );
+			}
+			else
+			{
+				chunk->setAllowDrawing( true );
+			}
 			break;
 		}
 	}
