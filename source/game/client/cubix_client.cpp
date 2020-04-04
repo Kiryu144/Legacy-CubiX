@@ -19,9 +19,7 @@ CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
 	m_gameTime.setFPSLimit( 10000 );
 	connect( "127.0.0.1", 4444 );
 	m_renderer.loadShaders();
-	m_moveableView.setSpeed( 3 );
-
-	glDisable( GL_CULL_FACE );
+	m_moveableView.setSpeed( 4 );
 
 	m_clipboard.createSphere( 64, { 255, 64, 128 } );
 }

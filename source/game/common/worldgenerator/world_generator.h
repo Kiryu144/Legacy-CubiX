@@ -17,6 +17,7 @@ class WorldGenerator
 {
 protected:
 	virtual void setVoxel( Voxel& voxel, unsigned int blocksUnderground );
+	virtual Voxel getWaterVoxel();
 	virtual int getHeight( const glm::ivec2& worldPosition );
 	virtual void prepareForChunk( const glm::ivec3& chunkPosition ) {}
 

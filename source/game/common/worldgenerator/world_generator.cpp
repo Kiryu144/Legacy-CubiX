@@ -26,6 +26,11 @@ void WorldGenerator::setVoxel( Voxel& voxel, unsigned int blocksUnderground )
 	}
 }
 
+Voxel WorldGenerator::getWaterVoxel()
+{
+	return { 51, 170, 255, 255 };
+}
+
 void WorldGenerator::generateHeight( WorldChunk& chunk )
 {
 	prepareForChunk( chunk.getChunkPosition() );
@@ -42,6 +47,14 @@ void WorldGenerator::generateHeight( WorldChunk& chunk )
 			if( y < worldPosition.y )
 			{
 				generateChunkOnBottom = true;
+
+				if( worldPosition.y < 0 )
+				{
+					for( int _y = 0; _y > y && _y < WorldChunk::s_sideLength; ++_y )
+					{
+						chunk.set( { x, _y, z }, getWaterVoxel() );
+					}
+				}
 				continue;
 			}
 
@@ -52,9 +65,16 @@ void WorldGenerator::generateHeight( WorldChunk& chunk )
 			}
 
 			unsigned int depth = 0;
-			for( int _y = y - worldPosition.y; _y >= 0; --_y )
+			for( int _y = WorldChunk::s_sideLength - 1; _y >= 0; --_y )
 			{
-				setVoxel( chunk.get( { x, _y, z } ), depth++ );
+				if( _y <= y - worldPosition.y )
+				{
+					setVoxel( chunk.get( { x, _y, z } ), depth++ );
+				}
+				else if( worldPosition.y < 0 )
+				{
+					chunk.set( { x, _y, z }, getWaterVoxel() );
+				}
 			}
 		}
 	}
