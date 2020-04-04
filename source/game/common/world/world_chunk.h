@@ -24,6 +24,12 @@ class WorldChunk : public VoxelGroup, public Core::Transform, public std::mutex
 {
 public:
 	static unsigned int s_sideLength;
+	static glm::ivec3 WorldPosToChunkPos( const glm::vec3& worldPos )
+	{
+		return glm::ivec3{ std::floor( worldPos.x / s_sideLength ),
+						   std::floor( worldPos.y / s_sideLength ),
+						   std::floor( worldPos.z / s_sideLength ) };
+	}
 
 protected:
 	glm::ivec3 m_chunkPosition;

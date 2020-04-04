@@ -103,58 +103,31 @@ void World::update( float deltaTime )
 
 void World::insert( const VoxelGroup& voxelGroup, glm::ivec3 position )
 {
-	glm::ivec3 lowestChunkPos = position / glm::ivec3( WorldChunk::s_sideLength );
-	Core::Container3D< std::shared_ptr< WorldChunk > > affectedChunks(
-		( glm::ivec3( voxelGroup.getSize() ) / glm::ivec3( WorldChunk::s_sideLength ) )
-		+ glm::ivec3( 2 ) );
-	for( int x = 0; x < affectedChunks.getSize().x; ++x )
+	glm::ivec3 lowestChunkPos{ WorldChunk::WorldPosToChunkPos( position ) };
+	glm::ivec3 affectedChunks{ static_cast< glm::ivec3 >( voxelGroup.getSize() )
+								   / glm::ivec3( WorldChunk::s_sideLength )
+							   + glm::ivec3( 2 ) };
+
+	for( int x = 0; x < affectedChunks.x; ++x )
 	{
-		for( int y = 0; y < affectedChunks.getSize().y; ++y )
+		for( int y = 0; y < affectedChunks.y; ++y )
 		{
-			for( int z = 0; z < affectedChunks.getSize().z; ++z )
+			for( int z = 0; z < affectedChunks.z; ++z )
 			{
-				glm::ivec3 chunkPos = lowestChunkPos + glm::ivec3{ x, y, z };
-				auto chunk			= getChunk( chunkPos );
-				if( chunk == nullptr )
+				glm::ivec3 chunkPosition{ lowestChunkPos + glm::ivec3{ x, y, z } };
+				auto chunk = getChunk( chunkPosition );
+				if( !chunk )
 				{
-					chunk = createEmptyChunkIfAbsent( chunkPos );
+					chunk = createEmptyChunkIfAbsent( chunkPosition );
 				}
 
-				affectedChunks[ { x, y, z } ] = chunk;
-				affectedChunks[ { x, y, z } ]->WorldChunk::lock();
-			}
-		}
-	}
+				chunk->WorldChunk::lock();
 
-	std::unordered_set< glm::ivec3 > chunksToReload;
-	for( unsigned int x = 0; x < voxelGroup.getSize().x; ++x )
-	{
-		for( unsigned int y = 0; y < voxelGroup.getSize().y; ++y )
-		{
-			for( unsigned int z = 0; z < voxelGroup.getSize().z; ++z )
-			{
-				auto& voxel = voxelGroup.get( { x, y, z } );
-				if( voxel.a == 0 )
-				{
-					continue;
-				}
+				glm::ivec3 v = position
+					- ( ( chunkPosition  )
+						* glm::ivec3( WorldChunk::s_sideLength ) );
+				chunk->insert( voxelGroup, v );
 
-				glm::ivec3 worldPos = position + glm::ivec3{ x, y, z };
-				glm::ivec3 chunkPos = worldPos / glm::ivec3( WorldChunk::s_sideLength );
-				glm::ivec3 insideChunkPos
-					= worldPos - ( chunkPos * glm::ivec3( WorldChunk::s_sideLength ) );
-				affectedChunks[ chunkPos ]->set( insideChunkPos, voxel );
-			}
-		}
-	}
-
-	for( int x = 0; x < affectedChunks.getSize().x; ++x )
-	{
-		for( int y = 0; y < affectedChunks.getSize().y; ++y )
-		{
-			for( int z = 0; z < affectedChunks.getSize().z; ++z )
-			{
-				auto& chunk = affectedChunks[ { x, y, z } ];
 				chunk->WorldChunk::unlock();
 				m_chunkWorker.queue( chunk, ChunkWorker::GENERATE_MESH );
 			}

@@ -10,6 +10,7 @@
 
 #include "game/client/moveable_view.h"
 #include "game/client/renderer.h"
+#include "game/client/voxel_clipboard.h"
 #include "game/common/cubix.h"
 
 namespace Game
@@ -25,8 +26,7 @@ private:
 	Renderer m_renderer;
 
 	MoveableView m_moveableView;
-
-	VoxelGroup m_tree1;
+	VoxelClipboard m_clipboard;
 
 	int m_viewDistance{ 12 };
 
@@ -36,7 +36,6 @@ protected:
 	void onPacketReceive( Core::PeerID id, std::istream& istream ) override;
 	void onEvent( const Core::EventWindowResize& eventType ) override;
 	void onEvent( const Core::UserInputHandler::EventUpdate& eventType ) override;
-
 
 public:
 	CubixClient();

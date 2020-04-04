@@ -26,6 +26,7 @@ protected:
 	};
 
 	std::vector< Vertice > m_verticeBuffer;
+	bool m_upload{ false };
 	size_t m_voxelCount{ 0 };
 
 	void serialize( std::ostream& out ) const override;
@@ -35,16 +36,18 @@ public:
 	VoxelGroup( const glm::uvec3& size );
 	VoxelGroup( const std::string& voxFilePath );
 
+	CUBIX_GET_V( m_voxelCount, VoxelCount );
+
 	void set( const glm::uvec3& pos, const Voxel& voxel );
 	Voxel& get( const glm::uvec3& pos );
 	const Voxel& get( const glm::uvec3& pos ) const;
+
+	void insert( const VoxelGroup& other, const glm::ivec3& position );
 
 	Core::Facing findVisibleFaces( const glm::uvec3& pos ) const;
 
 	void regenerateMesh();
 	void upload();
-
-	CUBIX_GET_V( m_voxelCount, VoxelCount );
 
 	Core::AttributeBuffer& getVertices();
 };

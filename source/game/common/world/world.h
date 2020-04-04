@@ -54,7 +54,6 @@ public:
 	WorldChunkColumn::ColumnMap::mapped_type createEmptyChunkIfAbsent( const glm::ivec3& position );
 	ChunkMap::mapped_type getChunkColumn( const glm::ivec2& position );
 
-
 	void insert( const VoxelGroup& voxelGroup, glm::ivec3 position );
 
 	void updateForPlayer( const glm::ivec2& chunkPosition );

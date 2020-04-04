@@ -228,7 +228,7 @@ void VoxelGroup::regenerateMesh()
 						for( int j = 0; j < 6; ++j )
 						{
 							vertice.m_position = s_vertices[ i * 6 + j ]
-								+ glm::vec3( x - halfSize.x, y - halfSize.y, z - halfSize.z );
+								+ glm::vec3( x, y , z );
 							vertice.m_normal = s_normals[ i ];
 							m_verticeBuffer.push_back( vertice );
 						}
@@ -237,18 +237,18 @@ void VoxelGroup::regenerateMesh()
 			}
 		}
 	}
+	m_upload = true;
 }
 
 void VoxelGroup::upload()
 {
-	if( m_verticeBuffer.empty() )
+	if( !m_upload || m_verticeBuffer.empty() )
 	{
 		return;
 	}
 
 	m_vertices.upload( &m_verticeBuffer[ 0 ], m_verticeBuffer.size() );
-
-	m_verticeBuffer.clear();
+	m_upload = false;
 }
 
 Core::AttributeBuffer& VoxelGroup::getVertices()
@@ -264,6 +264,34 @@ void VoxelGroup::serialize( std::ostream& out ) const
 void VoxelGroup::deserialize( std::istream& in )
 {
 	Container3D::deserialize( in );
+}
+
+void VoxelGroup::insert( const VoxelGroup& other, const glm::ivec3& position )
+{
+	glm::ivec3 min;
+	glm::ivec3 max;
+	glm::ivec3 diff;
+	for( unsigned int i = 0; i < 3; ++i )
+	{
+		min[ i ] = std::min( static_cast<int>( m_size[ i ]), std::max( 0, position[ i ] ) );
+		max[ i ] = std::min( static_cast<int>( m_size[ i ]), std::max( 0, position[ i ]  + static_cast<int>( other.m_size[ i ] )) );
+		diff[ i ] = position[i] - min[i];
+	}
+
+	for( int x = min.x; x < max.x; ++x )
+	{
+		for( int y = min.y; y < max.y; ++y )
+		{
+			for( int z = min.z; z < max.z; ++z )
+			{
+				auto& voxel = other.get( glm::ivec3{ x, y, z } - diff );
+				if( voxel.exists() )
+				{
+					set( { x, y, z }, voxel );
+				}
+			}
+		}
+	}
 }
 
 } // namespace Game
