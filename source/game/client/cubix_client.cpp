@@ -97,6 +97,11 @@ void CubixClient::onEvent( const Core::UserInputHandler::EventUpdate& eventType 
 	{
 		m_world.insert( m_tree1, m_moveableView.getPosition() );
 	}
+
+	if( eventType.instance.isKeyDown( Core::UserInputHandler::R ) )
+	{
+		m_moveableView.getPosition() += glm::vec3{ 10000000, 0, 0 };
+	}
 }
 
 } // namespace Game

@@ -4,31 +4,39 @@
 
 #include "attributebuffer.h"
 
-Core::AttributeBuffer::AttributeBuffer( GLenum bufferTarget,
-										std::shared_ptr< Attribute > attribute )
+#include "core/opengl/openg_error.h"
+
+namespace Core
+{
+
+AttributeBuffer::AttributeBuffer( std::shared_ptr< Attribute > attribute, GLenum bufferTarget )
 	: m_bufferTarget( bufferTarget ), m_attribute( attribute )
 {
 	cubix_assert( m_attribute.get() != nullptr, "Null attribute" );
 }
 
-Core::AttributeBuffer::~AttributeBuffer()
-{
-	if( m_id > 0 )
-	{
-		glDeleteBuffers( 1, &m_id );
-		m_id = 0;
-	}
-}
-
-void Core::AttributeBuffer::bind( GLuint vertexAttribIndex )
+void AttributeBuffer::bind( GLuint vertexAttribIndex )
 {
 	cubix_assert( m_totalSize > 0, "Unable to bind buffer with no data uploaded" );
-	glBindBuffer( m_bufferTarget, m_id );
-	m_attribute->bindVertexAttribPointer( vertexAttribIndex );
-	glEnableVertexAttribArray( vertexAttribIndex );
+	gl_log_error( glBindBuffer( m_bufferTarget, m_vbo.getID() ) );
+	m_attribute->vertexAttribPointer( vertexAttribIndex );
 }
 
-GLuint Core::AttributeBuffer::getVerticeAmount() const
+void AttributeBuffer::upload( void* data, size_t vertices )
 {
-	return m_vertices;
+	cubix_assert( data != nullptr, "Nullptr data provided" );
+	cubix_assert( vertices != 0, "Cannot upload data with zero vertices" );
+
+	GLuint vbo{ 0 };
+	glGenBuffers( 1, &vbo );
+	m_vbo.reset( vbo );
+
+	cubix_assert( vbo != 0, "Created VBO id is zero" );
+
+	m_totalSize = static_cast< GLuint >( m_attribute->getSize( vertices ) );
+	m_vertices	= static_cast< GLuint >( vertices );
+	gl_log_error( glBindBuffer( m_bufferTarget, m_vbo.getID() ) );
+	gl_log_error( glBufferData( m_bufferTarget, m_totalSize, data, GL_STATIC_DRAW ) );
 }
+
+} // namespace Core

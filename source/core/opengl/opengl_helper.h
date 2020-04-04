@@ -18,8 +18,11 @@ namespace Core
 
 const std::string& to_string( GLenum e );
 
+size_t GetSizeOfGLType( GLenum type );
+
 void ShaderDeleter( GLuint shader );
 void ProgramDeleter( GLuint program );
+void BufferDeleter( GLuint buffer );
 
 template< decltype( ShaderDeleter ) Deleter >
 class DestructibleGLuint : Core::NoCopy
@@ -45,6 +48,12 @@ public:
 	~DestructibleGLuint()
 	{
 		Deleter( m_id );
+	}
+
+	void reset( GLuint id = 0 )
+	{
+		Deleter( m_id );
+		m_id = id;
 	}
 
 	CUBIX_GET_SET_CR_CR( m_id, ID );

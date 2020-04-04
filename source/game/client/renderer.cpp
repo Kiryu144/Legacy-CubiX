@@ -11,8 +11,8 @@ namespace Game
 
 void Renderer::loadShaders()
 {
-	m_chunkShader.compileShaderFromFile( "basic.vert", Core::ShaderProgram::VERTEX_SHADER )
-		.compileShaderFromFile( "basic.frag", Core::ShaderProgram::FRAGMENT_SHADER )
+	m_chunkShader.compileShaderFromFile( "voxelstructure.vert", Core::ShaderProgram::VERTEX_SHADER )
+		.compileShaderFromFile( "voxelstructure.frag", Core::ShaderProgram::FRAGMENT_SHADER )
 		.link();
 }
 

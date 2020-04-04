@@ -9,7 +9,6 @@
 #include "core/opengl/shader_program.h"
 
 #include "game/common/entity/entitytype.h"
-#include "game/proxy.h"
 
 namespace Game
 {

@@ -4,7 +4,10 @@
 
 #include "opengl_helper.h"
 
+#include "core/cubix_assert.h"
+
 #include <map>
+#include <vector>
 
 namespace Core
 {
@@ -1864,6 +1867,16 @@ const std::string& to_string( GLenum e )
 	return it != data.end() ? it->second : unknown;
 }
 
+size_t GetSizeOfGLType( GLenum type )
+{
+	static const std::vector< size_t > sizes{ sizeof( GLbyte ),	 sizeof( GLubyte ),
+											  sizeof( GLshort ), sizeof( GLushort ),
+											  sizeof( GLint ),	 sizeof( GLuint ),
+											  sizeof( GLfloat ) };
+	cubix_assert( type >= GL_BYTE && type <= GL_FLOAT, "Invalid type" );
+	return sizes.at( type - GL_BYTE );
+}
+
 std::string __initialize = to_string( 0 );
 
 void ShaderDeleter( GLuint shader )
@@ -1881,5 +1894,13 @@ void ProgramDeleter( GLuint program )
 		glDeleteProgram( program );
 	}
 };
+
+void BufferDeleter( GLuint buffer )
+{
+	if( buffer != 0 )
+	{
+		glDeleteBuffers( 1, &buffer );
+	}
+}
 
 } // namespace Core

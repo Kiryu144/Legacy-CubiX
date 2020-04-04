@@ -13,7 +13,6 @@
 #include "game/common/voxel/voxel_group.h"
 #include "game/common/world/chunk_worker.h"
 #include "game/common/world/world_chunk_column.h"
-#include "game/proxy.h"
 
 #include <set>
 #include <unordered_map>

@@ -10,6 +10,7 @@
 #include "core/opengl/shader_program.h"
 
 #include "game/common/world/world.h"
+#include "core/math/transform.h"
 
 namespace Game
 {
@@ -18,7 +19,6 @@ class Renderer
 {
 protected:
 	Core::ShaderProgram m_chunkShader;
-
 	glm::mat4 m_projection;
 	glm::mat4 m_view;
 

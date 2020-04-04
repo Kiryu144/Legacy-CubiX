@@ -6,8 +6,9 @@
 #define CUBIX_ATTRIBUTEBUFFER_H
 
 #include "core/cubix_assert.h"
-#include "core/opengl/attribute.h"
-#include "core/opengl/openg_error.h"
+#include "core/cubix_macro.h"
+#include "core/logic/no_copy.h"
+#include "core/opengl/data/attribute.h"
 #include "core/opengl/opengl_helper.h"
 
 #include <glad/glad.h>
@@ -15,38 +16,25 @@
 namespace Core
 {
 
-class AttributeBuffer
+class AttributeBuffer : public NoCopy
 {
 private:
+	DestructibleGLuint< BufferDeleter > m_vbo;
+	std::shared_ptr< Attribute > m_attribute;
+
 	GLenum m_bufferTarget{ 0 };
-	GLuint m_id{ 0 };
 	GLuint m_vertices{ 0 };
 	GLuint m_totalSize{ 0 };
-	std::shared_ptr<Attribute> m_attribute;
 
 public:
-	AttributeBuffer( GLenum bufferTarget, std::shared_ptr<Attribute> attribute );
-	AttributeBuffer( const AttributeBuffer& other ) = delete;
-	~AttributeBuffer();
-	AttributeBuffer& operator=( AttributeBuffer& other ) = delete;
+	AttributeBuffer( std::shared_ptr< Attribute > attribute,
+					 GLenum bufferTarget = GL_ARRAY_BUFFER );
 
-	template< typename T >
-	void upload( T* data, size_t size )
-	{
-		if( m_id == 0 )
-		{
-			glGenBuffers( 1, &m_id );
-		}
-
-		m_vertices = size / m_attribute->getTotalSize(1);
-		m_totalSize = m_attribute->getTotalSize( m_vertices );
-		gl_log_error( glBindBuffer( m_bufferTarget, m_id ) );
-		gl_log_error( glBufferData( m_bufferTarget, m_totalSize, data, GL_STATIC_DRAW ) );
-	}
-
+	void upload( void* data, size_t vertices );
 	void bind( GLuint vertexAttribIndex );
 
-	GLuint getVerticeAmount() const;
+	CUBIX_GET_V( m_vertices, VerticeAmount );
+	CUBIX_GET_V( m_totalSize, TotalSize );
 };
 
 } // namespace Core

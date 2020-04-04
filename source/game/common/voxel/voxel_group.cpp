@@ -5,6 +5,7 @@
 #include "voxel_group.h"
 
 #include "core/io/riff_parser.h"
+#include "core/opengl/data/interleaved_attribute.h"
 
 #include <cmath>
 
@@ -12,14 +13,12 @@ namespace Game
 {
 
 VoxelGroup::VoxelGroup( const glm::uvec3& size )
-	: Core::Container3D< Voxel >( size ),
-	  m_vertices( GL_ARRAY_BUFFER, Core::InterleavedVertNormColAttribute )
+	: Core::Container3D< Voxel >( size ), m_vertices( Core::InterleavedVertNormColAttribute )
 {
 }
 
 VoxelGroup::VoxelGroup( const std::string& voxFilePath )
-	: Core::Container3D< Voxel >( { 1, 1, 1 } ),
-	  m_vertices( GL_ARRAY_BUFFER, Core::InterleavedVertNormColAttribute )
+	: Core::Container3D< Voxel >( { 1, 1, 1 } ), m_vertices( Core::InterleavedVertNormColAttribute )
 {
 	Core::RiffParser vox( voxFilePath );
 
@@ -247,7 +246,7 @@ void VoxelGroup::upload()
 		return;
 	}
 
-	m_vertices.upload( &m_verticeBuffer[ 0 ], m_verticeBuffer.size() * sizeof( Vertice ) );
+	m_vertices.upload( &m_verticeBuffer[ 0 ], m_verticeBuffer.size() );
 
 	m_verticeBuffer.clear();
 }
