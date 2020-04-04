@@ -63,6 +63,11 @@ struct EventWindowResize
 	unsigned int w, h;
 };
 
+struct EventWindowFileDrop
+{
+	std::string fpath;
+};
+
 } // namespace Core
 
 #endif

@@ -23,7 +23,7 @@ CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
 
 	glDisable( GL_CULL_FACE );
 
-	m_clipboard.createCube( 32, { 255, 255, 128 } );
+	m_clipboard.createSphere( 64, { 255, 64, 128 } );
 }
 
 void CubixClient::update()
@@ -100,15 +100,20 @@ void CubixClient::onEvent( const Core::EventWindowResize& eventType )
 
 void CubixClient::onEvent( const Core::UserInputHandler::EventUpdate& eventType )
 {
-	if( eventType.instance.isKeyDown( Core::UserInputHandler::F ) )
+	if( eventType.instance.isKeyDown( Core::UserInputHandler::F ) && m_group.get() != nullptr )
 	{
-		m_world.insert( *m_clipboard.getVoxelGroup(), m_moveableView.getPosition() );
+		m_world.insert( *m_group, m_moveableView.getPosition() );
 	}
 
 	if( eventType.instance.isKeyDown( Core::UserInputHandler::R ) )
 	{
 		m_moveableView.getPosition() += glm::vec3{ 5000, 0, 5000 };
 	}
+}
+
+void CubixClient::onEvent( const Core::EventWindowFileDrop& eventType )
+{
+	m_group.reset( new VoxelGroup( eventType.fpath ) );
 }
 
 } // namespace Game

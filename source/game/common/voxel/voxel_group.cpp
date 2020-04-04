@@ -28,8 +28,8 @@ VoxelGroup::VoxelGroup( const std::string& voxFilePath )
 	// Read SIZE
 	glm::uvec3 dimensions;
 	dimensions.x = ( *reinterpret_cast< uint32_t* >( size + 0 ) );
-	dimensions.y = ( *reinterpret_cast< uint32_t* >( size + 4 ) );
-	dimensions.z = ( *reinterpret_cast< uint32_t* >( size + 8 ) );
+	dimensions.z = ( *reinterpret_cast< uint32_t* >( size + 4 ) );
+	dimensions.y = ( *reinterpret_cast< uint32_t* >( size + 8 ) );
 
 	initialize( dimensions );
 
@@ -119,14 +119,15 @@ VoxelGroup::VoxelGroup( const std::string& voxFilePath )
 	{
 		glm::uvec3 pos;
 		pos.x = *reinterpret_cast< int8_t* >( xyzi + 4 + ( n * 4 ) + 0 );
-		pos.y = *reinterpret_cast< int8_t* >( xyzi + 4 + ( n * 4 ) + 1 );
-		pos.z = *reinterpret_cast< int8_t* >( xyzi + 4 + ( n * 4 ) + 2 );
+		pos.z = *reinterpret_cast< int8_t* >( xyzi + 4 + ( n * 4 ) + 1 );
+		pos.y = *reinterpret_cast< int8_t* >( xyzi + 4 + ( n * 4 ) + 2 );
 		Voxel voxel;
 		int i	= int( *reinterpret_cast< uint8_t* >( xyzi + 4 + ( n * 4 ) + 3 ) ) - 1;
 		voxel.r = palette[ ( i * 4 ) + 0 ];
 		voxel.g = palette[ ( i * 4 ) + 1 ];
 		voxel.b = palette[ ( i * 4 ) + 2 ];
 		voxel.a = palette[ ( i * 4 ) + 3 ];
+		voxel.setFlag(Voxel::EXISTS, true);
 		set( pos, voxel );
 	}
 }
@@ -284,7 +285,7 @@ void VoxelGroup::insert( const VoxelGroup& other, const glm::ivec3& position )
 		{
 			for( int z = min.z; z < max.z; ++z )
 			{
-				auto& voxel = other.get( glm::ivec3{ x, y, z } - diff );
+				auto& voxel = other.get( glm::ivec3{ x, y, z } - min - diff );
 				if( voxel.exists() )
 				{
 					set( { x, y, z }, voxel );

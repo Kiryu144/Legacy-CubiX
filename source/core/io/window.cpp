@@ -42,6 +42,11 @@ Window::Window( int width, int height, const std::string& title, GLFWwindow* par
 		Handler< EventWindowResize >::Fire( resize );
 	} );
 
+	glfwSetDropCallback( m_window, []( GLFWwindow* window, int count, const char** paths ) {
+		EventWindowFileDrop fileDrop{ std::string( paths[ 0 ] ) };
+		Handler< EventWindowFileDrop >::Fire( fileDrop );
+	} );
+
 	EventWindowResize resize{ static_cast< unsigned int >( width ),
 							  static_cast< unsigned int >( height ) };
 	Handler< EventWindowResize >::Fire( resize );
