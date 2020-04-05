@@ -127,7 +127,7 @@ VoxelGroup::VoxelGroup( const std::string& voxFilePath )
 		voxel.g = palette[ ( i * 4 ) + 1 ];
 		voxel.b = palette[ ( i * 4 ) + 2 ];
 		voxel.a = palette[ ( i * 4 ) + 3 ];
-		voxel.setFlag(Voxel::EXISTS, true);
+		voxel.setFlag( Voxel::EXISTS, true );
 		set( pos, voxel );
 	}
 }
@@ -145,6 +145,32 @@ Voxel& VoxelGroup::get( const glm::uvec3& pos )
 const Voxel& VoxelGroup::get( const glm::uvec3& pos ) const
 {
 	return operator[]( pos );
+}
+
+Voxel VoxelGroup::getSafe( const glm::ivec3& pos, const Voxel& _default )
+{
+	if( pos.x >= 0 && pos.x < m_size.x && pos.y >= 0 && pos.y < m_size.y && pos.z >= 0
+		&& pos.z < m_size.z )
+	{
+		return get( pos );
+	}
+	else
+	{
+		return _default;
+	}
+}
+
+const Voxel VoxelGroup::getSafe( const glm::ivec3& pos, const Voxel& _default ) const
+{
+	if( pos.x >= 0 && pos.x < m_size.x && pos.y >= 0 && pos.y < m_size.y && pos.z >= 0
+		&& pos.z < m_size.z )
+	{
+		return get( pos );
+	}
+	else
+	{
+		return _default;
+	}
 }
 
 Core::Facing VoxelGroup::findVisibleFaces( const glm::uvec3& pos ) const
@@ -166,18 +192,50 @@ Core::Facing VoxelGroup::findVisibleFaces( const glm::uvec3& pos ) const
 void VoxelGroup::regenerateMesh()
 {
 	static const glm::vec3 s_vertices[ 6 * 6 ]{
-		glm::vec3( 0.0, 0.0, 0.0 ), glm::vec3( 0.0, 1.0, 0.0 ), glm::vec3( 1.0, 0.0, 0.0 ),
-		glm::vec3( 1.0, 0.0, 0.0 ), glm::vec3( 0.0, 1.0, 0.0 ), glm::vec3( 1.0, 1.0, 0.0 ),
+		glm::vec3( 1.0, 0.0, 0.0 ), glm::vec3( 0.0, 0.0, 0.0 ), glm::vec3( 1.0, 1.0, 0.0 ),
+		glm::vec3( 0.0, 1.0, 0.0 ), glm::vec3( 1.0, 1.0, 0.0 ), glm::vec3( 0.0, 0.0, 0.0 ),
+
 		glm::vec3( 0.0, 0.0, 0.0 ), glm::vec3( 0.0, 0.0, 1.0 ), glm::vec3( 0.0, 1.0, 0.0 ),
-		glm::vec3( 0.0, 1.0, 0.0 ), glm::vec3( 0.0, 0.0, 1.0 ), glm::vec3( 0.0, 1.0, 1.0 ),
-		glm::vec3( 0.0, 0.0, 1.0 ), glm::vec3( 1.0, 0.0, 1.0 ), glm::vec3( 1.0, 1.0, 1.0 ),
-		glm::vec3( 1.0, 1.0, 1.0 ), glm::vec3( 0.0, 1.0, 1.0 ), glm::vec3( 0.0, 0.0, 1.0 ),
-		glm::vec3( 1.0, 0.0, 0.0 ), glm::vec3( 1.0, 1.0, 0.0 ), glm::vec3( 1.0, 0.0, 1.0 ),
-		glm::vec3( 1.0, 0.0, 1.0 ), glm::vec3( 1.0, 1.0, 0.0 ), glm::vec3( 1.0, 1.0, 1.0 ),
+		glm::vec3( 0.0, 1.0, 1.0 ), glm::vec3( 0.0, 1.0, 0.0 ), glm::vec3( 0.0, 0.0, 1.0 ),
+
+		glm::vec3( 0.0, 0.0, 1.0 ), glm::vec3( 1.0, 0.0, 1.0 ), glm::vec3( 0.0, 1.0, 1.0 ),
+		glm::vec3( 1.0, 1.0, 1.0 ), glm::vec3( 0.0, 1.0, 1.0 ), glm::vec3( 1.0, 0.0, 1.0 ),
+
+		glm::vec3( 1.0, 0.0, 1.0 ), glm::vec3( 1.0, 0.0, 0.0 ), glm::vec3( 1.0, 1.0, 1.0 ),
+		glm::vec3( 1.0, 1.0, 0.0 ), glm::vec3( 1.0, 1.0, 1.0 ), glm::vec3( 1.0, 0.0, 0.0 ),
+
 		glm::vec3( 0.0, 0.0, 0.0 ), glm::vec3( 1.0, 0.0, 0.0 ), glm::vec3( 1.0, 0.0, 1.0 ),
 		glm::vec3( 1.0, 0.0, 1.0 ), glm::vec3( 0.0, 0.0, 1.0 ), glm::vec3( 0.0, 0.0, 0.0 ),
+
 		glm::vec3( 0.0, 1.0, 0.0 ), glm::vec3( 0.0, 1.0, 1.0 ), glm::vec3( 1.0, 1.0, 0.0 ),
 		glm::vec3( 1.0, 1.0, 0.0 ), glm::vec3( 0.0, 1.0, 1.0 ), glm::vec3( 1.0, 1.0, 1.0 ),
+	};
+
+	static const glm::ivec3 s_acLookups[ 6 * 6 * 3 ]{
+		{ 1, 0, -1 },  { 1, -1, -1 },  { 0, -1, -1 }, { 0, -1, -1 }, { -1, -1, -1 }, { -1, 0, -1 },
+		{ 1, 0, -1 },  { 1, 1, -1 },   { 0, 1, -1 },  { 0, 1, -1 },	 { -1, 1, -1 },	 { -1, 0, -1 },
+		{ 1, 0, -1 },  { 1, 1, -1 },   { 0, 1, -1 },  { 0, -1, -1 }, { -1, -1, -1 }, { -1, 0, -1 },
+
+		{ -1, 0, -1 }, { -1, -1, -1 }, { -1, -1, 0 }, { -1, -1, 0 }, { -1, -1, 1 },	 { -1, 0, 1 },
+		{ -1, 0, -1 }, { -1, 1, -1 },  { -1, 1, 0 },  { -1, 1, 0 },	 { -1, 1, 1 },	 { -1, 0, 1 },
+		{ -1, 0, -1 }, { -1, 1, -1 },  { -1, 1, 0 },  { -1, -1, 0 }, { -1, -1, 1 },	 { -1, 0, 1 },
+
+		{ -1, 0, 1 },  { -1, -1, 1 },  { 0, -1, 1 },  { 0, -1, 1 },	 { 1, -1, 1 },	 { 1, 0, 1 },
+		{ -1, 0, 1 },  { -1, 1, 1 },   { 0, 1, 1 },	  { 0, 1, 1 },	 { 1, 1, 1 },	 { 1, 0, 1 },
+		{ -1, 0, 1 },  { -1, 1, 1 },   { 0, 1, 1 },	  { 0, -1, 1 },	 { 1, -1, 1 },	 { 1, 0, 1 },
+
+		{ 1, 0, 1 },   { 1, -1, 1 },   { 1, -1, 0 },  { 1, -1, 0 },	 { 1, -1, -1 },	 { 1, 0, -1 },
+		{ 1, 0, 1 },   { 1, 1, 1 },	   { 1, 1, 0 },	  { 1, 1, 0 },	 { 1, 1, -1 },	 { 1, 0, -1 },
+		{ 1, 0, 1 },   { 1, 1, 1 },	   { 1, 1, 0 },	  { 1, -1, 0 },	 { 1, -1, -1 },	 { 1, 0, -1 },
+
+		{ 0, -1, -1 }, { -1, -1, -1 }, { -1, -1, 0 }, { 1, -1, 0 },	 { 1, -1, -1 },	 { 0, -1, -1 },
+		{ 0, -1, 1 },  { 1, -1, 1 },   { 1, -1, 0 },  { 0, -1, 1 },	 { 1, -1, 1 },	 { 1, -1, 0 },
+		{ 0, -1, 1 },  { -1, -1, 1 },  { -1, -1, 0 }, { 0, -1, -1 }, { -1, -1, -1 }, { -1, -1, 0 },
+
+		{ 0, 1, -1 },  { -1, 1, -1 },  { -1, 1, 0 },  { -1, 1, 0 },	 { -1, 1, 1 },	 { 0, 1, 1 },
+		{ 1, 1, 0 },   { 1, 1, -1 },   { 0, 1, -1 },  { 1, 1, 0 },	 { 1, 1, -1 },	 { 0, 1, -1 },
+		{ -1, 1, 0 },  { -1, 1, 1 },   { 0, 1, 1 },	  { 1, 1, 0 },	 { 1, 1, 1 },	 { 0, 1, 1 },
+
 	};
 
 	static const glm::vec3 s_normals[ 6 ]{
@@ -210,7 +268,8 @@ void VoxelGroup::regenerateMesh()
 		{
 			for( int z = 0; z < getSize().z; ++z )
 			{
-				const Voxel& voxel = operator[]( { x, y, z } );
+				glm::ivec3 pos	   = { x, y, z };
+				const Voxel& voxel = operator[]( pos );
 				if( voxel.a == 0 || !voxel.exists() )
 				{
 					continue;
@@ -218,18 +277,31 @@ void VoxelGroup::regenerateMesh()
 				++m_voxelCount;
 
 				const Core::Facing& visible = faces[ { x, y, z } ];
-				// MultipleFacingData<uint8_t> light = voxel.getLightLevel();
 				for( int i = 0; i < 6; ++i )
 				{
 					if( visible.hasFace( static_cast< Core::Facing::Face >( pow( 2.0, i ) ) ) )
 					{
 						Vertice vertice;
-						vertice.m_color = voxel;
-						// float lightMul = light.getFace(i) / 255.0f;
 						for( int j = 0; j < 6; ++j )
 						{
-							vertice.m_position = s_vertices[ i * 6 + j ]
-								+ glm::vec3( x, y , z );
+							vertice.m_color	   = voxel;
+							vertice.m_position = s_vertices[ i * 6 + j ] + glm::vec3( x, y, z );
+							int darkness	   = 0;
+
+							int k		= ( i * 18 ) + ( j * 3 );
+							bool side1	= getSafe( pos + s_acLookups[ k + 0 ] ).exists();
+							bool corner = getSafe( pos + s_acLookups[ k + 1 ] ).exists();
+							bool side2	= getSafe( pos + s_acLookups[ k + 2 ] ).exists();
+							if( side1 && side2 )
+							{
+								darkness = 3;
+							}
+							else
+							{
+								darkness = side1 + side2 + corner;
+							}
+							int colorChange = 30 * darkness;
+							vertice.m_color.add( -colorChange, -colorChange, -colorChange );
 							vertice.m_normal = s_normals[ i ];
 							m_verticeBuffer.push_back( vertice );
 						}
@@ -274,9 +346,11 @@ void VoxelGroup::insert( const VoxelGroup& other, const glm::ivec3& position )
 	glm::ivec3 diff;
 	for( unsigned int i = 0; i < 3; ++i )
 	{
-		min[ i ] = std::min( static_cast<int>( m_size[ i ]), std::max( 0, position[ i ] ) );
-		max[ i ] = std::min( static_cast<int>( m_size[ i ]), std::max( 0, position[ i ]  + static_cast<int>( other.m_size[ i ] )) );
-		diff[ i ] = position[i] - min[i];
+		min[ i ] = std::min( static_cast< int >( m_size[ i ] ), std::max( 0, position[ i ] ) );
+		max[ i ]
+			= std::min( static_cast< int >( m_size[ i ] ),
+						std::max( 0, position[ i ] + static_cast< int >( other.m_size[ i ] ) ) );
+		diff[ i ] = position[ i ] - min[ i ];
 	}
 
 	for( int x = min.x; x < max.x; ++x )

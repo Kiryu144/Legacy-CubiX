@@ -22,7 +22,7 @@ protected:
 	{
 		glm::vec3 m_position;
 		glm::vec3 m_normal;
-		glm::tvec4< unsigned char > m_color;
+		Core::Color m_color;
 	};
 
 	std::vector< Vertice > m_verticeBuffer;
@@ -41,6 +41,9 @@ public:
 	void set( const glm::uvec3& pos, const Voxel& voxel );
 	Voxel& get( const glm::uvec3& pos );
 	const Voxel& get( const glm::uvec3& pos ) const;
+
+	Voxel getSafe( const glm::ivec3& pos, const Voxel& _default = Voxel() );
+	const Voxel getSafe( const glm::ivec3& pos, const Voxel& _default = Voxel() ) const;
 
 	void insert( const VoxelGroup& other, const glm::ivec3& position );
 
