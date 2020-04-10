@@ -52,7 +52,7 @@ public:
 	void regenerateMesh();
 	void upload();
 
-	Core::AttributeBuffer& getVertices();
+	Core::AttributeBuffer& getVertexAttribute();
 };
 
 } // namespace Game

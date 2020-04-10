@@ -5,6 +5,8 @@
 #ifndef CUBIX_FACING_H
 #define CUBIX_FACING_H
 
+#include <array>
+
 namespace Core
 {
 
@@ -21,6 +23,7 @@ public:
 		BOTTOM = 1 << 5
 	};
 
+	static const std::array<Facing::Face, 6> Facings;
 private:
 	unsigned char m_data;
 

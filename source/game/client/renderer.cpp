@@ -43,16 +43,16 @@ void Renderer::render( World& world )
 
 		chunk->upload();
 
-		if( chunk->getVertices().getVerticeAmount() == 0 )
+		if( chunk->getVertexAttribute().getVerticeAmount() == 0 )
 		{
 			continue;
 		}
 
 		m_chunkShader.setUniform( "u_transformation", chunk->getMatrix() );
 
-		chunk->getVertices().bind( 0 );
+		chunk->getVertexAttribute().bind( 0 );
 
-		glDrawArrays( GL_TRIANGLES, 0, chunk->getVertices().getVerticeAmount() );
+		glDrawArrays( GL_TRIANGLES, 0, chunk->getVertexAttribute().getVerticeAmount() );
 	}
 }
 

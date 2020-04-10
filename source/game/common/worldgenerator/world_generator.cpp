@@ -89,4 +89,30 @@ void WorldGenerator::generateHeight( WorldChunk& chunk )
 	}
 }
 
+void WorldGenerator::populate( WorldChunk& chunk )
+{
+	if( m_trees.empty() )
+	{
+		return;
+	}
+
+	srand( static_cast< unsigned int >( chunk.getPosition().x * 22222.55345
+										+ chunk.getPosition().z * M_PI_4 * 200 * getSeed() ) );
+	int trees = rand() % 16;
+	for( int i = 0; i < trees; ++i )
+	{
+		auto& treeVoxelGroup = m_trees.at( rand() % m_trees.size() );
+		glm::ivec2 randomPos{ rand() % WorldChunk::s_sideLength,
+							  rand() % WorldChunk::s_sideLength };
+
+
+
+	}
+}
+
+void WorldGenerator::addTree( std::shared_ptr< VoxelGroup >& tree )
+{
+	m_trees.push_back( { tree } );
+}
+
 } // namespace Game

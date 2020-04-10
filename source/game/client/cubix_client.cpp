@@ -19,9 +19,9 @@ CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
 	m_gameTime.setFPSLimit( 10000 );
 	connect( "127.0.0.1", 4444 );
 	m_renderer.loadShaders();
-	m_moveableView.setSpeed( 4 );
+	m_moveableView.setSpeed( 2 );
 
-	m_clipboard.createSphere( 64, { 255, 64, 128 } );
+	m_clipboard.createCube( 1, { 255, 64, 128 } );
 }
 
 void CubixClient::update()
@@ -98,9 +98,10 @@ void CubixClient::onEvent( const Core::EventWindowResize& eventType )
 
 void CubixClient::onEvent( const Core::UserInputHandler::EventUpdate& eventType )
 {
-	if( eventType.instance.isKeyDown( Core::UserInputHandler::F ) && m_group.get() != nullptr )
+	if( eventType.instance.isKeyDown( Core::UserInputHandler::F ) )
 	{
-		m_world.insert( *m_group, m_moveableView.getPosition() );
+		//m_world.insert( *m_group, m_moveableView.getPosition() );
+		m_world.insert( *m_clipboard.getVoxelGroup(), m_moveableView.getPosition() );
 	}
 
 	if( eventType.instance.isKeyDown( Core::UserInputHandler::R ) )

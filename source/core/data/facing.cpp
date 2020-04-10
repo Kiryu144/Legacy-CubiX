@@ -7,6 +7,8 @@
 namespace Core
 {
 
+const std::array< Facing::Face, 6 > Facing::Facings{ FRONT, RIGHT, BACK, LEFT, TOP, BOTTOM };
+
 void Facing::setFace( Face side, bool enabled )
 {
 	if( enabled )

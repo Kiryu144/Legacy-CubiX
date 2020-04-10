@@ -20,7 +20,7 @@ public:
 	};
 
 protected:
-	uint64_t m_flags;
+	uint64_t m_flags{ 0 };
 
 public:
 	Voxel() = default;

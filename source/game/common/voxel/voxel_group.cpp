@@ -324,7 +324,7 @@ void VoxelGroup::upload()
 	m_upload = false;
 }
 
-Core::AttributeBuffer& VoxelGroup::getVertices()
+Core::AttributeBuffer& VoxelGroup::getVertexAttribute()
 {
 	return m_vertices;
 }

@@ -13,7 +13,6 @@ WorldChunk::WorldChunk( World& world, const glm::ivec3& chunkPosition )
 	: VoxelGroup( glm::uvec3{ s_sideLength, s_sideLength, s_sideLength } ),
 	  m_chunkPosition( chunkPosition ),
 	  m_world( world ),
-	  m_yLevelLimits( { s_sideLength, s_sideLength } ),
 	  m_millisecondsNotSeen( 0 )
 {
 	getPosition() = glm::ivec3{ chunkPosition.x * getSize().x,
@@ -49,11 +48,6 @@ const glm::ivec3 WorldChunk::getWorldPosition() const
 World& WorldChunk::getWorld() const
 {
 	return m_world;
-}
-
-Core::Container2D< glm::ivec2 >& WorldChunk::getYLevelLimits()
-{
-	return m_yLevelLimits;
 }
 
 } // namespace Game

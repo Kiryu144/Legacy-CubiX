@@ -15,16 +15,27 @@ namespace Game
 
 class WorldGenerator
 {
+public:
+	struct Tree
+	{
+		std::shared_ptr< VoxelGroup > tree;
+	};
+
 protected:
 	virtual void setVoxel( Voxel& voxel, unsigned int blocksUnderground );
 	virtual Voxel getWaterVoxel();
 	virtual int getHeight( const glm::ivec2& worldPosition );
 	virtual void prepareForChunk( const glm::ivec3& chunkPosition ) {}
 
+	std::vector<Tree> m_trees;
 public:
 	WorldGenerator() = default;
 
 	void generateHeight( WorldChunk& chunk );
+	void populate( WorldChunk& chunk );
+
+	void addTree(std::shared_ptr<VoxelGroup>& tree);
+
 	int getSeed()
 	{
 		return 1234;

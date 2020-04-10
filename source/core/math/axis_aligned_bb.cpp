@@ -8,110 +8,33 @@ namespace Core
 {
 
 AxisAlignedBB::AxisAlignedBB( const glm::vec3& min, const glm::vec3& max )
-	: m_min( min ), m_max( max )
+	: m_min( min ), m_max( max ), m_size( m_min - m_max ), m_center( m_size / glm::vec3( 2.0 ) )
 {
 }
 
-void AxisAlignedBB::offset( const glm::vec3& v )
+glm::vec3 AxisAlignedBB::getOverlapping( const AxisAlignedBB& other ) const
 {
-	m_min += v;
-	m_max += v;
-}
-
-float AxisAlignedBB::calculateXOffset( const AxisAlignedBB& other, float _def ) const
-{
-	if( other.m_max.y > m_min.y && other.m_min.y < m_max.y && other.m_max.z > m_min.z
-		&& other.m_min.z < m_max.z )
+	glm::vec3 overlappingAxis;
+	if( ( std::abs( m_min.x - other.m_min.x ) * 2 > ( m_size.x + other.m_size.x ) )
+		|| ( std::abs( m_min.y - other.m_min.y ) * 2 > ( m_size.y + other.m_size.y ) )
+		|| ( std::abs( m_min.z - other.m_min.z ) * 2 > ( m_size.z + other.m_size.z ) ) )
 	{
-		if( _def > 0.0D && other.m_max.x <= m_min.x )
-		{
-			float d1 = m_min.x - other.m_max.x;
-
-			if( d1 < _def )
-			{
-				_def = d1;
-			}
-		}
-		else if( _def < 0.0D && other.m_min.x >= m_max.x )
-		{
-			float d0 = m_max.x - other.m_min.x;
-
-			if( d0 > _def )
-			{
-				_def = d0;
-			}
-		}
-
-		return _def;
+		return overlappingAxis; // No collision occured
 	}
-	else
-	{
-		return _def;
+
+	overlappingAxis.x = sign( m_center.x - other.m_center.x )
+		* ( ( other.m_size.x / 2 + m_size.x / 2 ) - std::abs( m_center.x - other.m_center.x ) );
+	overlappingAxis.y = sign( m_center.y - other.m_center.y )
+		* ( ( other.m_size.y / 2 + m_size.y / 2 ) - std::abs( m_center.y - other.m_center.y ) );
+	overlappingAxis.z = sign( m_center.z - other.m_center.z )
+		* ( ( other.m_size.z / 2 + m_size.z / 2 ) - std::abs( m_center.z - other.m_center.z ) );
+
+	for( int i = 0; i < 3; i++ )
+	{ // Add a bit of an offset so that it actually moves out of the collision
+		overlappingAxis[ i ] += sign( overlappingAxis[ i ] ) * 0.0005;
 	}
-}
 
-float AxisAlignedBB::calculateYOffset( const AxisAlignedBB& other, float _def ) const
-{
-	if( other.m_max.x > m_min.x && other.m_min.x < m_max.x && other.m_max.z > m_min.z
-		&& other.m_min.z < m_max.z )
-	{
-		if( _def > 0.0D && other.m_max.y <= m_min.y )
-		{
-			float d1 = m_min.y - other.m_max.y;
-
-			if( d1 < _def )
-			{
-				_def = d1;
-			}
-		}
-		else if( _def < 0.0D && other.m_min.y >= m_max.y )
-		{
-			float d0 = m_max.y - other.m_min.y;
-
-			if( d0 > _def )
-			{
-				_def = d0;
-			}
-		}
-
-		return _def;
-	}
-	else
-	{
-		return _def;
-	}
-}
-
-float AxisAlignedBB::calculateZOffset( const AxisAlignedBB& other, float _def ) const
-{
-	if( other.m_max.x > m_min.x && other.m_min.x < m_max.x && other.m_max.y > m_min.y
-		&& other.m_min.y < m_max.y )
-	{
-		if( _def > 0.0D && other.m_max.z <= m_min.z )
-		{
-			float d1 = m_min.z - other.m_max.z;
-
-			if( d1 < _def )
-			{
-				_def = d1;
-			}
-		}
-		else if( _def < 0.0D && other.m_min.z >= m_max.z )
-		{
-			float d0 = m_max.z - other.m_min.z;
-
-			if( d0 > _def )
-			{
-				_def = d0;
-			}
-		}
-
-		return _def;
-	}
-	else
-	{
-		return _def;
-	}
+	return overlappingAxis;
 }
 
 } // namespace Core

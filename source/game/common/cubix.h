@@ -27,7 +27,6 @@ protected:
 
 public:
 	Cubix();
-
 	void start();
 	void quit();
 };

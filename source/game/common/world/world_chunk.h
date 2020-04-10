@@ -37,10 +37,7 @@ protected:
 	double m_millisecondsNotSeen{ 0 };
 	bool m_terrainGenerated{ false };
 	bool m_terrainPopulated{ false };
-	bool m_allowDrawing{ false };
-
-	// The top/bottom-most block for a given position
-	Core::Container2D< glm::ivec2 > m_yLevelLimits;
+	bool m_meshGenerated{ false };
 
 	World& m_world;
 
@@ -51,14 +48,13 @@ public:
 	CUBIX_GET_SET_R_CR( m_millisecondsNotSeen, MillisecondsNotSeen );
 	CUBIX_GET_SET_CR_CR( m_terrainGenerated, TerrainGenerated );
 	CUBIX_GET_SET_CR_CR( m_terrainPopulated, TerrainPopulated );
-	CUBIX_GET_SET_CR_CR( m_allowDrawing, AllowDrawing );
+	CUBIX_GET_SET_CR_CR( m_meshGenerated, AllowDrawing );
 
 	const glm::ivec3 getWorldPosition() const;
 
 	unsigned int getSideLength();
 
 	World& getWorld() const;
-	Core::Container2D< glm::ivec2 >& getYLevelLimits();
 
 	void serialize( std::ostream& out ) const override;
 	void deserialize( std::istream& in ) override;
