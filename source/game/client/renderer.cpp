@@ -36,7 +36,7 @@ void Renderer::render( World& world )
 
 		auto chunk = chunkIt.lock();
 
-		if( !chunk->getAllowDrawing() || chunk->getMillisecondsNotSeen() > 0 )
+		if( !chunk->getRender() || chunk->getMillisecondsNotSeen() > 0 )
 		{
 			continue;
 		}

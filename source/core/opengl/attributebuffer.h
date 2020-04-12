@@ -32,6 +32,7 @@ public:
 
 	void upload( void* data, size_t vertices );
 	void bind( GLuint vertexAttribIndex );
+	bool isValid() const;
 
 	CUBIX_GET_V( m_vertices, VerticeAmount );
 	CUBIX_GET_V( m_totalSize, TotalSize );

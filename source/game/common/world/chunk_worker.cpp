@@ -61,7 +61,7 @@ void ChunkWorker::worker()
 			}
 			else
 			{
-				chunk->setAllowDrawing( true );
+				chunk->setRender( true );
 			}
 			break;
 		}
