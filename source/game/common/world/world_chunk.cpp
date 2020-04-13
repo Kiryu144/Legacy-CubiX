@@ -36,7 +36,7 @@ void WorldChunk::deserialize( std::istream& in )
 	in.read( reinterpret_cast< char* >( &m_chunkPosition ), sizeof( decltype( m_chunkPosition ) ) );
 }
 
-const glm::vec3& WorldChunk::GetPosForCube( const Core::Facing::Face& face, int index )
+const glm::vec3& WorldChunk::GetPosForCube( const Core::MultipleFacing::Face& face, int index )
 {
 	static const glm::vec3 s_vertices[ 6 * 6 ]{
 		glm::vec3( 1.0, 0.0, 0.0 ), glm::vec3( 0.0, 0.0, 0.0 ), glm::vec3( 1.0, 1.0, 0.0 ),
@@ -60,7 +60,7 @@ const glm::vec3& WorldChunk::GetPosForCube( const Core::Facing::Face& face, int 
 	return s_vertices[ static_cast< const int& >( face ) * 6 + index ];
 }
 
-const glm::vec3& WorldChunk::GetNormForCube( const Core::Facing::Face& face )
+const glm::vec3& WorldChunk::GetNormForCube( const Core::MultipleFacing::Face& face )
 {
 	static const glm::vec3 s_normals[ 6 ]{
 		glm::vec3( 0.0, 0.0, -1.0 ), glm::vec3( -1.0, 0.0, 0.0 ), glm::vec3( 0.0, 0.0, 1.0 ),
@@ -69,7 +69,7 @@ const glm::vec3& WorldChunk::GetNormForCube( const Core::Facing::Face& face )
 	return s_normals[ static_cast< const int& >( face ) ];
 }
 
-int WorldChunk::getACColorCorrectionForCube( const Core::Facing::Face& face,
+int WorldChunk::getACColorCorrectionForCube( const Core::MultipleFacing::Face& face,
                                                    const glm::ivec3& pos,
                                                    int index )
 {
@@ -124,7 +124,7 @@ void WorldChunk::generateMesh()
 				}
 
 				const auto& visibleFaces{ findVisibleFaces( pos ) };
-				for( const auto& face : Core::Facing::Facings )
+				for( const auto& face : Core::MultipleFacing::Facings )
 				{
 					if( !visibleFaces.hasFace( face ) )
 					{

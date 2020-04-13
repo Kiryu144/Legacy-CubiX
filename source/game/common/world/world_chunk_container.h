@@ -5,24 +5,32 @@
 #ifndef CUBIX_WORLD_CHUNK_CONTAINER_H
 #define CUBIX_WORLD_CHUNK_CONTAINER_H
 
-#include "game/common/world/world_chunk_column.h"
-
+#include <list>
+#include <memory>
 #include <unordered_map>
 #include <unordered_set>
 
+
+#include "core/cubix_macro.h"
+
+// clang-format off
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+// clang-format on
 
 namespace Game
 {
+
+class WorldChunkColumn;
+class WorldChunk;
+class World;
 
 class WorldChunkContainer
 {
 public:
 	typedef std::unordered_map< glm::ivec2, std::shared_ptr< WorldChunkColumn > > ChunkColumnMap;
-	typedef std::unordered_set< glm::ivec3 > ChunkQueue;
 	typedef std::list< std::weak_ptr< WorldChunk > > ChunkList;
 
 protected:
@@ -37,7 +45,7 @@ protected:
 	std::shared_ptr< WorldChunkColumn > getOrCreateChunkColumn( const glm::ivec2& chunkPos );
 
 public:
-	WorldChunkContainer(World& world);
+	WorldChunkContainer( World& world );
 
 	// Get chunk from a given chunkpos. Returns nullptr if missing
 	std::shared_ptr< WorldChunk > getChunk( const glm::ivec3& chunkPos );
@@ -48,6 +56,8 @@ public:
 
 	// Creates an empty chunk instance
 	std::shared_ptr< WorldChunk > createChunk( const glm::ivec3& chunkPos );
+
+	void removeChunk( const glm::ivec3& chunkPos );
 
 	CUBIX_GET_R_CR( m_allChunks, AllChunks );
 };

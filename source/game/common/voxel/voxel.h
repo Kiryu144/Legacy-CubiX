@@ -6,7 +6,7 @@
 #define CUBIX_VOXEL_H
 
 #include "core/data/color.h"
-#include "core/data/facing.h"
+#include "core/data/multiple_facing.h"
 
 namespace Game
 {

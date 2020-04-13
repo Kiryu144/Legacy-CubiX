@@ -9,16 +9,19 @@
 
 #include <cmath>
 
+#include <glm/vec3.hpp>
+
 namespace Game
 {
 
 VoxelGroup::VoxelGroup( const glm::uvec3& size )
-	: Core::Container3D< Voxel >( size ), m_vertices( Core::InterleavedVertNormColAttribute )
+	: Core::Container3D< Voxel >( size ), m_attributeBuffer( Core::InterleavedVertNormColAttribute )
 {
 }
 
 VoxelGroup::VoxelGroup( const std::string& voxFilePath )
-	: Core::Container3D< Voxel >( { 1, 1, 1 } ), m_vertices( Core::InterleavedVertNormColAttribute )
+	: Core::Container3D< Voxel >( { 1, 1, 1 } ),
+	  m_attributeBuffer( Core::InterleavedVertNormColAttribute )
 {
 	Core::RiffParser vox( voxFilePath );
 
@@ -173,23 +176,26 @@ const Voxel VoxelGroup::getSafe( const glm::ivec3& pos, const Voxel& _default ) 
 	}
 }
 
-Core::Facing VoxelGroup::findVisibleFaces( const glm::uvec3& pos ) const
+Core::MultipleFacing VoxelGroup::findVisibleFaces( const glm::uvec3& pos ) const
 {
 	using namespace Core;
-	Facing facing;
-	facing.setFace( Facing::LEFT,
+	MultipleFacing facing;
+	facing.setFace( MultipleFacing::LEFT,
 					( pos.x >= getSize().x - 1 || get( pos + glm::uvec3{ 1, 0, 0 } ).a < 255 ) );
-	facing.setFace( Facing::BACK,
+	facing.setFace( MultipleFacing::BACK,
 					( pos.z >= getSize().z - 1 || get( pos + glm::uvec3{ 0, 0, 1 } ).a < 255 ) );
-	facing.setFace( Facing::BOTTOM,
+	facing.setFace( MultipleFacing::BOTTOM,
 					( pos.y >= getSize().y - 1 || get( pos + glm::uvec3{ 0, 1, 0 } ).a < 255 ) );
-	facing.setFace( Facing::RIGHT, ( pos.x <= 0 || get( pos + glm::uvec3{ -1, 0, 0 } ).a < 255 ) );
-	facing.setFace( Facing::FRONT, ( pos.z <= 0 || get( pos + glm::uvec3{ 0, 0, -1 } ).a < 255 ) );
-	facing.setFace( Facing::TOP, ( pos.y <= 0 || get( pos + glm::uvec3{ 0, -1, 0 } ).a < 255 ) );
+	facing.setFace( MultipleFacing::RIGHT,
+					( pos.x <= 0 || get( pos + glm::uvec3{ -1, 0, 0 } ).a < 255 ) );
+	facing.setFace( MultipleFacing::FRONT,
+					( pos.z <= 0 || get( pos + glm::uvec3{ 0, 0, -1 } ).a < 255 ) );
+	facing.setFace( MultipleFacing::TOP,
+					( pos.y <= 0 || get( pos + glm::uvec3{ 0, -1, 0 } ).a < 255 ) );
 	return facing;
 }
 
-void VoxelGroup::regenerateMesh()
+const glm::vec3& VoxelGroup::GetPosForCube( const Core::MultipleFacing::Face& face, int index )
 {
 	static const glm::vec3 s_vertices[ 6 * 6 ]{
 		glm::vec3( 1.0, 0.0, 0.0 ), glm::vec3( 0.0, 0.0, 0.0 ), glm::vec3( 1.0, 1.0, 0.0 ),
@@ -210,7 +216,22 @@ void VoxelGroup::regenerateMesh()
 		glm::vec3( 0.0, 1.0, 0.0 ), glm::vec3( 0.0, 1.0, 1.0 ), glm::vec3( 1.0, 1.0, 0.0 ),
 		glm::vec3( 1.0, 1.0, 0.0 ), glm::vec3( 0.0, 1.0, 1.0 ), glm::vec3( 1.0, 1.0, 1.0 ),
 	};
+	return s_vertices[ Core::MultipleFacing::IndexOf( face ) * 6 + index ];
+}
 
+const glm::vec3& VoxelGroup::GetNormForCube( const Core::MultipleFacing::Face& face )
+{
+	static const glm::vec3 s_normals[ 6 ]{
+		glm::vec3( 0.0, 0.0, -1.0 ), glm::vec3( -1.0, 0.0, 0.0 ), glm::vec3( 0.0, 0.0, 1.0 ),
+		glm::vec3( 1.0, 0.0, 0.0 ),	 glm::vec3( 0.0, 1.0, 0.0 ),  glm::vec3( 0.0, -1.0, 0.0 )
+	};
+	return s_normals[ Core::MultipleFacing::IndexOf( face ) ];
+}
+
+int VoxelGroup::getACColorCorrectionForCube( const Core::MultipleFacing::Face& face,
+											 const glm::ivec3& pos,
+											 int index )
+{
 	static const glm::ivec3 s_acLookups[ 6 * 6 * 3 ]{
 		{ 1, 0, -1 },  { 1, -1, -1 },  { 0, -1, -1 }, { 0, -1, -1 }, { -1, -1, -1 }, { -1, 0, -1 },
 		{ 1, 0, -1 },  { 1, 1, -1 },   { 0, 1, -1 },  { 0, 1, -1 },	 { -1, 1, -1 },	 { -1, 0, -1 },
@@ -235,32 +256,20 @@ void VoxelGroup::regenerateMesh()
 		{ 0, 1, -1 },  { -1, 1, -1 },  { -1, 1, 0 },  { -1, 1, 0 },	 { -1, 1, 1 },	 { 0, 1, 1 },
 		{ 1, 1, 0 },   { 1, 1, -1 },   { 0, 1, -1 },  { 1, 1, 0 },	 { 1, 1, -1 },	 { 0, 1, -1 },
 		{ -1, 1, 0 },  { -1, 1, 1 },   { 0, 1, 1 },	  { 1, 1, 0 },	 { 1, 1, 1 },	 { 0, 1, 1 },
-
 	};
+	const int& i{ static_cast< const int& >( Core::MultipleFacing::IndexOf( face ) * 18
+											 + index * 3 ) };
+	bool side1	= getSafe( pos + s_acLookups[ i + 0 ] ).exists();
+	bool corner = getSafe( pos + s_acLookups[ i + 1 ] ).exists();
+	bool side2	= getSafe( pos + s_acLookups[ i + 2 ] ).exists();
+	return ( side1 && side2 ) ? 3 : side1 + side2 + corner;
+}
 
-	static const glm::vec3 s_normals[ 6 ]{
-		glm::vec3( 0.0, 0.0, -1.0 ), glm::vec3( -1.0, 0.0, 0.0 ), glm::vec3( 0.0, 0.0, 1.0 ),
-		glm::vec3( 1.0, 0.0, 0.0 ),	 glm::vec3( 0.0, 1.0, 0.0 ),  glm::vec3( 0.0, -1.0, 0.0 )
-	};
-
-	Core::Container3D< Core::Facing > faces( m_size );
-
-	for( int x = 0; x < getSize().x; ++x )
-	{
-		for( int y = 0; y < getSize().y; ++y )
-		{
-			for( int z = 0; z < getSize().z; ++z )
-			{
-				faces[ { x, y, z } ] = findVisibleFaces( { x, y, z } );
-			}
-		}
-	}
-
-	m_verticeBuffer.clear();
-	m_verticeBuffer.reserve( getSize().x * getSize().y * getSize().z * 6 );
-
-	glm::vec3 halfSize{ getSize().x * 0.5f, getSize().y * 0.5f, getSize().z * 0.5f };
-
+void VoxelGroup::regenerateMesh()
+{
+	m_uploadVertices = false;
+	m_vertexBuffer.clear();
+	m_vertexBuffer.reserve( getSize().x * getSize().y * getSize().z * 36 );
 	m_voxelCount = 0;
 	for( int x = 0; x < getSize().x; ++x )
 	{
@@ -268,65 +277,51 @@ void VoxelGroup::regenerateMesh()
 		{
 			for( int z = 0; z < getSize().z; ++z )
 			{
-				glm::ivec3 pos	   = { x, y, z };
-				const Voxel& voxel = operator[]( pos );
-				if( voxel.a == 0 || !voxel.exists() )
+				const glm::ivec3 pos{ x, y, z };
+				const Voxel voxel{ operator[]( pos ) };
+				if( voxel.a == 0 )
 				{
 					continue;
 				}
 				++m_voxelCount;
 
-				const Core::Facing& visible = faces[ { x, y, z } ];
-				for( int i = 0; i < 6; ++i )
+				const auto& visibleFaces{ findVisibleFaces( pos ) };
+				for( const auto& face : Core::MultipleFacing::Facings )
 				{
-					if( visible.hasFace( static_cast< Core::Facing::Face >( pow( 2.0, i ) ) ) )
+					if( !visibleFaces.hasFace( face ) )
 					{
-						Vertice vertice;
-						for( int j = 0; j < 6; ++j )
-						{
-							vertice.m_color	   = voxel;
-							vertice.m_position = s_vertices[ i * 6 + j ] + glm::vec3( x, y, z );
-							int darkness	   = 0;
-
-							int k		= ( i * 18 ) + ( j * 3 );
-							bool side1	= getSafe( pos + s_acLookups[ k + 0 ] ).exists();
-							bool corner = getSafe( pos + s_acLookups[ k + 1 ] ).exists();
-							bool side2	= getSafe( pos + s_acLookups[ k + 2 ] ).exists();
-							if( side1 && side2 )
-							{
-								darkness = 3;
-							}
-							else
-							{
-								darkness = side1 + side2 + corner;
-							}
-							int colorChange = 30 * darkness;
-							vertice.m_color.add( -colorChange, -colorChange, -colorChange );
-							vertice.m_normal = s_normals[ i ];
-							m_verticeBuffer.push_back( vertice );
-						}
+						continue;
+					}
+					Vertex vertex;
+					for( int vertice = 0; vertice < 6; ++vertice )
+					{
+						vertex.color	= voxel;
+						vertex.position = glm::vec3( pos ) + GetPosForCube( face, vertice );
+						vertex.normal	= GetNormForCube( face );
+						int acDarkness	= getACColorCorrectionForCube( face, pos, vertice );
+						vertex.color.add( -acDarkness, -acDarkness, -acDarkness );
+						m_vertexBuffer.push_back( vertex );
 					}
 				}
 			}
 		}
 	}
-	m_upload = true;
+	m_uploadVertices = true;
 }
 
 void VoxelGroup::upload()
 {
-	if( !m_upload || m_verticeBuffer.empty() )
+	if( m_uploadVertices )
 	{
-		return;
+		m_uploadVertices = false;
+		m_attributeBuffer.upload( &m_vertexBuffer.at( 0 ), m_vertexBuffer.size() );
+		m_vertexBuffer.clear();
 	}
-
-	m_vertices.upload( &m_verticeBuffer[ 0 ], m_verticeBuffer.size() );
-	m_upload = false;
 }
 
 Core::AttributeBuffer& VoxelGroup::getVertexAttribute()
 {
-	return m_vertices;
+	return m_attributeBuffer;
 }
 
 void VoxelGroup::serialize( std::ostream& out ) const

@@ -30,19 +30,18 @@ const WorldChunkColumn::ColumnMap::mapped_type WorldChunkColumn::getChunk( int y
 
 WorldChunkColumn::ColumnMap::mapped_type WorldChunkColumn::createEmptyChunkIfAbsent( int yLevel )
 {
-	ColumnMap::mapped_type chunk;
 	if( getChunk( yLevel ).get() == nullptr )
 	{
-		chunk = m_column
-					.insert( { yLevel,
-							   std::shared_ptr< WorldChunk >( new WorldChunk(
-								   m_world, { m_chunkPosition.x, yLevel, m_chunkPosition.y } ) ) } )
-					.first->second;
+		return m_column
+			.insert( { yLevel,
+					   std::shared_ptr< WorldChunk >( new WorldChunk(
+						   m_world, { m_chunkPosition.x, yLevel, m_chunkPosition.y } ) ) } )
+			.first->second;
 	}
-	return chunk;
+	return { nullptr };
 }
 
-void WorldChunkColumn::deleteChunk( int yLevel )
+void WorldChunkColumn::removeChunk( int yLevel )
 {
 	m_column.erase( yLevel );
 }

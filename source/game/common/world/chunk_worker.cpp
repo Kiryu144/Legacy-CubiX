@@ -57,7 +57,7 @@ void ChunkWorker::worker()
 			chunk->regenerateMesh();
 			if( chunk->getVoxelCount() == 0 )
 			{
-				chunk->getWorld().deleteChunk( chunk->getChunkPosition() );
+				// chunk->getWorld().deleteChunk( chunk->getChunkPosition() );
 			}
 			else
 			{

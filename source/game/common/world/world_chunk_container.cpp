@@ -4,6 +4,10 @@
 
 #include "world_chunk_container.h"
 
+#include "core/cubix_macro.h"
+
+#include "game/common/world/world_chunk_column.h"
+
 namespace Game
 {
 
@@ -22,8 +26,12 @@ std::shared_ptr< const WorldChunk > WorldChunkContainer::getChunk(
 
 std::shared_ptr< WorldChunk > WorldChunkContainer::getChunk( const glm::ivec3& chunkPos )
 {
-	return CUBIX_NCONST_GET(
-		std::shared_ptr< WorldChunk >, WorldChunkContainer, getChunk( chunkPos ) );
+	auto it = m_chunkColumnMap.find( { chunkPos.x, chunkPos.z } );
+	if( it == m_chunkColumnMap.end() )
+	{
+		return nullptr;
+	}
+	return it->second->getChunk( chunkPos.y );
 }
 
 bool WorldChunkContainer::getChunkExists( const glm::ivec3& chunkPos ) const
@@ -34,7 +42,12 @@ bool WorldChunkContainer::getChunkExists( const glm::ivec3& chunkPos ) const
 std::shared_ptr< WorldChunk > WorldChunkContainer::createChunk( const glm::ivec3& chunkPos )
 {
 	auto column = getOrCreateChunkColumn( { chunkPos.x, chunkPos.z } );
-	return column->createEmptyChunkIfAbsent( chunkPos.y );
+	auto chunk	= column->createEmptyChunkIfAbsent( chunkPos.y );
+	if( chunk != nullptr )
+	{
+		m_allChunks.push_back( chunk );
+	}
+	return chunk;
 }
 
 std::shared_ptr< WorldChunkColumn > WorldChunkContainer::getChunkColumn(
@@ -47,8 +60,8 @@ std::shared_ptr< WorldChunkColumn > WorldChunkContainer::getChunkColumn(
 std::shared_ptr< const WorldChunkColumn > WorldChunkContainer::getChunkColumn(
 	const glm::ivec2& chunkPos ) const
 {
-	return CUBIX_NCONST_GET(
-		std::shared_ptr< WorldChunkColumn >, WorldChunkContainer, getChunkColumn( chunkPos ) );
+	auto it = m_chunkColumnMap.find( chunkPos );
+	return it != m_chunkColumnMap.end() ? it->second : nullptr;
 }
 
 std::shared_ptr< WorldChunkColumn > WorldChunkContainer::getOrCreateChunkColumn(
@@ -58,8 +71,23 @@ std::shared_ptr< WorldChunkColumn > WorldChunkContainer::getOrCreateChunkColumn(
 	{
 		return ptr;
 	}
-	m_chunkColumnMap.insert( { chunkPos, { new WorldChunkColumn( m_world, chunkPos ) } } );
+	m_chunkColumnMap.insert(
+		{ chunkPos,
+		  std::shared_ptr< WorldChunkColumn >( new WorldChunkColumn( m_world, chunkPos ) ) } );
 	return m_chunkColumnMap.find( chunkPos )->second;
+}
+
+void WorldChunkContainer::removeChunk( const glm::ivec3& chunkPos )
+{
+	auto column = getChunkColumn( chunkPos );
+	if( column != nullptr )
+	{
+		column->removeChunk( chunkPos.y );
+		if( column->size() == 0 )
+		{
+			m_chunkColumnMap.erase( { chunkPos.x, chunkPos.z } );
+		}
+	}
 }
 
 } // namespace Game

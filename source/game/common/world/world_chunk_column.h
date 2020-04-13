@@ -39,7 +39,7 @@ public:
 	ColumnMap::mapped_type getChunk( int yLevel );
 	const ColumnMap::mapped_type getChunk( int yLevel ) const;
 	ColumnMap::mapped_type createEmptyChunkIfAbsent( int yLevel );
-	void deleteChunk( int yLevel );
+	void removeChunk( int yLevel );
 	size_t size() const;
 };
 

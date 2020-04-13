@@ -2,15 +2,15 @@
  * Copyright (c) 2020 David Klostermann.
  */
 
-#ifndef CUBIX_FACING_H
-#define CUBIX_FACING_H
+#ifndef CUBIX_MULTIPLE_FACING_H
+#define CUBIX_MULTIPLE_FACING_H
 
 #include <array>
 
 namespace Core
 {
 
-class Facing
+class MultipleFacing
 {
 public:
 	enum Face : unsigned char
@@ -23,7 +23,9 @@ public:
 		BOTTOM = 1 << 5
 	};
 
-	static const std::array<Facing::Face, 6> Facings;
+	static const int IndexOf( const Face& face );
+	static Face ValueOf(int index);
+	static const std::array< MultipleFacing::Face, 6> Facings;
 private:
 	unsigned char m_data;
 

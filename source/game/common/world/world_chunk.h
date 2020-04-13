@@ -30,9 +30,9 @@ class WorldChunk : public virtual VoxelGroup,
 				   public Renderable
 {
 protected:
-	static const glm::vec3& GetPosForCube( const Core::Facing::Face& face, int index );
-	static const glm::vec3& GetNormForCube( const Core::Facing::Face& face );
-	int getACColorCorrectionForCube( const Core::Facing::Face& face,
+	static const glm::vec3& GetPosForCube( const Core::MultipleFacing::Face& face, int index );
+	static const glm::vec3& GetNormForCube( const Core::MultipleFacing::Face& face );
+	int getACColorCorrectionForCube( const Core::MultipleFacing::Face& face,
 									 const glm::ivec3& pos,
 									 int index );
 

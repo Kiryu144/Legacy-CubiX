@@ -43,6 +43,9 @@
 		x = _in;                            \
 	}
 
+#define CUBIX_NCONST_GET( nconst_return, class_name, call ) \
+	const_cast< nconst_return >(static_cast<const class_name &>(*this).call);
+
 // Inline getter & setter that take and return const references
 #define CUBIX_GET_SET_R_CR( x, n ) CUBIX_GET_R_CR( x, n ) CUBIX_SET_CR( x, n )
 

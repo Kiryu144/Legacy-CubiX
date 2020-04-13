@@ -10,19 +10,19 @@
 int main()
 {
 	using namespace Game;
-	Cubix* c;
-	std::thread thread( [&c]() {
-		Core::Logger::Register( "NetServer" );
-		CubixServer server( 4444 );
-		c = &server;
+	//Cubix* c;
+	//std::thread thread( [&c]() {
+	//	Core::Logger::Register( "NetServer" );
+		//CubixServer server( 4444 );
+		//c = &server;
 		//server.start();
-	} );
+	//} );
 
 	Core::Logger::Register( "Client" );
 	CubixClient client;
 	client.start();
 
-	c->quit();
-	thread.join();
+	//c->quit();
+	//thread.join();
 	return 0;
 }
