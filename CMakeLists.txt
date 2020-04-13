@@ -127,7 +127,7 @@ source/core/opengl/data/single_attribute.h
 source/core/opengl/data/interleaved_attribute.cpp
 source/core/opengl/data/interleaved_attribute.h
 source/game/client/voxel_clipboard.cpp
-source/game/client/voxel_clipboard.h)
+source/game/client/voxel_clipboard.h source/game/common/world/world_chunk_manager.cpp source/game/common/world/world_chunk_manager.h)
 
 add_executable(CubiX ${SOURCE_FILES} resources.rc)
 target_link_libraries(CubiX ${LINKER_TARGETS})

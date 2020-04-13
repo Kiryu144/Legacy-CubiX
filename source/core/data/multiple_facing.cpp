@@ -11,7 +11,8 @@
 namespace Core
 {
 
-const std::array< MultipleFacing::Face, 6 > MultipleFacing::Facings{ FRONT, RIGHT, BACK, LEFT, TOP, BOTTOM };
+const std::array< MultipleFacing::Face, 6 > MultipleFacing::Facings{ FRONT, RIGHT, BACK,
+																	 LEFT,	TOP,   BOTTOM };
 
 void MultipleFacing::setFace( Face side, bool enabled )
 {
@@ -47,6 +48,15 @@ MultipleFacing::Face MultipleFacing::ValueOf( int index )
 {
 	cubix_assert( index >= 0 && index < 6, "Index out of range" );
 	return Facings[ index ];
+}
+
+const glm::vec3& MultipleFacing::DirectionOf( const MultipleFacing::Face& face )
+{
+	static const std::vector< glm::vec3 > s_lookup{
+		glm::vec3( 0, 0, -1 ), glm::vec3( -1, 0, 0 ), glm::vec3( 0, 0, 1 ),
+		glm::vec3( 1, 0, 0 ),  glm::vec3( 0, 1, 0 ),  glm::vec3( 0, -1, 0 ),
+	};
+	return s_lookup[ IndexOf( face ) ];
 }
 
 } // namespace Core

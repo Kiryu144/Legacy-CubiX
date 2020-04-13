@@ -314,8 +314,11 @@ void VoxelGroup::upload()
 	if( m_uploadVertices )
 	{
 		m_uploadVertices = false;
-		m_attributeBuffer.upload( &m_vertexBuffer.at( 0 ), m_vertexBuffer.size() );
-		m_vertexBuffer.clear();
+		if( !m_vertexBuffer.empty() )
+		{
+			m_attributeBuffer.upload( &m_vertexBuffer[ 0 ], m_vertexBuffer.size() );
+			m_vertexBuffer.clear();
+		}
 	}
 }
 

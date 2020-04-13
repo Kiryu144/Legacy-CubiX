@@ -9,7 +9,7 @@
 namespace Game
 {
 
-World::World() : WorldChunkContainer( *this ), m_chunkWorker( 4 ) {}
+World::World() : WorldChunkContainer( *this ), m_chunkWorker( 1 ) {}
 
 void World::generateChunk( const glm::ivec3& chunkPosition )
 {
@@ -22,8 +22,9 @@ void World::_generateChunk( const glm::ivec3& chunkPosition )
 	auto chunk = createChunk( chunkPosition );
 	if( chunk != nullptr )
 	{
-		m_chunkWorker.queue( chunk, ChunkWorker::GENERATE_TERRAIN );
-		m_chunkWorker.queue( chunk, ChunkWorker::GENERATE_MESH );
+		m_chunkWorker.queue( chunk );
+		m_chunkWorker.queue( chunk );
+		m_chunkWorker.queue( chunk );
 	}
 }
 
@@ -95,7 +96,7 @@ void World::insert( const VoxelGroup& voxelGroup, glm::ivec3 position )
 				chunk->insert( voxelGroup, v );
 
 				chunk->WorldChunk::unlock();
-				m_chunkWorker.queue( chunk, ChunkWorker::GENERATE_MESH );
+				//m_chunkWorker.queue( chunk );
 			}
 		}
 	}

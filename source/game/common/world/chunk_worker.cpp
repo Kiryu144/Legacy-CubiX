@@ -27,7 +27,7 @@ void ChunkWorker::worker()
 	{
 		std::this_thread::sleep_for( sleepTime );
 		sleepTime = sleepTime.zero();
-		Operation operation;
+		std::weak_ptr< WorldChunk > weakChunk;
 		{
 			std::lock_guard< std::mutex > guard( m_queueMutex );
 			if( m_queue.empty() )
@@ -35,34 +35,32 @@ void ChunkWorker::worker()
 				sleepTime = std::chrono::milliseconds( 100 );
 				continue;
 			}
-			operation = m_queue.front();
+			weakChunk = m_queue.front();
 			m_queue.pop_front();
 		}
 
-		if( operation.m_worldChunk.expired() )
+		if( weakChunk.expired() )
 		{
 			return;
 		}
 
-		auto chunk = operation.m_worldChunk.lock();
+		auto chunk = weakChunk.lock();
 		std::lock_guard< std::mutex > guard( *chunk );
 
-		switch( operation.m_operationType )
+		switch( chunk->getChunkState() )
 		{
-		case GENERATE_TERRAIN:
+		case WorldChunk::State::NEW:
 			worldGenerator.generateHeight( *chunk );
-			chunk->setTerrainGenerated( true );
+			chunk->updateHighestBlocks();
+			chunk->setChunkState( WorldChunk::State::TERRAIN_GENERATED );
 			break;
-		case GENERATE_MESH:
+		case WorldChunk::State::TERRAIN_GENERATED:
+			// TODO: Implement
+			chunk->setChunkState( WorldChunk::State::TERRAIN_POPULATED );
+			break;
+		case WorldChunk::State::TERRAIN_POPULATED:
 			chunk->regenerateMesh();
-			if( chunk->getVoxelCount() == 0 )
-			{
-				// chunk->getWorld().deleteChunk( chunk->getChunkPosition() );
-			}
-			else
-			{
-				chunk->setRender( true );
-			}
+			chunk->setChunkState( WorldChunk::State::DONE );
 			break;
 		}
 	}
@@ -80,18 +78,16 @@ ChunkWorker::~ChunkWorker()
 	}
 }
 
-void ChunkWorker::queue( std::shared_ptr< WorldChunk > chunk,
-						 ChunkWorker::OperationType operationType,
-						 bool priority )
+void ChunkWorker::queue( std::shared_ptr< WorldChunk > chunk, bool priority )
 {
 	std::lock_guard< std::mutex > guard( m_queueMutex );
 	if( priority )
 	{
-		m_queue.push_front( { chunk, operationType } );
+		m_queue.push_front( chunk );
 	}
 	else
 	{
-		m_queue.push_back( { chunk, operationType } );
+		m_queue.push_back( chunk );
 	}
 }
 

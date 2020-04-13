@@ -5,6 +5,7 @@
 #include "world_chunk_container.h"
 
 #include "core/cubix_macro.h"
+#include "core/data/multiple_facing.h"
 
 #include "game/common/world/world_chunk_column.h"
 
@@ -88,6 +89,19 @@ void WorldChunkContainer::removeChunk( const glm::ivec3& chunkPos )
 			m_chunkColumnMap.erase( { chunkPos.x, chunkPos.z } );
 		}
 	}
+}
+
+std::vector< std::shared_ptr< WorldChunk > > WorldChunkContainer::getSurroundingChunks(
+	const glm::ivec3& chunkPos )
+{
+	std::vector< std::shared_ptr< WorldChunk > > vec;
+	vec.reserve( Core::MultipleFacing::Facings.size() );
+	for( const auto& face : Core::MultipleFacing::Facings )
+	{
+		vec.push_back(
+			getChunk( chunkPos + glm::ivec3( Core::MultipleFacing::DirectionOf( face ) ) ) );
+	}
+	return vec;
 }
 
 } // namespace Game

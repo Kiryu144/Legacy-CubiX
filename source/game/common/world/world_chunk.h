@@ -26,17 +26,18 @@ class Entity;
 
 class WorldChunk : public virtual VoxelGroup,
 				   public Core::Transform,
-				   public std::mutex,
-				   public Renderable
+				   public std::mutex
 {
-protected:
-	static const glm::vec3& GetPosForCube( const Core::MultipleFacing::Face& face, int index );
-	static const glm::vec3& GetNormForCube( const Core::MultipleFacing::Face& face );
-	int getACColorCorrectionForCube( const Core::MultipleFacing::Face& face,
-									 const glm::ivec3& pos,
-									 int index );
-
 public:
+	enum class State : int
+	{
+		NEW					 = 0,
+		TERRAIN_GENERATED	 = 1,
+		TERRAIN_POPULATED	 = 2,
+		TERRAIN_MESH_CREATED = 3,
+		DONE				 = 4
+	};
+
 	static unsigned int s_sideLength;
 	static glm::ivec3 WorldPosToChunkPos( const glm::vec3& worldPos )
 	{
@@ -46,36 +47,19 @@ public:
 	}
 
 protected:
+	State m_chunkState{ State::NEW };
 	glm::ivec3 m_chunkPosition;
-
 	double m_millisecondsNotSeen{ 0 };
-	bool m_terrainGenerated{ false };
-	bool m_terrainPopulated{ false };
-
 	World& m_world;
 
-	struct Vertex
-	{
-		glm::vec3 position;
-		glm::vec3 normal;
-		Core::Color color;
-	};
-
-	// Vertices ready to be uploaded to the GPU if m_uploadVertices == true
-	std::vector< Vertex > m_vertexBuffer;
-	bool m_uploadVertices{ false };
-	bool m_render{ false };
-
-	Core::AttributeBuffer m_attributeBuffer;
+	Core::Container2D<int> m_highestBlock;
 
 public:
 	WorldChunk( World& world, const glm::ivec3& chunkPosition = glm::ivec3{ 0, 0, 0 } );
 
 	CUBIX_GET_SET_R_CR( m_chunkPosition, ChunkPosition );
 	CUBIX_GET_SET_R_CR( m_millisecondsNotSeen, MillisecondsNotSeen );
-	CUBIX_GET_SET_CR_CR( m_terrainGenerated, TerrainGenerated );
-	CUBIX_GET_SET_CR_CR( m_terrainPopulated, TerrainPopulated );
-	CUBIX_GET_SET_CR_CR( m_render, Render );
+	CUBIX_GET_SET_CR_CR( m_chunkState, ChunkState );
 
 	const glm::ivec3 getWorldPosition() const;
 
@@ -83,10 +67,8 @@ public:
 
 	World& getWorld() const;
 
-	void generateMesh();
-	void uploadMesh();
-
-	void render( const View& view, const Projection& projection ) override;
+	int updateHighestBlock(const glm::ivec2& pos);
+	void updateHighestBlocks();
 
 	void serialize( std::ostream& out ) const override;
 	void deserialize( std::istream& in ) override;

@@ -51,6 +51,8 @@ public:
 	std::shared_ptr< WorldChunk > getChunk( const glm::ivec3& chunkPos );
 	std::shared_ptr< const WorldChunk > getChunk( const glm::ivec3& chunkPos ) const;
 
+	std::vector< std::shared_ptr< WorldChunk > > getSurroundingChunks(const glm::ivec3& chunkPos);
+
 	// Returns true if chunk exists, false if otherwise
 	bool getChunkExists( const glm::ivec3& chunkPos ) const;
 
