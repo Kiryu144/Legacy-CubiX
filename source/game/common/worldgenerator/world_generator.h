@@ -22,21 +22,22 @@ public:
 	};
 
 protected:
-	virtual void setVoxel( Voxel& voxel, unsigned int blocksUnderground );
-	virtual Voxel getWaterVoxel();
-	virtual int getHeight( const glm::ivec2& worldPosition );
+	virtual Voxel getVoxel( unsigned int blocksUnderground ) const;
+	virtual Voxel getWaterVoxel() const;
+	virtual int getHeight( const glm::ivec2& worldPosition ) const;
 	virtual void prepareForChunk( const glm::ivec3& chunkPosition ) {}
 
-	std::vector<Tree> m_trees;
+	std::vector< Tree > m_trees;
+
 public:
 	WorldGenerator() = default;
 
-	void generateHeight( WorldChunk& chunk );
-	void populate( WorldChunk& chunk );
+	void generateHeight( std::shared_ptr< IWorldChunk > chunk );
+	void populate( std::shared_ptr< IWorldChunk > chunk );
 
-	void addTree(std::shared_ptr<VoxelGroup>& tree);
+	void addTree( std::shared_ptr< VoxelGroup >& tree );
 
-	int getSeed()
+	int getSeed() const
 	{
 		return 1234;
 	}

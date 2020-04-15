@@ -6,7 +6,7 @@
 
 #include "game/common/packet/packet_client_information.h"
 #include "game/common/packet/packet_server_information.h"
-#include "game/common/world/world_chunk.h"
+#include "game/common/world/chunk/world_chunk.h"
 
 #include <glfw/glfw3.h>
 #include <imgui/imgui.h>
@@ -40,8 +40,8 @@ void CubixClient::update()
 		for( int z = -m_viewDistance; z <= m_viewDistance; ++z )
 		{
 			m_world.updateForPlayer(
-				{ x + m_moveableView.getPosition().x / WorldChunk::s_sideLength,
-				  z + m_moveableView.getPosition().z / WorldChunk::s_sideLength } );
+				{ x + m_moveableView.getPosition().x / IWorldChunk::GetSideLength(),
+				  z + m_moveableView.getPosition().z / IWorldChunk::GetSideLength() } );
 		}
 	}
 
@@ -62,11 +62,11 @@ void CubixClient::update()
 				 static_cast< int >( m_moveableView.getPosition().z ) );
 	ImGui::Text( "Chunk Position: %d %d %d",
 				 static_cast< int >(
-					 std::floor( m_moveableView.getPosition().x / WorldChunk::s_sideLength ) ),
+					 std::floor( m_moveableView.getPosition().x / IWorldChunk::GetSideLength() ) ),
 				 static_cast< int >(
-					 std::floor( m_moveableView.getPosition().y / WorldChunk::s_sideLength ) ),
-				 static_cast< int >(
-					 std::floor( m_moveableView.getPosition().z / WorldChunk::s_sideLength ) ) );
+					 std::floor( m_moveableView.getPosition().y / IWorldChunk::GetSideLength() ) ),
+				 static_cast< int >( std::floor( m_moveableView.getPosition().z
+												 / IWorldChunk::GetSideLength() ) ) );
 	ImGui::End();
 #endif
 }
@@ -100,7 +100,7 @@ void CubixClient::onEvent( const Core::UserInputHandler::EventUpdate& eventType 
 {
 	if( eventType.instance.isKeyDown( Core::UserInputHandler::F ) )
 	{
-		//m_world.insert( *m_group, m_moveableView.getPosition() );
+		// m_world.insert( *m_group, m_moveableView.getPosition() );
 		m_world.insert( *m_clipboard.getVoxelGroup(), m_moveableView.getPosition() );
 	}
 

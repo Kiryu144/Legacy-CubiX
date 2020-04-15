@@ -4,45 +4,43 @@
 
 #include "world_generator.h"
 
-#include "game/common/world/world_chunk.h"
-
 namespace Game
 {
 
-int WorldGenerator::getHeight( const glm::ivec2& worldPosition )
+int WorldGenerator::getHeight( const glm::ivec2& worldPosition ) const
 {
 	return 0;
 }
 
-void WorldGenerator::setVoxel( Voxel& voxel, unsigned int blocksUnderground )
+Voxel WorldGenerator::getVoxel( unsigned int blocksUnderground ) const
 {
 	if( blocksUnderground == 0 )
 	{
-		voxel = Voxel( { 88, 237, 110, 255 } );
+		return { 88, 237, 110, 255 };
 	}
 	else
 	{
-		voxel = Voxel( { 166, 166, 166, 255 } );
+		return { 166, 166, 166, 255 };
 	}
 }
 
-Voxel WorldGenerator::getWaterVoxel()
+Voxel WorldGenerator::getWaterVoxel() const
 {
 	return { 51, 170, 255, 255 };
 }
 
-void WorldGenerator::generateHeight( WorldChunk& chunk )
+void WorldGenerator::generateHeight( std::shared_ptr< IWorldChunk > chunk )
 {
-	prepareForChunk( chunk.getChunkPosition() );
-	glm::ivec3 worldPosition = chunk.getWorldPosition();
+	prepareForChunk( chunk->getChunkPosition() );
+	glm::ivec3 worldPosition = IWorldChunk::WorldPosFromChunkPos( chunk->getChunkPosition() );
 	bool generateChunkOnTop{ false };
 	bool generateChunkOnBottom{ false };
-	for( int x = 0; x < chunk.getSideLength(); ++x )
+	for( int x = 0; x < IWorldChunk::GetSideLength(); ++x )
 	{
-		for( int z = 0; z < chunk.getSideLength(); ++z )
+		for( int z = 0; z < IWorldChunk::GetSideLength(); ++z )
 		{
-			int y = getHeight( { chunk.getChunkPosition().x * chunk.getSideLength() + x,
-								 chunk.getChunkPosition().z * chunk.getSideLength() + z } );
+			int y = getHeight( { chunk->getChunkPosition().x * IWorldChunk::GetSideLength() + x,
+								 chunk->getChunkPosition().z * IWorldChunk::GetSideLength() + z } );
 
 			if( y < worldPosition.y )
 			{
@@ -50,30 +48,30 @@ void WorldGenerator::generateHeight( WorldChunk& chunk )
 
 				if( worldPosition.y < 0 )
 				{
-					for( int _y = 0; _y > y && _y < WorldChunk::s_sideLength; ++_y )
+					for( int _y = 0; _y > y && _y < IWorldChunk::GetSideLength(); ++_y )
 					{
-						chunk.set( { x, _y, z }, getWaterVoxel() );
+						chunk->setVoxel( { x, _y, z }, getWaterVoxel() );
 					}
 				}
 				continue;
 			}
 
-			if( y >= ( worldPosition.y + static_cast< int >( chunk.getSideLength() ) ) )
+			if( y >= ( worldPosition.y + static_cast< int >( IWorldChunk::GetSideLength() ) ) )
 			{
 				generateChunkOnTop = true;
 				continue;
 			}
 
 			unsigned int depth = 0;
-			for( int _y = WorldChunk::s_sideLength - 1; _y >= 0; --_y )
+			for( int _y = IWorldChunk::GetSideLength() - 1; _y >= 0; --_y )
 			{
 				if( _y <= y - worldPosition.y )
 				{
-					setVoxel( chunk.get( { x, _y, z } ), depth++ );
+					chunk->setVoxel( { x, _y, z }, getVoxel( depth ) );
 				}
 				else if( worldPosition.y < 0 )
 				{
-					chunk.set( { x, _y, z }, getWaterVoxel() );
+					chunk->setVoxel( { x, _y, z }, getWaterVoxel() );
 				}
 			}
 		}
@@ -81,32 +79,19 @@ void WorldGenerator::generateHeight( WorldChunk& chunk )
 
 	if( generateChunkOnTop )
 	{
-		chunk.getWorld().generateChunk( chunk.getChunkPosition() + glm::ivec3{ 0, 1, 0 } );
+		chunk->getWorld().generateChunk( chunk->getChunkPosition() + glm::ivec3{ 0, 1, 0 } );
 	}
 	if( generateChunkOnBottom )
 	{
-		chunk.getWorld().generateChunk( chunk.getChunkPosition() + glm::ivec3{ 0, -1, 0 } );
+		chunk->getWorld().generateChunk( chunk->getChunkPosition() + glm::ivec3{ 0, -1, 0 } );
 	}
 }
 
-void WorldGenerator::populate( WorldChunk& chunk )
+void WorldGenerator::populate( std::shared_ptr< IWorldChunk > chunk )
 {
 	if( m_trees.empty() )
 	{
 		return;
-	}
-
-	srand( static_cast< unsigned int >( chunk.getPosition().x * 22222.55345
-										+ chunk.getPosition().z * M_PI_4 * 200 * getSeed() ) );
-	int trees = rand() % 16;
-	for( int i = 0; i < trees; ++i )
-	{
-		auto& treeVoxelGroup = m_trees.at( rand() % m_trees.size() );
-		glm::ivec2 randomPos{ rand() % WorldChunk::s_sideLength,
-							  rand() % WorldChunk::s_sideLength };
-
-
-
 	}
 }
 

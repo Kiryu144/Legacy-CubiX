@@ -5,13 +5,16 @@
 #ifndef CUBIX_WORLD_CHUNK_CONTAINER_H
 #define CUBIX_WORLD_CHUNK_CONTAINER_H
 
+#include "core/cubix_macro.h"
+
+#include "game/common/voxel/voxel.h"
+#include "game/common/world/chunk/i_world_chunk.h"
+#include "core/logic/lockable.h"
+
 #include <list>
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
-
-
-#include "core/cubix_macro.h"
 
 // clang-format off
 #define GLM_ENABLE_EXPERIMENTAL
@@ -31,9 +34,10 @@ class WorldChunkContainer
 {
 public:
 	typedef std::unordered_map< glm::ivec2, std::shared_ptr< WorldChunkColumn > > ChunkColumnMap;
-	typedef std::list< std::weak_ptr< WorldChunk > > ChunkList;
+	typedef std::list< std::weak_ptr< IWorldChunk > > ChunkList;
 
 protected:
+	std::mutex m_chunkColumnMutex;
 	ChunkColumnMap m_chunkColumnMap;
 	ChunkList m_allChunks;
 	World& m_world;
@@ -48,16 +52,18 @@ public:
 	WorldChunkContainer( World& world );
 
 	// Get chunk from a given chunkpos. Returns nullptr if missing
-	std::shared_ptr< WorldChunk > getChunk( const glm::ivec3& chunkPos );
-	std::shared_ptr< const WorldChunk > getChunk( const glm::ivec3& chunkPos ) const;
+	std::shared_ptr< IWorldChunk > getChunk( const glm::ivec3& chunkPos );
+	std::shared_ptr< const IWorldChunk > getChunk( const glm::ivec3& chunkPos ) const;
 
-	std::vector< std::shared_ptr< WorldChunk > > getSurroundingChunks(const glm::ivec3& chunkPos);
+	Voxel getVoxel( const glm::ivec3& pos, const Voxel& _def = Voxel() ) const;
+
+	std::vector< std::shared_ptr< IWorldChunk > > getSurroundingChunks( const glm::ivec3& chunkPos );
 
 	// Returns true if chunk exists, false if otherwise
 	bool getChunkExists( const glm::ivec3& chunkPos ) const;
 
 	// Creates an empty chunk instance
-	std::shared_ptr< WorldChunk > createChunk( const glm::ivec3& chunkPos );
+	std::shared_ptr< IWorldChunk > createChunk( const glm::ivec3& chunkPos );
 
 	void removeChunk( const glm::ivec3& chunkPos );
 

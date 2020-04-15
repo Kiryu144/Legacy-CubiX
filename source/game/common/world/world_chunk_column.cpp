@@ -4,15 +4,15 @@
 
 #include "world_chunk_column.h"
 
-#include "game/common/world/world_chunk.h"
+#include "game/common/world/chunk/world_chunk.h"
+#include "game/common/world/chunk/world_chunk_factory.h"
+#include "game/common/world/world.h"
 
 namespace Game
 {
 
 WorldChunkColumn::WorldChunkColumn( World& world, const glm::ivec2& chunkPosition )
-	: m_world( world ),
-	  m_chunkPosition( chunkPosition ),
-	  m_yLevelLimits( { WorldChunk::s_sideLength, WorldChunk::s_sideLength } )
+	: m_world( world ), m_chunkPosition( chunkPosition )
 {
 }
 
@@ -34,7 +34,7 @@ WorldChunkColumn::ColumnMap::mapped_type WorldChunkColumn::createEmptyChunkIfAbs
 	{
 		return m_column
 			.insert( { yLevel,
-					   std::shared_ptr< WorldChunk >( new WorldChunk(
+					   std::shared_ptr< IWorldChunk >( m_world.getChunkFactory()->create(
 						   m_world, { m_chunkPosition.x, yLevel, m_chunkPosition.y } ) ) } )
 			.first->second;
 	}

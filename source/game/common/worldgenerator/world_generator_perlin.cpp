@@ -7,7 +7,7 @@
 namespace Game
 {
 
-int WorldGeneratorPerlin::getHeight( const glm::ivec2& worldPosition )
+int WorldGeneratorPerlin::getHeight( const glm::ivec2& worldPosition ) const
 {
 	auto n1 = noise.GetNoise( worldPosition.x / 4.0f, worldPosition.y / 4.0f ) * 60;
 	auto n2 = noise.GetNoise( worldPosition.x / 0.5f, worldPosition.y / 0.5f ) * 5;

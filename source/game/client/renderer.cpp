@@ -4,8 +4,6 @@
 
 #include "renderer.h"
 
-#include "game/common/world/world_chunk.h"
-
 namespace Game
 {
 
@@ -34,26 +32,20 @@ void Renderer::render( World& world )
 			continue;
 		}
 
-		auto chunk = chunkIt.lock();
+		std::shared_ptr< RenderWorldChunk > chunk
+			= std::static_pointer_cast< RenderWorldChunk >( chunkIt.lock() );
 
-		if( chunk->getChunkState() != WorldChunk::State::DONE
-			|| chunk->getMillisecondsNotSeen() > 0 )
-		{
-			continue;
-		}
-
-		chunk->upload();
-
-		if( chunk->getVertexAttribute().getVerticeAmount() == 0 )
+		chunk->uploadWhenNeeded();
+		if( !chunk->isMeshGenerated() || chunk->getMillisecondsNotSeen() > 0
+			|| chunk->getAttributeBuffer().getVerticeAmount() == 0 )
 		{
 			continue;
 		}
 
 		m_chunkShader.setUniform( "u_transformation", chunk->getMatrix() );
 
-		chunk->getVertexAttribute().bind( 0 );
-
-		glDrawArrays( GL_TRIANGLES, 0, chunk->getVertexAttribute().getVerticeAmount() );
+		chunk->getAttributeBuffer().bind( 0 );
+		glDrawArrays( GL_TRIANGLES, 0, chunk->getAttributeBuffer().getVerticeAmount() );
 	}
 }
 

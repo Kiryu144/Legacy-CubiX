@@ -11,7 +11,8 @@
 #include "core/math/glm_math.h"
 
 #include "game/common/voxel/voxel_group.h"
-#include "game/common/world/chunk_worker.h"
+#include "game/common/world/chunk/chunk_worker.h"
+#include "game/common/world/chunk/world_chunk_factory.h"
 #include "game/common/world/world_chunk_column.h"
 #include "game/common/world/world_chunk_container.h"
 
@@ -32,6 +33,7 @@ public:
 
 protected:
 	ChunkWorker m_chunkWorker;
+	std::unique_ptr<IWorldChunkFactory> m_chunkFactory;
 	Core::Lockable< ChunkQueue > m_chunksToGenerate;
 	Core::Lockable< ChunkQueue > m_chunksToDelete;
 
@@ -44,6 +46,7 @@ public:
 	virtual void update( float deltaTime );
 
 	CUBIX_GET_R_CR( m_chunkWorker, ChunkWorker );
+	CUBIX_GET_CR( m_chunkFactory, ChunkFactory );
 
 	void insert( const VoxelGroup& voxelGroup, glm::ivec3 position );
 	void updateForPlayer( const glm::ivec2& chunkPosition );

@@ -19,7 +19,7 @@ private:
 
 protected:
 	void prepareForChunk( const glm::ivec3& chunkPosition ) override;
-	int getHeight( const glm::ivec2& worldPosition ) override;
+	int getHeight( const glm::ivec2& worldPosition ) const override;
 };
 
 } // namespace Game

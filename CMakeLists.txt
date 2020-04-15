@@ -62,8 +62,8 @@ source/core/io/riff_parser.cpp
 source/core/io/riff_parser.h
 source/game/common/cubix.cpp
 source/game/common/cubix.h
-source/game/common/world/world_chunk.cpp
-source/game/common/world/world_chunk.h
+        source/game/common/world/chunk/world_chunk.cpp
+        source/game/common/world/chunk/world_chunk.h
 source/game/common/world/world.cpp
 source/game/common/world/world.h
 source/defines.h
@@ -105,8 +105,8 @@ source/core/logic/no_copy.h
 source/core/logic/memory.h
 source/game/client/renderer.cpp
 source/game/client/renderer.h
-source/game/common/world/chunk_worker.cpp
-source/game/common/world/chunk_worker.h
+        source/game/common/world/chunk/chunk_worker.cpp
+        source/game/common/world/chunk/chunk_worker.h
 source/game/common/worldgenerator/world_generator.cpp
 source/game/common/worldgenerator/world_generator.h
 source/game/common/worldgenerator/world_generator_perlin.cpp
@@ -127,7 +127,7 @@ source/core/opengl/data/single_attribute.h
 source/core/opengl/data/interleaved_attribute.cpp
 source/core/opengl/data/interleaved_attribute.h
 source/game/client/voxel_clipboard.cpp
-source/game/client/voxel_clipboard.h source/game/common/world/world_chunk_manager.cpp source/game/common/world/world_chunk_manager.h)
+source/game/client/voxel_clipboard.h source/game/common/world/world_chunk_manager.cpp source/game/common/world/world_chunk_manager.h source/game/common/world/chunk/i_world_chunk.h source/game/common/world/chunk/render_world_chunk.cpp source/game/common/world/chunk/render_world_chunk.h source/game/common/world/chunk/empty_world_chunk.cpp source/game/common/world/chunk/empty_world_chunk.h source/game/common/world/chunk/world_chunk_factory.h)
 
 add_executable(CubiX ${SOURCE_FILES} resources.rc)
 target_link_libraries(CubiX ${LINKER_TARGETS})

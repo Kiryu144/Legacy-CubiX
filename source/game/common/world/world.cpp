@@ -4,12 +4,17 @@
 
 #include "world.h"
 
-#include "game/common/world/world_chunk.h"
+#include "game/common/world/chunk/world_chunk.h"
 
 namespace Game
 {
 
-World::World() : WorldChunkContainer( *this ), m_chunkWorker( 1 ) {}
+World::World()
+	: WorldChunkContainer( *this ),
+	  m_chunkWorker( 4 ),
+	  m_chunkFactory( new RenderWorldChunkFactory() )
+{
+}
 
 void World::generateChunk( const glm::ivec3& chunkPosition )
 {
@@ -23,13 +28,12 @@ void World::_generateChunk( const glm::ivec3& chunkPosition )
 	if( chunk != nullptr )
 	{
 		m_chunkWorker.queue( chunk );
-		m_chunkWorker.queue( chunk );
-		m_chunkWorker.queue( chunk );
 	}
 }
 
 void World::update( float deltaTime )
 {
+	m_chunkWorker.checkForCrash();
 	{
 		auto lock( m_chunksToGenerate.lockGuard() );
 		for( auto& chunkPosition : m_chunksToGenerate )
@@ -71,9 +75,10 @@ void World::update( float deltaTime )
 
 void World::insert( const VoxelGroup& voxelGroup, glm::ivec3 position )
 {
-	glm::ivec3 lowestChunkPos{ WorldChunk::WorldPosToChunkPos( position ) };
+	/*
+	glm::ivec3 lowestChunkPos{ IWorldChunk::ChunkPosFromWorldPos( position ) };
 	glm::ivec3 affectedChunks{ static_cast< glm::ivec3 >( voxelGroup.getSize() )
-								   / glm::ivec3( WorldChunk::s_sideLength )
+								   / glm::ivec3( IWorldChunk::GetSideLength() )
 							   + glm::ivec3( 2 ) };
 
 	for( int x = 0; x < affectedChunks.x; ++x )
@@ -92,14 +97,14 @@ void World::insert( const VoxelGroup& voxelGroup, glm::ivec3 position )
 				chunk->WorldChunk::lock();
 
 				glm::ivec3 v
-					= position - ( ( chunkPosition )*glm::ivec3( WorldChunk::s_sideLength ) );
+					= position - ( ( chunkPosition )*glm::ivec3( IWorldChunk::GetSideLength() ) );
 				chunk->insert( voxelGroup, v );
 
 				chunk->WorldChunk::unlock();
-				//m_chunkWorker.queue( chunk );
+				// m_chunkWorker.queue( chunk );
 			}
 		}
-	}
+	}*/
 }
 
 void World::updateForPlayer( const glm::ivec2& chunkPosition )

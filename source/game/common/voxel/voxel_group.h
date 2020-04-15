@@ -57,7 +57,7 @@ public:
 
 	void insert( const VoxelGroup& other, const glm::ivec3& position );
 
-	Core::MultipleFacing findVisibleFaces( const glm::uvec3& pos ) const;
+	virtual Core::MultipleFacing findVisibleFaces( const glm::uvec3& pos ) const;
 
 	void regenerateMesh();
 	void upload();

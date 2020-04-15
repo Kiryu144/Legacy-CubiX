@@ -5,6 +5,7 @@
 #ifndef CUBIX_CHUNK_WORKER_H
 #define CUBIX_CHUNK_WORKER_H
 
+#include "core/logic/lockable.h"
 #include "core/logic/no_copy.h"
 
 #include <atomic>
@@ -15,7 +16,7 @@
 namespace Game
 {
 
-class WorldChunk;
+class IWorldChunk;
 
 class ChunkWorker : Core::NoCopy
 {
@@ -25,16 +26,14 @@ private:
 
 protected:
 	std::list< std::thread > m_threads;
-
-	std::mutex m_queueMutex;
-	std::list< std::weak_ptr< WorldChunk > > m_queue;
+	Core::Lockable< std::list< std::shared_ptr< IWorldChunk > > > m_queue;
 
 public:
 	ChunkWorker( unsigned int threadAmount );
 	~ChunkWorker();
 
-	void queue( std::shared_ptr< WorldChunk > chunk,
-				bool priority = false );
+	void queue( std::shared_ptr< IWorldChunk > chunk, bool priority = false );
+	void checkForCrash();
 
 	size_t size();
 };

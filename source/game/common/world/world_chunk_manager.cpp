@@ -4,7 +4,7 @@
 
 #include "world_chunk_manager.h"
 
-#include "game/common/world/world_chunk.h"
+#include "game/common/world/chunk/world_chunk.h"
 #include "game/common/world/world_chunk_container.h"
 
 namespace Game
@@ -20,6 +20,7 @@ void WorldChunkManager::updateChunk( const glm::ivec3& chunkPosition )
 	auto surroundingChunks = m_chunkContainer.getSurroundingChunks( chunkPosition );
 	for( const auto& chunk : surroundingChunks )
 	{
+		
 	}
 }
 
