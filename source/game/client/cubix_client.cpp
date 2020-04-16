@@ -19,7 +19,7 @@ CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
 	m_gameTime.setFPSLimit( 10000 );
 	connect( "127.0.0.1", 4444 );
 	m_renderer.loadShaders();
-	m_moveableView.setSpeed( 2 );
+	m_moveableView.setSpeed( 20 );
 
 	m_clipboard.createCube( 1, { 255, 64, 128 } );
 }
@@ -35,13 +35,19 @@ void CubixClient::update()
 		quit();
 	}
 
+	glm::ivec3 playerChunkPos{ IWorldChunk::ChunkPosFromWorldPos( m_moveableView.getPosition() ) };
 	for( int x = -m_viewDistance; x <= m_viewDistance; ++x )
 	{
 		for( int z = -m_viewDistance; z <= m_viewDistance; ++z )
 		{
-			m_world.updateForPlayer(
-				{ x + m_moveableView.getPosition().x / IWorldChunk::GetSideLength(),
-				  z + m_moveableView.getPosition().z / IWorldChunk::GetSideLength() } );
+			glm::ivec2 chunkPos{ playerChunkPos.x + x, playerChunkPos.z + z };
+			double distance{ std::sqrt(
+				std::pow( static_cast< float >( chunkPos.x ) - playerChunkPos.x, 2 )
+				+ std::pow( static_cast< float >( chunkPos.y ) - playerChunkPos.z, 2 ) ) };
+			if( distance <= m_viewDistance )
+			{
+				m_world.updateForPlayer( chunkPos );
+			}
 		}
 	}
 
@@ -55,7 +61,7 @@ void CubixClient::update()
 	ImGui::Text( "FPS: %d", int( m_gameTime.getFPS() ) );
 	ImGui::Text( "Chunks loaded: %d", m_world.getAllChunks().size() );
 	ImGui::Text( "Chunk queue: %d", m_world.getChunkWorker().size() );
-	ImGui::SliderInt( "View Distance", &m_viewDistance, 2, 16 );
+	ImGui::SliderInt( "View Distance", &m_viewDistance, 2, 32 );
 	ImGui::Text( "Position: %d %d %d",
 				 static_cast< int >( m_moveableView.getPosition().x ),
 				 static_cast< int >( m_moveableView.getPosition().y ),

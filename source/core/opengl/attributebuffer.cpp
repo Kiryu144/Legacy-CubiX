@@ -38,6 +38,7 @@ void AttributeBuffer::upload( void* data, size_t vertices )
 	gl_log_error( glBindBuffer( m_bufferTarget, m_vbo.getID() ) );
 	gl_log_error( glBufferData( m_bufferTarget, m_totalSize, data, GL_STATIC_DRAW ) );
 }
+
 bool AttributeBuffer::isValid() const
 {
 	return m_vbo.getID() > 0 && m_vertices > 0;

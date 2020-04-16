@@ -22,17 +22,17 @@ class World;
 class IWorldChunk
 {
 public:
-	static constexpr unsigned int GetSideLength()
+	static constexpr int GetSideLength()
 	{
 		return 32;
 	}
 
-	static constexpr unsigned int GetArea()
+	static constexpr int GetArea()
 	{
 		return GetSideLength() * GetSideLength();
 	}
 
-	static constexpr unsigned int GetVolume()
+	static constexpr int GetVolume()
 	{
 		return GetSideLength() * GetSideLength() * GetSideLength();
 	}
@@ -48,8 +48,7 @@ public:
 		cubix_assert( position.x < GetSideLength() && position.y < GetSideLength()
 						  && position.z < GetSideLength(),
 					  "Out of range" );
-		return ( position.z * GetArea() ) + ( position.y * GetSideLength() )
-			+ position.x;
+		return ( position.z * GetArea() ) + ( position.y * GetSideLength() ) + position.x;
 	}
 
 	static glm::uvec3 GetPositionForIndex( unsigned int index )

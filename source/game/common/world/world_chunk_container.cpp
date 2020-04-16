@@ -83,7 +83,7 @@ std::shared_ptr< WorldChunkColumn > WorldChunkContainer::getOrCreateChunkColumn(
 
 void WorldChunkContainer::removeChunk( const glm::ivec3& chunkPos )
 {
-	auto column = getChunkColumn( chunkPos );
+	auto column = getChunkColumn( glm::ivec2{ chunkPos.x, chunkPos.z } );
 	if( column != nullptr )
 	{
 		column->removeChunk( chunkPos.y );
