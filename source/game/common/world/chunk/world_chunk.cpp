@@ -10,7 +10,7 @@ namespace Game
 {
 
 WorldChunk::WorldChunk( World& world, const glm::ivec3& chunkPosition )
-	: m_chunkPosition( chunkPosition ), m_world( world )
+	: EmptyWorldChunk( world, chunkPosition )
 {
 }
 
@@ -37,16 +37,6 @@ const Voxel& WorldChunk::getVoxel( const glm::uvec3& position ) const
 	return m_data[ GetIndexForPosition( position ) ];
 }
 
-World& WorldChunk::getWorld() const
-{
-	return m_world;
-}
-
-const glm::ivec3& WorldChunk::getChunkPosition() const
-{
-	return m_chunkPosition;
-}
-
 bool WorldChunk::isPopulated() const
 {
 	return m_isPopulated;
@@ -65,16 +55,6 @@ void WorldChunk::setPopulated()
 void WorldChunk::setGenerated()
 {
 	m_isGenerated = true;
-}
-
-void WorldChunk::setMillisecondsNotSeen( int ms )
-{
-	m_millisecondsNotSeen = ms;
-}
-
-int WorldChunk::getMillisecondsNotSeen()
-{
-	return m_millisecondsNotSeen;
 }
 
 } // namespace Game

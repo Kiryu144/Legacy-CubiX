@@ -17,7 +17,6 @@ protected:
 	glm::ivec3 m_chunkPosition;
 
 	int m_millisecondsNotSeen{ 0 };
-
 public:
 	EmptyWorldChunk( World& world, const glm::ivec3& chunkPosition );
 
