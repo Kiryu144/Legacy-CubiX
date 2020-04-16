@@ -78,8 +78,7 @@ int RenderWorldChunk::getACColorCorrectionForCube( const Core::MultipleFacing::F
 		{ 1, 1, 0 },   { 1, 1, -1 },   { 0, 1, -1 },  { 1, 1, 0 },	 { 1, 1, -1 },	 { 0, 1, -1 },
 		{ -1, 1, 0 },  { -1, 1, 1 },   { 0, 1, 1 },	  { 1, 1, 0 },	 { 1, 1, 1 },	 { 0, 1, 1 },
 	};
-	const int& i{ static_cast< const int& >( Core::MultipleFacing::IndexOf( face ) * 18
-											 + index * 3 ) };
+	int i{ Core::MultipleFacing::IndexOf( face ) * 18 + index * 3 };
 	bool side1	= getVoxelFromWorld( pos + s_acLookups[ i + 0 ] ).exists();
 	bool corner = getVoxelFromWorld( pos + s_acLookups[ i + 1 ] ).exists();
 	bool side2	= getVoxelFromWorld( pos + s_acLookups[ i + 2 ] ).exists();
@@ -94,7 +93,7 @@ void RenderWorldChunk::regenerateMesh()
 	}
 
 	m_vertices.clear();
-	m_vertices.reserve( GetVolume() * 36 );
+	m_vertices.reserve( GetVolume() );
 	for( int x = 0; x < GetSideLength(); ++x )
 	{
 		for( int y = 0; y < GetSideLength(); ++y )
@@ -121,7 +120,7 @@ void RenderWorldChunk::regenerateMesh()
 						vertex.color	= voxel;
 						vertex.position = glm::vec3( pos ) + GetPosForCube( face, vertice );
 						vertex.normal	= GetNormForCube( face );
-						int acDarkness	= getACColorCorrectionForCube( face, pos, vertice );
+						int acDarkness	= getACColorCorrectionForCube( face, pos, vertice ) * 20;
 						vertex.color.add( -acDarkness, -acDarkness, -acDarkness );
 						m_vertices.push_back( vertex );
 					}

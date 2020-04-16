@@ -47,7 +47,7 @@ void World::update( float deltaTime )
 		auto lock( m_chunksToDelete.lockGuard() );
 		for( auto& chunkPosition : m_chunksToDelete )
 		{
-			_deleteChunk( chunkPosition );
+			//_deleteChunk( chunkPosition );
 		}
 		m_chunksToDelete.clear();
 	}

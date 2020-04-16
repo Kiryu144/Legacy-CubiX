@@ -36,8 +36,8 @@ protected:
 	glm::ivec3 m_chunkPosition;
 	State m_chunkState{ State::NEW };
 
-	std::atomic_bool m_isGenerated;
-	std::atomic_bool m_isPopulated;
+	std::atomic_bool m_isGenerated{ false };
+	std::atomic_bool m_isPopulated{ false };
 
 	int m_millisecondsNotSeen{ 0 };
 

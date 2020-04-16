@@ -23,7 +23,7 @@ void Renderer::render( World& world )
 	m_chunkShader.setUniform( "u_directionalLightPosition",
 							  glm::vec3{ 5000.0f, -100000.0f, 14400.0f } );
 	m_chunkShader.setUniform( "u_skyColor", glm::vec3( 179 / 255.0f, 210 / 255.0f, 238 / 255.0f ) );
-	m_chunkShader.setUniform( "u_density", 0.004f );
+	m_chunkShader.setUniform( "u_density", 0.0004f );
 
 	for( auto& chunkIt : world.getAllChunks() )
 	{
