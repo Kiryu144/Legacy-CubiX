@@ -17,6 +17,7 @@ protected:
 	glm::ivec3 m_chunkPosition;
 
 	int m_millisecondsNotSeen{ 0 };
+
 public:
 	EmptyWorldChunk( World& world, const glm::ivec3& chunkPosition );
 
@@ -31,6 +32,7 @@ public:
 	void setGenerated() override {}
 	void setMillisecondsNotSeen( int ms ) override;
 	int getMillisecondsNotSeen() override;
+	size_t getVoxelCount() override;
 };
 
 } // namespace Game

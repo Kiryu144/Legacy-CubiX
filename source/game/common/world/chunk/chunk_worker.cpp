@@ -58,6 +58,10 @@ void ChunkWorker::worker()
 			{
 				// TODO: Implement
 				chunk->setPopulated();
+				if( chunk->getVoxelCount() == 0 )
+				{
+					chunk->getWorld().deleteChunk( chunk->getChunkPosition() );
+				}
 				wasWorkDone = true;
 			}
 

@@ -89,6 +89,8 @@ public:
 
 	virtual void setMillisecondsNotSeen( int ms ) = 0;
 	virtual int getMillisecondsNotSeen()		  = 0;
+
+	virtual size_t getVoxelCount() = 0;
 };
 
 } // namespace Game

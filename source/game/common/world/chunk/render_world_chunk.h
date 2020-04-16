@@ -12,6 +12,7 @@
 #include "game/common/world/chunk/world_chunk.h"
 
 #include <atomic>
+#include <bitset>
 
 namespace Game
 {
@@ -35,6 +36,8 @@ protected:
 	Core::AttributeBuffer m_attributeBuffer;
 	std::vector< Vertex > m_vertices;
 
+	std::bitset< GetVolume() > m_renderableVoxels;
+
 	std::mutex m_uploadMutex;
 	bool m_upload{ false };
 
@@ -46,6 +49,8 @@ public:
 	CUBIX_GET_R_CR( m_attributeBuffer, AttributeBuffer );
 
 	Core::MultipleFacing findVisibleFaces( const glm::uvec3& pos ) const;
+
+	void setVoxel( const glm::uvec3& position, const Voxel& voxel ) override;
 
 	void regenerateMesh();
 	void uploadWhenNeeded();

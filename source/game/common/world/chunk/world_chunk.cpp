@@ -29,7 +29,13 @@ Voxel WorldChunk::getVoxelFromWorld( const glm::ivec3& position, const Voxel& _d
 
 void WorldChunk::setVoxel( const glm::uvec3& position, const Voxel& voxel )
 {
-	m_data[ GetIndexForPosition( position ) ] = voxel;
+	auto& existingVoxel = m_data[ GetIndexForPosition( position ) ];
+	if( existingVoxel.exists() != voxel.exists() )
+	{
+		m_voxelCount += voxel.exists() ? +1 : -1;
+	}
+
+	existingVoxel = voxel;
 }
 
 const Voxel& WorldChunk::getVoxel( const glm::uvec3& position ) const
@@ -55,6 +61,11 @@ void WorldChunk::setPopulated()
 void WorldChunk::setGenerated()
 {
 	m_isGenerated = true;
+}
+
+size_t WorldChunk::getVoxelCount()
+{
+	return m_voxelCount;
 }
 
 } // namespace Game

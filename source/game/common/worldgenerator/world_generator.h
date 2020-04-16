@@ -39,7 +39,7 @@ public:
 
 	int getSeed() const
 	{
-		return 1234;
+		return 123555;
 	}
 };
 

@@ -57,4 +57,9 @@ int EmptyWorldChunk::getMillisecondsNotSeen()
 	return m_millisecondsNotSeen;
 }
 
+size_t EmptyWorldChunk::getVoxelCount()
+{
+	return 0;
+}
+
 } // namespace Game

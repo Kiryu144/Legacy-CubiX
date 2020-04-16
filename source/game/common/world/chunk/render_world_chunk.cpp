@@ -180,4 +180,18 @@ void RenderWorldChunk::setMeshGenerated()
 	m_meshGenerated = true;
 }
 
+void RenderWorldChunk::setVoxel( const glm::uvec3& position, const Voxel& voxel )
+{
+	auto index			= GetIndexForPosition( position );
+	auto& existingVoxel = m_data[ index ];
+
+	if( existingVoxel.exists() != voxel.exists() )
+	{
+		m_voxelCount += voxel.exists() ? +1 : -1;
+	}
+	m_renderableVoxels[ index ] = voxel.exists();
+
+	existingVoxel = voxel;
+}
+
 } // namespace Game
