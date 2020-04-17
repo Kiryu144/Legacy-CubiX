@@ -72,8 +72,8 @@ source/game/client/moveable_view.h
 source/core/math/view.cpp
 source/core/math/view.h
 source/core/math/glm_math.h
-source/core/logic/game_time.cpp
-source/core/logic/game_time.h
+        source/core/time/game_time.cpp
+        source/core/time/game_time.h
 source/core/net/net_client.cpp
 source/core/net/net_client.h
 source/core/net/net_server.cpp
@@ -127,7 +127,7 @@ source/core/opengl/data/single_attribute.h
 source/core/opengl/data/interleaved_attribute.cpp
 source/core/opengl/data/interleaved_attribute.h
 source/game/client/voxel_clipboard.cpp
-source/game/client/voxel_clipboard.h source/game/common/world/world_chunk_manager.cpp source/game/common/world/world_chunk_manager.h source/game/common/world/chunk/i_world_chunk.h source/game/common/world/chunk/render_world_chunk.cpp source/game/common/world/chunk/render_world_chunk.h source/game/common/world/chunk/empty_world_chunk.cpp source/game/common/world/chunk/empty_world_chunk.h source/game/common/world/chunk/world_chunk_factory.h)
+source/game/client/voxel_clipboard.h source/game/common/world/world_chunk_manager.cpp source/game/common/world/world_chunk_manager.h source/game/common/world/chunk/i_world_chunk.h source/game/common/world/chunk/render_world_chunk.cpp source/game/common/world/chunk/render_world_chunk.h source/game/common/world/chunk/empty_world_chunk.cpp source/game/common/world/chunk/empty_world_chunk.h source/game/common/world/chunk/world_chunk_factory.h source/core/time/stop_watch.cpp source/core/time/stop_watch.h source/core/time/average_stop_watch.cpp source/core/time/average_stop_watch.h source/game/client/imgui_performance_counter.cpp source/game/client/imgui_performance_counter.h source/core/logic/singelton.h)
 
 add_executable(CubiX ${SOURCE_FILES} resources.rc)
 target_link_libraries(CubiX ${LINKER_TARGETS})

@@ -4,6 +4,7 @@
 
 #include "cubix_client.h"
 
+#include "game/client/imgui_performance_counter.h"
 #include "game/common/packet/packet_client_information.h"
 #include "game/common/packet/packet_server_information.h"
 #include "game/common/world/chunk/world_chunk.h"
@@ -20,12 +21,11 @@ CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
 	connect( "127.0.0.1", 4444 );
 	m_renderer.loadShaders();
 	m_moveableView.setSpeed( 20 );
-
-	m_clipboard.createCube( 1, { 255, 64, 128 } );
 }
 
 void CubixClient::update()
 {
+	Game::ImguiPerformanceCounter::Get().getFrameTime().start();
 	Cubix::update();
 	Core::Window::Update();
 	m_window.swap();
@@ -74,7 +74,9 @@ void CubixClient::update()
 				 static_cast< int >( std::floor( m_moveableView.getPosition().z
 												 / IWorldChunk::GetSideLength() ) ) );
 	ImGui::End();
+	//Game::ImguiPerformanceCounter::Get().draw();
 #endif
+	Game::ImguiPerformanceCounter::Get().getFrameTime().stop();
 }
 
 void CubixClient::onPacketReceive( Core::PeerID id, std::istream& istream )
@@ -107,7 +109,6 @@ void CubixClient::onEvent( const Core::UserInputHandler::EventUpdate& eventType 
 	if( eventType.instance.isKeyDown( Core::UserInputHandler::F ) )
 	{
 		// m_world.insert( *m_group, m_moveableView.getPosition() );
-		m_world.insert( *m_clipboard.getVoxelGroup(), m_moveableView.getPosition() );
 	}
 
 	if( eventType.instance.isKeyDown( Core::UserInputHandler::R ) )

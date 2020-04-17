@@ -28,6 +28,7 @@ protected:
 public:
 	AxisAlignedBB( const glm::vec3& min, const glm::vec3& max );
 
+	void translate(const glm::vec3& v);
 	glm::vec3 getOverlapping( const AxisAlignedBB& other ) const;
 };
 

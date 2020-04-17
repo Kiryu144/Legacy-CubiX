@@ -5,8 +5,8 @@
 #ifndef CUBIX_CUBIX_H
 #define CUBIX_CUBIX_H
 
-#include "core/logic/game_time.h"
 #include "core/net/net_instance.h"
+#include "core/time/game_time.h"
 
 #include "game/common/packet/packet.h"
 #include "game/common/world/world.h"

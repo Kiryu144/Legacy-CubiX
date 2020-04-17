@@ -37,4 +37,11 @@ glm::vec3 AxisAlignedBB::getOverlapping( const AxisAlignedBB& other ) const
 	return overlappingAxis;
 }
 
+void AxisAlignedBB::translate( const glm::vec3& v )
+{
+	m_min += v;
+	m_max += v;
+	m_center += v;
+}
+
 } // namespace Core

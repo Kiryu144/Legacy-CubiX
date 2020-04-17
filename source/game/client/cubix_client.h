@@ -10,7 +10,6 @@
 
 #include "game/client/moveable_view.h"
 #include "game/client/renderer.h"
-#include "game/client/voxel_clipboard.h"
 #include "game/common/cubix.h"
 
 namespace Game
@@ -27,7 +26,6 @@ private:
 	Renderer m_renderer;
 
 	MoveableView m_moveableView;
-	VoxelClipboard m_clipboard;
 
 	std::unique_ptr< VoxelGroup > m_group{ nullptr };
 

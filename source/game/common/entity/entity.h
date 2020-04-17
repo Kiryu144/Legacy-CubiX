@@ -20,7 +20,7 @@ class Entity : public Core::Transform
 protected:
 	bool m_remove{ false };
 	EntityType m_entityType;
-	Game::World* m_world;
+	Game::World& m_world;
 
 public:
 	Entity( World& world );
