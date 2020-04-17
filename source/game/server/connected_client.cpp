@@ -22,14 +22,4 @@ enet_uint32 ConnectedClient::getId() const
 	return m_id;
 }
 
-Player* ConnectedClient::getEntity()
-{
-	return m_entity;
-}
-
-void ConnectedClient::setEntity( Player* entity )
-{
-	m_entity = entity;
-}
-
 } // namespace Game

@@ -5,12 +5,12 @@
 #ifndef CUBIX_VIEW_H
 #define CUBIX_VIEW_H
 
-#include "core/math/transform.h"
+#include "core/math/rigidbody.h"
 
 namespace Core
 {
 
-class View : public Transform
+class View : public Rigidbody
 {
 protected:
 public:

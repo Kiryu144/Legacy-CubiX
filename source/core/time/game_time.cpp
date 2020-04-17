@@ -43,7 +43,7 @@ unsigned int GameTime::getFPS() const
 
 float GameTime::getDeltaTime() const
 {
-	return std::chrono::duration_cast< resolution >( m_deltaTime ).count() / 1000.0f;
+	return std::chrono::duration_cast< resolution >( m_deltaTime ).count() / 1000000.0f;
 }
 
 void GameTime::setFPSLimit( unsigned int fpsLimit )

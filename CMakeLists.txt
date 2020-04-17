@@ -84,14 +84,7 @@ source/game/client/cubix_client.cpp
 source/game/client/cubix_client.h
 source/game/server/cubix_server.cpp
 source/game/server/cubix_server.h
-source/game/common/entity/entity.cpp
-source/game/common/entity/entity.h
-source/game/common/entity/player.cpp
-source/game/common/entity/player.h
-source/game/common/entity/living_entity.cpp
-source/game/common/entity/living_entity.h
-source/game/common/entity/entitytype.h
-source/game/common/packet/packet.h
+        source/game/common/packet/packet.h
 source/game/common/packet/packet.cpp
 source/game/common/packet/packet_client_information.cpp
 source/game/common/packet/packet_client_information.h
@@ -107,10 +100,10 @@ source/game/client/renderer.cpp
 source/game/client/renderer.h
         source/game/common/world/chunk/chunk_worker.cpp
         source/game/common/world/chunk/chunk_worker.h
-source/game/common/worldgenerator/world_generator.cpp
-source/game/common/worldgenerator/world_generator.h
-source/game/common/worldgenerator/world_generator_perlin.cpp
-source/game/common/worldgenerator/world_generator_perlin.h
+        source/game/common/world/worldgenerator/world_generator.cpp
+        source/game/common/world/worldgenerator/world_generator.h
+        source/game/common/world/worldgenerator/world_generator_perlin.cpp
+        source/game/common/world/worldgenerator/world_generator_perlin.h
 source/game/common/world/world_chunk_column.cpp
 source/game/common/world/world_chunk_column.h
 source/game/common/world/world_chunk_container.cpp
@@ -127,7 +120,7 @@ source/core/opengl/data/single_attribute.h
 source/core/opengl/data/interleaved_attribute.cpp
 source/core/opengl/data/interleaved_attribute.h
 source/game/client/voxel_clipboard.cpp
-source/game/client/voxel_clipboard.h source/game/common/world/world_chunk_manager.cpp source/game/common/world/world_chunk_manager.h source/game/common/world/chunk/i_world_chunk.h source/game/common/world/chunk/render_world_chunk.cpp source/game/common/world/chunk/render_world_chunk.h source/game/common/world/chunk/empty_world_chunk.cpp source/game/common/world/chunk/empty_world_chunk.h source/game/common/world/chunk/world_chunk_factory.h source/core/time/stop_watch.cpp source/core/time/stop_watch.h source/core/time/average_stop_watch.cpp source/core/time/average_stop_watch.h source/game/client/imgui_performance_counter.cpp source/game/client/imgui_performance_counter.h source/core/logic/singelton.h)
+source/game/client/voxel_clipboard.h source/game/common/world/world_chunk_manager.cpp source/game/common/world/world_chunk_manager.h source/game/common/world/chunk/i_world_chunk.h source/game/common/world/chunk/render_world_chunk.cpp source/game/common/world/chunk/render_world_chunk.h source/game/common/world/chunk/empty_world_chunk.cpp source/game/common/world/chunk/empty_world_chunk.h source/game/common/world/chunk/world_chunk_factory.h source/core/time/stop_watch.cpp source/core/time/stop_watch.h source/core/time/average_stop_watch.cpp source/core/time/average_stop_watch.h source/game/client/imgui_performance_counter.cpp source/game/client/imgui_performance_counter.h source/core/logic/singelton.h source/core/math/rigidbody.cpp source/core/math/rigidbody.h)
 
 add_executable(CubiX ${SOURCE_FILES} resources.rc)
 target_link_libraries(CubiX ${LINKER_TARGETS})

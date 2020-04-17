@@ -6,8 +6,8 @@
 
 #include "game/common/world/chunk/i_world_chunk.h"
 #include "game/common/world/chunk/render_world_chunk.h"
-#include "game/common/worldgenerator/world_generator.h"
-#include "game/common/worldgenerator/world_generator_perlin.h"
+#include "game/common/world/worldgenerator/world_generator.h"
+#include "game/common/world/worldgenerator/world_generator_perlin.h"
 
 #include <string.h>
 

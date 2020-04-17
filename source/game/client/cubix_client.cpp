@@ -20,7 +20,7 @@ CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
 	m_gameTime.setFPSLimit( 10000 );
 	connect( "127.0.0.1", 4444 );
 	m_renderer.loadShaders();
-	m_moveableView.setSpeed( 20 );
+	m_moveableView.setSpeed( 30 );
 }
 
 void CubixClient::update()

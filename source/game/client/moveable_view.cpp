@@ -73,18 +73,23 @@ void MoveableView::update( double deltaTime )
 		return;
 	}
 
-	getPosition() += glm::vec3{ m_moveDirection.x * 0.01 * deltaTime * m_moveSpeed,
-								m_moveDirection.y * 0.01 * deltaTime * m_moveSpeed,
-								m_moveDirection.z * 0.01 * deltaTime * m_moveSpeed };
-
 	getRotation() += glm::vec3{ m_turnDirection.x * 0.1 * m_turnSensitivity,
 								m_turnDirection.y * 0.1 * m_turnSensitivity,
 								0.0f };
+
+	setAirDrag( 200 );
+	if( m_moveDirection.x != 0 || m_moveDirection.y != 0 || m_moveDirection.z != 0 )
+	{
+		setVelocity( m_moveDirection * glm::vec3( m_moveSpeed * 1.0f ) );
+		clampVelocity( glm::vec3( m_moveSpeed ) );
+	}
 
 	getRotation().x = glm::clamp( getRotation().x, -89.9f, 89.0f );
 
 	m_moveDirection = { 0.0, 0.0, 0.0 };
 	m_turnDirection = { 0.0, 0.0 };
+
+	Core::Rigidbody::update( deltaTime );
 }
 
 } // namespace Game

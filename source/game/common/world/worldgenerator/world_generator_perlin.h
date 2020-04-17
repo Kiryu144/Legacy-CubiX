@@ -5,7 +5,7 @@
 #ifndef CUBIX_WORLD_GENERATOR_PERLIN_H
 #define CUBIX_WORLD_GENERATOR_PERLIN_H
 
-#include "game/common/worldgenerator/world_generator.h"
+#include "world_generator.h"
 
 #include <fast_noise/FastNoise.h>
 
