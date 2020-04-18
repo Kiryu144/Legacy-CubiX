@@ -23,6 +23,25 @@ RenderWorldChunk::RenderWorldChunk( World& world, const glm::ivec3& chunkPositio
 	m_shaderKey			 = shaderRegistry.getKey( "world_chunk_shader" ).value();
 }
 
+bool RenderWorldChunk::IsFullRenderVoxel( const glm::ivec3& pos,
+										  const RenderWorldChunk::FullRenderVoxelBitset& bitset )
+{
+	return bitset[ IWorldChunk::GetIndexForPosition( pos ) ];
+}
+
+bool RenderWorldChunk::IsFullRenderVoxelSurr( const glm::ivec3& pos,
+											  const FullRenderVoxelBitset ( *bitset )[ 3 ][ 3 ] )
+{
+	glm::ivec3 chunkOffset{
+		std::floor( static_cast< float >( pos.x ) / IWorldChunk::GetSideLength() ),
+		std::floor( static_cast< float >( pos.y ) / IWorldChunk::GetSideLength() ),
+		std::floor( static_cast< float >( pos.z ) / IWorldChunk::GetSideLength() )
+	};
+	return IsFullRenderVoxel(
+		pos - ( chunkOffset * glm::ivec3( IWorldChunk::GetSize() ) ),
+		bitset[ chunkOffset.x + 1 ][ chunkOffset.y + 1 ][ chunkOffset.z + 1 ] );
+}
+
 const glm::vec3& RenderWorldChunk::GetPosForCube( const Core::MultipleFacing::Face& face,
 												  int index )
 {
@@ -57,9 +76,11 @@ const glm::vec3& RenderWorldChunk::GetNormForCube( const Core::MultipleFacing::F
 	return s_normals[ Core::MultipleFacing::IndexOf( face ) ];
 }
 
-int RenderWorldChunk::getACColorCorrectionForCube( const Core::MultipleFacing::Face& face,
-												   const glm::ivec3& pos,
-												   int index )
+int RenderWorldChunk::getACColorCorrectionForCube(
+	const Core::MultipleFacing::Face& face,
+	const glm::ivec3& pos,
+	int index,
+	const FullRenderVoxelBitset ( *bitset )[ 3 ][ 3 ] )
 {
 	static const glm::ivec3 s_acLookups[ 6 * 6 * 3 ]{
 		{ 1, 0, -1 },  { 1, -1, -1 },  { 0, -1, -1 }, { 0, -1, -1 }, { -1, -1, -1 }, { -1, 0, -1 },
@@ -87,9 +108,9 @@ int RenderWorldChunk::getACColorCorrectionForCube( const Core::MultipleFacing::F
 		{ -1, 1, 0 },  { -1, 1, 1 },   { 0, 1, 1 },	  { 1, 1, 0 },	 { 1, 1, 1 },	 { 0, 1, 1 },
 	};
 	int i{ Core::MultipleFacing::IndexOf( face ) * 18 + index * 3 };
-	bool side1	= getVoxelFromWorld( pos + s_acLookups[ i + 0 ] ).exists();
-	bool corner = getVoxelFromWorld( pos + s_acLookups[ i + 1 ] ).exists();
-	bool side2	= getVoxelFromWorld( pos + s_acLookups[ i + 2 ] ).exists();
+	bool side1	= IsFullRenderVoxelSurr( pos + s_acLookups[ i + 0 ], bitset );
+	bool corner = IsFullRenderVoxelSurr( pos + s_acLookups[ i + 1 ], bitset );
+	bool side2	= IsFullRenderVoxelSurr( pos + s_acLookups[ i + 2 ], bitset );
 	return ( side1 && side2 ) ? 3 : side1 + side2 + corner;
 }
 
@@ -98,6 +119,24 @@ void RenderWorldChunk::regenerateMesh()
 	{
 		std::lock_guard< decltype( m_uploadMutex ) > lock_guard( m_uploadMutex );
 		m_upload = false;
+	}
+
+	FullRenderVoxelBitset fullRenderBlocks[ 3 ][ 3 ][ 3 ];
+
+	for( int x = -1; x <= 1; ++x )
+	{
+		for( int y = -1; y <= 1; ++y )
+		{
+			for( int z = -1; z <= 1; ++z )
+			{
+				auto chunk = m_world.getChunk( m_chunkPosition + glm::ivec3{ x, y, z } );
+				if( chunk != nullptr )
+				{
+					fullRenderBlocks[ x + 1 ][ y + 1 ][ z + 1 ]
+						= static_cast< decltype( this ) >( chunk.get() )->m_renderableVoxels;
+				}
+			}
+		}
 	}
 
 	m_vertices.clear();
@@ -115,7 +154,7 @@ void RenderWorldChunk::regenerateMesh()
 					continue;
 				}
 
-				const auto& visibleFaces{ findVisibleFaces( pos ) };
+				const auto& visibleFaces{ findVisibleFaces( pos, fullRenderBlocks ) };
 				for( const auto& face : Core::MultipleFacing::Facings )
 				{
 					if( !visibleFaces.hasFace( face ) )
@@ -128,7 +167,9 @@ void RenderWorldChunk::regenerateMesh()
 						vertex.color	= voxel;
 						vertex.position = glm::vec3( pos ) + GetPosForCube( face, vertice );
 						vertex.normal	= GetNormForCube( face );
-						int acDarkness	= getACColorCorrectionForCube( face, pos, vertice ) * 20;
+						int acDarkness
+							= getACColorCorrectionForCube( face, pos, vertice, fullRenderBlocks )
+							* 20;
 						vertex.color.add( -acDarkness, -acDarkness, -acDarkness );
 						m_vertices.push_back( vertex );
 					}
@@ -143,23 +184,24 @@ void RenderWorldChunk::regenerateMesh()
 	}
 }
 
-Core::MultipleFacing RenderWorldChunk::findVisibleFaces( const glm::uvec3& pos ) const
+Core::MultipleFacing RenderWorldChunk::findVisibleFaces(
+	const glm::uvec3& pos, const FullRenderVoxelBitset ( *bitset )[ 3 ][ 3 ] ) const
 {
 	using namespace Core;
 	glm::ivec3 ipos{ pos };
 	MultipleFacing facing;
 	facing.setFace( MultipleFacing::LEFT,
-					getVoxelFromWorld( ipos + glm::ivec3{ 1, 0, 0 } ).a < 255 );
+					!IsFullRenderVoxelSurr( ipos + glm::ivec3{ 1, 0, 0 }, bitset ) );
 	facing.setFace( MultipleFacing::BACK,
-					getVoxelFromWorld( ipos + glm::ivec3{ 0, 0, 1 } ).a < 255 );
+					!IsFullRenderVoxelSurr( ipos + glm::ivec3{ 0, 0, 1 }, bitset ) );
 	facing.setFace( MultipleFacing::BOTTOM,
-					getVoxelFromWorld( ipos + glm::ivec3{ 0, 1, 0 } ).a < 255 );
+					!IsFullRenderVoxelSurr( ipos + glm::ivec3{ 0, 1, 0 }, bitset ) );
 	facing.setFace( MultipleFacing::RIGHT,
-					getVoxelFromWorld( ipos + glm::ivec3{ -1, 0, 0 } ).a < 255 );
+					!IsFullRenderVoxelSurr( ipos + glm::ivec3{ -1, 0, 0 }, bitset ) );
 	facing.setFace( MultipleFacing::FRONT,
-					getVoxelFromWorld( ipos + glm::ivec3{ 0, 0, -1 } ).a < 255 );
+					!IsFullRenderVoxelSurr( ipos + glm::ivec3{ 0, 0, -1 }, bitset ) );
 	facing.setFace( MultipleFacing::TOP,
-					getVoxelFromWorld( ipos + glm::ivec3{ 0, -1, 0 } ).a < 255 );
+					!IsFullRenderVoxelSurr( ipos + glm::ivec3{ 0, -1, 0 }, bitset ) );
 	return facing;
 }
 

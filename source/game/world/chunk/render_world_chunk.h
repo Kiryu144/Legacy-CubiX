@@ -23,6 +23,7 @@ namespace Game
 class RenderWorldChunk : public WorldChunk, public Core::Transform, public Renderable
 {
 protected:
+	typedef std::bitset< GetVolume() > FullRenderVoxelBitset;
 	struct Vertex
 	{
 		glm::vec3 position;
@@ -34,12 +35,17 @@ protected:
 	static const glm::vec3& GetNormForCube( const Core::MultipleFacing::Face& face );
 	int getACColorCorrectionForCube( const Core::MultipleFacing::Face& face,
 									 const glm::ivec3& pos,
-									 int index );
+									 int index,
+									 const FullRenderVoxelBitset ( *bitset )[ 3 ][ 3 ] );
+
+	static bool IsFullRenderVoxel( const glm::ivec3& pos, const FullRenderVoxelBitset& bitset );
+	static bool IsFullRenderVoxelSurr( const glm::ivec3& pos,
+									   const FullRenderVoxelBitset ( *bitset )[ 3 ][ 3 ] );
 
 	Core::AttributeBuffer m_attributeBuffer;
 	std::vector< Vertex > m_vertices;
 
-	std::bitset< GetVolume() > m_renderableVoxels;
+	FullRenderVoxelBitset m_renderableVoxels;
 
 	std::mutex m_uploadMutex;
 	bool m_upload{ false };
@@ -51,7 +57,8 @@ protected:
 public:
 	RenderWorldChunk( World& world, const glm::ivec3& chunkPosition );
 
-	Core::MultipleFacing findVisibleFaces( const glm::uvec3& pos ) const;
+	Core::MultipleFacing findVisibleFaces(
+		const glm::uvec3& pos, const FullRenderVoxelBitset ( *bitset )[ 3 ][ 3 ] ) const;
 
 	void setVoxel( const glm::uvec3& position, const Voxel& voxel ) override;
 
