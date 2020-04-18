@@ -5,7 +5,7 @@
 #ifndef CUBIX_EMPTY_WORLD_CHUNK_H
 #define CUBIX_EMPTY_WORLD_CHUNK_H
 
-#include "game/common/world/chunk/i_world_chunk.h"
+#include "i_world_chunk.h"
 
 namespace Game
 {

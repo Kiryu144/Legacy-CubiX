@@ -8,9 +8,9 @@
 #include "core/io/window.h"
 #include "core/net/net_client.h"
 
-#include "game/client/moveable_view.h"
-#include "game/client/rendering/renderer.h"
-#include "game/common/cubix.h"
+#include "game/cubix.h"
+#include "game/rendering/moveable_view.h"
+#include "game/rendering/renderer.h"
 
 namespace Game
 {

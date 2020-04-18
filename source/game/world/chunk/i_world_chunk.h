@@ -7,11 +7,11 @@
 
 #include "core/cubix_assert.h"
 
-#include "game/common/world/voxel/voxel.h"
+#include "game/world/voxel/voxel.h"
 
 #include <vector>
 
-#include <glm/common.hpp>
+#include <glm/glm.hpp>
 #include <glm/vec3.hpp>
 
 namespace Game

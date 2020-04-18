@@ -5,8 +5,8 @@
 #ifndef CUBIX_WORLD_CHUNK_FACTORY_H
 #define CUBIX_WORLD_CHUNK_FACTORY_H
 
-#include "game/common/world/chunk/empty_world_chunk.h"
-#include "game/common/world/chunk/render_world_chunk.h"
+#include "empty_world_chunk.h"
+#include "render_world_chunk.h"
 
 namespace Game
 {

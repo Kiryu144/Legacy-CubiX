@@ -4,10 +4,10 @@
 
 #include "renderer.h"
 
+#include "renderable.h"
+
 #include "core/opengl/attributebuffer.h"
 #include "core/opengl/shader_program.h"
-
-#include "game/client/rendering/renderable.h"
 
 namespace Game
 {

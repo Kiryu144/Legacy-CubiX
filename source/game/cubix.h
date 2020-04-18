@@ -8,8 +8,8 @@
 #include "core/net/net_instance.h"
 #include "core/time/game_time.h"
 
-#include "game/common/packet/packet.h"
-#include "game/common/world/world.h"
+#include "game/packet/packet.h"
+#include "game/world/world.h"
 
 namespace Game
 {

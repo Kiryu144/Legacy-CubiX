@@ -4,8 +4,9 @@
 
 #include "world_chunk_container.h"
 
-#include "game/common/world/chunk/world_chunk.h"
-#include "game/common/world/world_chunk_column.h"
+#include "world_chunk_column.h"
+
+#include "game/world/chunk/world_chunk.h"
 
 #include <shared_mutex>
 

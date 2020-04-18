@@ -4,10 +4,11 @@
 
 #include "world.h"
 
+#include "world_chunk_column.h"
+
 #include "core/opengl/shader_program.h"
 
-#include "game/client/rendering/renderer.h"
-#include "game/common/world/world_chunk_column.h"
+#include "game/rendering/renderer.h"
 
 namespace Game
 {

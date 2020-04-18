@@ -4,8 +4,8 @@
 
 #include "cubix_server.h"
 
-#include "game/common/packet/packet_client_information.h"
-#include "game/common/packet/packet_server_information.h"
+#include "game/packet/packet_client_information.h"
+#include "game/packet/packet_server_information.h"
 
 namespace Game
 {

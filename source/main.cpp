@@ -2,8 +2,8 @@
  * Copyright (c) 2020 David Klostermann.
  */
 
-#include "game/client/cubix_client.h"
-#include "game/server/cubix_server.h"
+#include "game/cubix_client.h"
+#include "game/cubix_server.h"
 
 #include <iostream>
 

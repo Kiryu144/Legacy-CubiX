@@ -4,7 +4,7 @@
 
 #include "world_chunk.h"
 
-#include "game/common/world/world.h"
+#include "game/world/world.h"
 
 namespace Game
 {

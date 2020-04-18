@@ -5,8 +5,8 @@
 #ifndef CUBIX_WORLD_GENERATOR_H
 #define CUBIX_WORLD_GENERATOR_H
 
-#include "game/common/world/voxel/voxel.h"
-#include "game/common/world/world.h"
+#include "game/world/voxel/voxel.h"
+#include "game/world/world.h"
 
 #include <glm/vec2.hpp>
 

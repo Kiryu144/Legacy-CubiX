@@ -6,10 +6,10 @@
 #define CUBIX_WORLD_CHUNK_CONTAINER_H
 
 #include "core/cubix_macro.h"
-
-#include "game/common/world/voxel/voxel.h"
-#include "game/common/world/chunk/i_world_chunk.h"
 #include "core/logic/lockable.h"
+
+#include "game/world/chunk/i_world_chunk.h"
+#include "game/world/voxel/voxel.h"
 
 #include <list>
 #include <memory>
