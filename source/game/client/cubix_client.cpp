@@ -7,7 +7,6 @@
 #include "game/client/imgui_performance_counter.h"
 #include "game/common/packet/packet_client_information.h"
 #include "game/common/packet/packet_server_information.h"
-#include "game/common/world/chunk/world_chunk.h"
 
 #include <glfw/glfw3.h>
 #include <imgui/imgui.h>
@@ -17,10 +16,18 @@ namespace Game
 
 CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
 {
+	m_world.setRenderer( &m_renderer );
 	m_gameTime.setFPSLimit( 10000 );
 	connect( "127.0.0.1", 4444 );
-	m_renderer.loadShaders();
 	m_moveableView.setSpeed( 30 );
+
+	std::shared_ptr< Core::ShaderProgram > worldChunkShader( new Core::ShaderProgram() );
+	worldChunkShader
+		->compileShaderFromFile( "voxelstructure.vert", Core::ShaderProgram::VERTEX_SHADER )
+		.compileShaderFromFile( "voxelstructure.frag", Core::ShaderProgram::FRAGMENT_SHADER )
+		.link();
+
+	m_renderer.getShaderRegistry().insert( "world_chunk_shader", std::move( worldChunkShader ) );
 }
 
 void CubixClient::update()
@@ -29,6 +36,7 @@ void CubixClient::update()
 	Cubix::update();
 	Core::Window::Update();
 	m_window.swap();
+
 
 	if( m_window.shouldClose() )
 	{
@@ -53,7 +61,7 @@ void CubixClient::update()
 
 	m_moveableView.update( m_gameTime.getDeltaTime() );
 	m_renderer.setView( m_moveableView.getViewMatrix() );
-	m_renderer.render( m_world );
+	m_world.render();
 
 #if CUBIX_IMGUI
 	bool active = true;
@@ -74,7 +82,7 @@ void CubixClient::update()
 				 static_cast< int >( std::floor( m_moveableView.getPosition().z
 												 / IWorldChunk::GetSideLength() ) ) );
 	ImGui::End();
-	//Game::ImguiPerformanceCounter::Get().draw();
+	// Game::ImguiPerformanceCounter::Get().draw();
 #endif
 	Game::ImguiPerformanceCounter::Get().getFrameTime().stop();
 }

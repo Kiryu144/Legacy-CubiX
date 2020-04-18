@@ -9,7 +9,7 @@
 #include "core/net/net_client.h"
 
 #include "game/client/moveable_view.h"
-#include "game/client/renderer.h"
+#include "game/client/rendering/renderer.h"
 #include "game/common/cubix.h"
 
 namespace Game

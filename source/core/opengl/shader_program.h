@@ -48,6 +48,7 @@ protected:
 	void cacheUniformLocations();
 
 public:
+	ShaderProgram() = default;
 	ShaderProgram( ShaderProgram&& other );
 
 	CUBIX_GET_V( m_projectionUniform, ProjectionUniform );

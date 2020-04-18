@@ -4,15 +4,14 @@
 
 #include "world.h"
 
-#include "game/common/world/chunk/world_chunk.h"
-
 namespace Game
 {
 
-World::World()
+World::World( Renderer* renderer )
 	: WorldChunkContainer( *this ),
 	  m_chunkWorker( 4 ),
-	  m_chunkFactory( new RenderWorldChunkFactory() )
+	  m_chunkFactory( new RenderWorldChunkFactory() ),
+	  m_renderer( renderer )
 {
 }
 
@@ -66,7 +65,6 @@ void World::update( float deltaTime )
 			{
 				deleteChunk( chunk->getChunkPosition() );
 			}
-
 			++it;
 		}
 	}
@@ -131,6 +129,29 @@ void World::deleteChunk( const glm::ivec3& chunkPosition )
 {
 	auto lock( m_chunksToDelete.lockGuard() );
 	m_chunksToDelete.insert( chunkPosition );
+}
+
+void World::render()
+{
+	for( auto& chunkIt : getAllChunks() )
+	{
+		if( chunkIt.expired() )
+		{
+			continue;
+		}
+
+		std::shared_ptr< RenderWorldChunk > chunk
+			= std::static_pointer_cast< RenderWorldChunk >( chunkIt.lock() );
+
+		chunk->uploadWhenNeeded();
+		if( !chunk->isMeshGenerated() || chunk->getMillisecondsNotSeen() > 0
+			|| chunk->getAttributeBuffer().getVerticeAmount() == 0 )
+		{
+			continue;
+		}
+
+		m_renderer->render( chunk.get() );
+	}
 }
 
 } // namespace Game

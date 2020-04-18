@@ -6,9 +6,10 @@
 #define CUBIX_RENDER_WORLD_CHUNK_H
 
 #include "core/logic/lockable.h"
-#include "core/opengl/attributebuffer.h"
 #include "core/math/transform.h"
+#include "core/opengl/attributebuffer.h"
 
+#include "game/client/rendering/renderable.h"
 #include "game/common/world/chunk/world_chunk.h"
 
 #include <atomic>
@@ -17,7 +18,7 @@
 namespace Game
 {
 
-class RenderWorldChunk : public WorldChunk, public Core::Transform
+class RenderWorldChunk : public WorldChunk, public Core::Transform, public Renderable
 {
 protected:
 	struct Vertex
@@ -41,12 +42,16 @@ protected:
 	std::mutex m_uploadMutex;
 	bool m_upload{ false };
 
+	Core::RegistryKey m_shaderKey;
+	int m_ambientLightPowerUniform{ -1 };
+	int m_directionalLightPositionUniform{ -1 };
+	int m_skyColorUniform{ -1 };
+	int m_fogDensityUniform{ -1 };
+
 	std::atomic_bool m_meshGenerated{ false };
 
 public:
 	RenderWorldChunk( World& world, const glm::ivec3& chunkPosition );
-
-	CUBIX_GET_R_CR( m_attributeBuffer, AttributeBuffer );
 
 	Core::MultipleFacing findVisibleFaces( const glm::uvec3& pos ) const;
 
@@ -57,6 +62,10 @@ public:
 
 	bool isMeshGenerated() const;
 	void setMeshGenerated();
+
+	void setUniforms( Core::ShaderProgram& shader ) override;
+	Core::RegistryKey getShader() override;
+	Core::AttributeBuffer& getAttributeBuffer() override;
 };
 
 } // namespace Game

@@ -128,18 +128,18 @@ void ShaderProgram::cacheUniformLocations()
 	{
 		glGetActiveUniform(
 			m_program.getID(), static_cast< GLuint >( i ), bufSize, &length, &size, &type, name );
-		m_uniformLocations[ std::string( name, length ) ] = static_cast< UniformLocation >( i );
+		m_uniformLocations[ std::string( name ) ] = static_cast< UniformLocation >( i );
 	}
 
 	m_projectionUniform = getUniformLocation( "u_projection" );
 	m_viewUniform		= getUniformLocation( "u_view" );
-	m_transformUniform	= getUniformLocation( "u_transform" );
+	m_transformUniform	= getUniformLocation( "u_transformation" );
 }
 
 int ShaderProgram::getUniformLocation( const std::string& uniformName ) const
 {
 	auto it = m_uniformLocations.find( uniformName );
-	if( it != m_uniformLocations.end() )
+	if( it == m_uniformLocations.end() )
 	{
 		Logger::Warn( "Unknown uniform " + uniformName );
 		return -1;

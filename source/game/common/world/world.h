@@ -10,6 +10,7 @@
 #include "core/logic/memory.h"
 #include "core/math/glm_math.h"
 
+#include "game/client/rendering/renderer.h"
 #include "game/common/voxel/voxel_group.h"
 #include "game/common/world/chunk/chunk_worker.h"
 #include "game/common/world/chunk/world_chunk_factory.h"
@@ -26,6 +27,8 @@
 namespace Game
 {
 
+class Renderer;
+
 class World : public WorldChunkContainer
 {
 public:
@@ -33,7 +36,8 @@ public:
 
 protected:
 	ChunkWorker m_chunkWorker;
-	std::unique_ptr<IWorldChunkFactory> m_chunkFactory;
+	Renderer* m_renderer;
+	std::unique_ptr< IWorldChunkFactory > m_chunkFactory;
 	Core::Lockable< ChunkQueue > m_chunksToGenerate;
 	Core::Lockable< ChunkQueue > m_chunksToDelete;
 
@@ -41,15 +45,18 @@ protected:
 	void _deleteChunk( const glm::ivec3& chunkPosition );
 
 public:
-	World();
+	World( Renderer* renderer );
 	virtual ~World() = default;
 	virtual void update( float deltaTime );
 
 	CUBIX_GET_R_CR( m_chunkWorker, ChunkWorker );
 	CUBIX_GET_CR( m_chunkFactory, ChunkFactory );
+	CUBIX_GET_SET_R_CR( m_renderer, Renderer );
 
 	void insert( const VoxelGroup& voxelGroup, glm::ivec3 position );
 	void updateForPlayer( const glm::ivec2& chunkPosition );
+
+	void render();
 
 	// Thread safe
 	void generateChunk( const glm::ivec3& chunkPosition );

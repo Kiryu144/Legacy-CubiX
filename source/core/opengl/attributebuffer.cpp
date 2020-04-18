@@ -18,6 +18,7 @@ AttributeBuffer::AttributeBuffer( std::shared_ptr< Attribute > attribute, GLenum
 void AttributeBuffer::bind( GLuint vertexAttribIndex )
 {
 	cubix_assert( m_totalSize > 0, "Unable to bind buffer with no data uploaded" );
+	gl_clear_error();
 	gl_log_error( glBindBuffer( m_bufferTarget, m_vbo.getID() ) );
 	m_attribute->vertexAttribPointer( vertexAttribIndex );
 }

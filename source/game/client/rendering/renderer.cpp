@@ -7,13 +7,7 @@
 namespace Game
 {
 
-void Renderer::loadShaders()
-{
-	m_chunkShader.compileShaderFromFile( "voxelstructure.vert", Core::ShaderProgram::VERTEX_SHADER )
-		.compileShaderFromFile( "voxelstructure.frag", Core::ShaderProgram::FRAGMENT_SHADER )
-		.link();
-}
-
+/*
 void Renderer::render( World& world )
 {
 	m_chunkShader.bind();
@@ -48,15 +42,39 @@ void Renderer::render( World& world )
 		glDrawArrays( GL_TRIANGLES, 0, chunk->getAttributeBuffer().getVerticeAmount() );
 	}
 }
+*/
 
-void Renderer::setView( const glm::mat4& view )
+void Renderer::render( Renderable* renderable )
 {
-	m_view = view;
-}
+	if( !renderable )
+	{
+		return;
+	}
 
-void Renderer::setProjection( const glm::mat4& projection )
-{
-	m_projection = projection;
+	auto shader	 = m_shaderRegistry.getValue( renderable->getShader() );
+	auto& attrib = renderable->getAttributeBuffer();
+
+	if( attrib.getVerticeAmount() == 0 )
+	{
+		return;
+	}
+
+	shader->bind();
+
+	if( shader->getProjectionUniform() >= 0 )
+	{
+		shader->setUniform( shader->getProjectionUniform(), m_projection );
+	}
+
+	if( shader->getProjectionUniform() >= 0 )
+	{
+		shader->setUniform( shader->getViewUniform(), m_view );
+	}
+
+	renderable->setUniforms( *shader );
+	attrib.bind( 0 );
+
+	glDrawArrays( renderable->getDrawMode(), 0, attrib.getVerticeAmount() );
 }
 
 } // namespace Game

@@ -7,7 +7,7 @@
 namespace Game
 {
 
-Cubix::Cubix() : m_gameTime( 30 ) {}
+Cubix::Cubix() : m_gameTime( 30 ), m_world( nullptr ) {}
 
 void Cubix::update()
 {
