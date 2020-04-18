@@ -22,7 +22,7 @@ public:
 	};
 
 protected:
-	virtual Voxel getVoxel( unsigned int blocksUnderground ) const;
+	virtual Voxel getVoxel( unsigned int blocksUnderground, int yLevel ) const;
 	virtual Voxel getWaterVoxel() const;
 	virtual int getHeight( const glm::ivec2& worldPosition ) const;
 	virtual void prepareForChunk( const glm::ivec3& chunkPosition ) {}

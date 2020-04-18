@@ -12,15 +12,23 @@ int WorldGenerator::getHeight( const glm::ivec2& worldPosition ) const
 	return 0;
 }
 
-Voxel WorldGenerator::getVoxel( unsigned int blocksUnderground ) const
+Voxel WorldGenerator::getVoxel( unsigned int blocksUnderground, int yLevel ) const
 {
-	if( blocksUnderground == 0 )
+	static const Voxel grass{ 88, 237, 110, 255 };
+	static const Voxel stone{ 166, 166, 166, 255 };
+	static const Voxel sand{ 255, 255, 160, 255 };
+
+	if( yLevel <= 0 && blocksUnderground < 2 )
 	{
-		return { 88, 237, 110, 255 };
+		return sand;
+	}
+	else if( blocksUnderground == 0 )
+	{
+		return grass;
 	}
 	else
 	{
-		return { 166, 166, 166, 255 };
+		return stone;
 	}
 }
 
@@ -67,7 +75,7 @@ void WorldGenerator::generateHeight( std::shared_ptr< IWorldChunk > chunk )
 			{
 				if( _y <= y - worldPosition.y )
 				{
-					chunk->setVoxel( { x, _y, z }, getVoxel( depth ) );
+					chunk->setVoxel( { x, _y, z }, getVoxel( depth, worldPosition.y + _y ) );
 				}
 				else if( worldPosition.y < 0 )
 				{
