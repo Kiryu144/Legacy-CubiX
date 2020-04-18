@@ -4,6 +4,7 @@
 
 #include "cubix_client.h"
 
+#include "core/logic/string_cast.h"
 #include "core/opengl/shader_program.h"
 
 #include "game/packet/packet_client_information.h"
@@ -80,6 +81,11 @@ void CubixClient::update()
 					 std::floor( m_moveableView.getPosition().y / IWorldChunk::GetSideLength() ) ),
 				 static_cast< int >( std::floor( m_moveableView.getPosition().z
 												 / IWorldChunk::GetSideLength() ) ) );
+	if( ImGui::Button( m_voxelMemoryConsumption.c_str() ) )
+	{
+		m_voxelMemoryConsumption = "Total Voxel Memory: "
+			+ Core::ByteSizeToString( m_world.calculateVoxelMemoryConsumption() );
+	}
 	ImGui::End();
 #endif
 }
@@ -124,7 +130,7 @@ void CubixClient::onEvent( const Core::UserInputHandler::EventUpdate& eventType 
 
 void CubixClient::onEvent( const Core::EventWindowFileDrop& eventType )
 {
-	//m_group.reset( new VoxelGroup( eventType.fpath ) );
+	// m_group.reset( new VoxelGroup( eventType.fpath ) );
 }
 
 } // namespace Game

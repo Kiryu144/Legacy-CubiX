@@ -134,7 +134,7 @@ source/core/time/average_stop_watch.h
         source/core/logic/singelton.h
 source/core/math/rigidbody.cpp
 source/core/math/rigidbody.h
-        source/game/rendering/renderable.h source/core/data/registry.h source/game/rendering/renderable.cpp)
+        source/game/rendering/renderable.h source/core/data/registry.h source/game/rendering/renderable.cpp source/core/logic/string_cast.h source/core/logic/string_cast.cpp)
 
 add_executable(CubiX ${SOURCE_FILES} resources.rc)
 target_link_libraries(CubiX ${LINKER_TARGETS})

@@ -183,4 +183,18 @@ void World::prepareUniforms( Core::ShaderProgram& shader )
 	shader.setUniform( m_fogDensityUniform, 0.0004f );
 }
 
+size_t World::calculateVoxelMemoryConsumption() const
+{
+	size_t size{ 0 };
+	for( auto& chunk : getAllChunks() )
+	{
+		auto lock = chunk.lock();
+		if( dynamic_cast< WorldChunk* >( lock.get() ) != nullptr )
+		{
+			size += IWorldChunk::GetVolume() * sizeof( Voxel );
+		}
+	}
+	return size;
+}
+
 } // namespace Game

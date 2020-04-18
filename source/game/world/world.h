@@ -53,6 +53,8 @@ public:
 	void prepareUniforms( Core::ShaderProgram& shader );
 	void render();
 
+	size_t calculateVoxelMemoryConsumption() const;
+
 	// Thread safe
 	void generateChunk( const glm::ivec3& chunkPosition );
 	void deleteChunk( const glm::ivec3& chunkPosition );

@@ -30,6 +30,10 @@ private:
 
 	void update() override;
 
+#if CUBIX_IMGUI
+	std::string m_voxelMemoryConsumption{ "Total Voxel Memory: 0B" };
+#endif
+
 protected:
 	void onPacketReceive( Core::PeerID id, std::istream& istream ) override;
 	void onEvent( const Core::EventWindowResize& eventType ) override;
