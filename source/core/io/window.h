@@ -32,7 +32,7 @@ private:
 	void setupOpenGL();
 	void setupImGui();
 
-	bool m_vsync;
+	bool m_vsync{ false };
 	std::string m_windowTitle;
 
 public:

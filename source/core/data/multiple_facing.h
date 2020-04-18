@@ -6,6 +6,7 @@
 #define CUBIX_MULTIPLE_FACING_H
 
 #include <array>
+
 #include <glm/vec3.hpp>
 
 namespace Core
@@ -25,11 +26,12 @@ public:
 	};
 
 	static const int IndexOf( const Face& face );
-	static Face ValueOf(int index);
-	static const glm::vec3& DirectionOf( const Face& face);
-	static const std::array< MultipleFacing::Face, 6> Facings;
+	static Face ValueOf( int index );
+	static const glm::vec3& DirectionOf( const Face& face );
+	static const std::array< MultipleFacing::Face, 6 > Facings;
+
 private:
-	unsigned char m_data;
+	unsigned char m_data{ 0 };
 
 public:
 	void setAll( bool enabled );

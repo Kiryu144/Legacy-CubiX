@@ -41,9 +41,19 @@ protected:
 
 	std::map< std::string, UniformLocation > m_uniformLocations;
 
+	int m_projectionUniform;
+	int m_viewUniform;
+	int m_transformUniform;
+
 	void cacheUniformLocations();
 
 public:
+	ShaderProgram( ShaderProgram&& other );
+
+	CUBIX_GET_V( m_projectionUniform, ProjectionUniform );
+	CUBIX_GET_V( m_viewUniform, ViewUniform );
+	CUBIX_GET_V( m_transformUniform, TransformUniform );
+
 	ShaderProgram& compileShaderFromSource( const std::string& source,
 											const ShaderType& shaderType );
 	ShaderProgram& compileShaderFromFile( const std::string& file, const ShaderType& shaderType );
@@ -52,11 +62,11 @@ public:
 	void bind();
 
 	int getUniformLocation( const std::string& uniformName ) const;
-	ShaderProgram& setUniform( const std::string& uniform, float value );
-	ShaderProgram& setUniform( const std::string& uniform, const glm::vec2& vec );
-	ShaderProgram& setUniform( const std::string& uniform, const glm::vec3& vec );
-	ShaderProgram& setUniform( const std::string& uniform, const glm::vec4& vec );
-	ShaderProgram& setUniform( const std::string& uniform, const glm::mat4& mat );
+	ShaderProgram& setUniform( int uniformLocation, float value );
+	ShaderProgram& setUniform( int uniformLocation, const glm::vec2& vec );
+	ShaderProgram& setUniform( int uniformLocation, const glm::vec3& vec );
+	ShaderProgram& setUniform( int uniformLocation, const glm::vec4& vec );
+	ShaderProgram& setUniform( int uniformLocation, const glm::mat4& mat );
 };
 } // namespace Core
 

@@ -83,7 +83,7 @@ void Window::setupOpenGL()
 void Window::setupImGui()
 {
 	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
+	const ImGuiIO& io = ImGui::GetIO();
 	( void )io;
 
 	ImGui::StyleColorsDark();

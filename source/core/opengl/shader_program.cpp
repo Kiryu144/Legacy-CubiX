@@ -12,6 +12,12 @@
 namespace Core
 {
 
+ShaderProgram::ShaderProgram( ShaderProgram&& other ) : m_program( std::move( other.m_program ) )
+{
+	m_compiledShaders.merge( other.m_compiledShaders );
+	m_uniformLocations.merge( other.m_uniformLocations );
+}
+
 ShaderProgram& ShaderProgram::compileShaderFromSource( const std::string& source,
 													   const ShaderProgram::ShaderType& shaderType )
 {
@@ -124,42 +130,50 @@ void ShaderProgram::cacheUniformLocations()
 			m_program.getID(), static_cast< GLuint >( i ), bufSize, &length, &size, &type, name );
 		m_uniformLocations[ std::string( name, length ) ] = static_cast< UniformLocation >( i );
 	}
+
+	m_projectionUniform = getUniformLocation( "u_projection" );
+	m_viewUniform		= getUniformLocation( "u_view" );
+	m_transformUniform	= getUniformLocation( "u_transform" );
 }
 
 int ShaderProgram::getUniformLocation( const std::string& uniformName ) const
 {
 	auto it = m_uniformLocations.find( uniformName );
-	cubix_assert( it != m_uniformLocations.end(), "Unknown uniform " + uniformName );
+	if( it != m_uniformLocations.end() )
+	{
+		Logger::Warn( "Unknown uniform " + uniformName );
+		return -1;
+	}
 	return it->second;
 }
 
-ShaderProgram& ShaderProgram::setUniform( const std::string& uniform, float value )
+ShaderProgram& ShaderProgram::setUniform( int uniformLocation, float value )
 {
-	glUniform1f( getUniformLocation( uniform ), value );
+	glUniform1f( uniformLocation, value );
 	return *this;
 }
 
-ShaderProgram& ShaderProgram::setUniform( const std::string& uniform, const glm::vec2& vec )
+ShaderProgram& ShaderProgram::setUniform( int uniformLocation, const glm::vec2& vec )
 {
-	glUniform2f( getUniformLocation( uniform ), vec.x, vec.y );
+	glUniform2f( uniformLocation, vec.x, vec.y );
 	return *this;
 }
 
-ShaderProgram& ShaderProgram::setUniform( const std::string& uniform, const glm::vec3& vec )
+ShaderProgram& ShaderProgram::setUniform( int uniformLocation, const glm::vec3& vec )
 {
-	glUniform3f( getUniformLocation( uniform ), vec.x, vec.y, vec.z );
+	glUniform3f( uniformLocation, vec.x, vec.y, vec.z );
 	return *this;
 }
 
-ShaderProgram& ShaderProgram::setUniform( const std::string& uniform, const glm::vec4& vec )
+ShaderProgram& ShaderProgram::setUniform( int uniformLocation, const glm::vec4& vec )
 {
-	glUniform4f( getUniformLocation( uniform ), vec.x, vec.y, vec.z, vec.w );
+	glUniform4f( uniformLocation, vec.x, vec.y, vec.z, vec.w );
 	return *this;
 }
 
-ShaderProgram& ShaderProgram::setUniform( const std::string& uniform, const glm::mat4& mat )
+ShaderProgram& ShaderProgram::setUniform( int uniformLocation, const glm::mat4& mat )
 {
-	glUniformMatrix4fv( getUniformLocation( uniform ), 1, GL_FALSE, &mat[ 0 ][ 0 ] );
+	glUniformMatrix4fv( uniformLocation, 1, GL_FALSE, &mat[ 0 ][ 0 ] );
 	return *this;
 }
 

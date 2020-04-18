@@ -96,8 +96,8 @@ source/game/server/connected_client.h
 source/core/logic/serializeable.h
 source/core/logic/no_copy.h
 source/core/logic/memory.h
-source/game/client/renderer.cpp
-source/game/client/renderer.h
+        source/game/client/rendering/renderer.cpp
+        source/game/client/rendering/renderer.h
         source/game/common/world/chunk/chunk_worker.cpp
         source/game/common/world/chunk/chunk_worker.h
         source/game/common/world/worldgenerator/world_generator.cpp
@@ -120,7 +120,25 @@ source/core/opengl/data/single_attribute.h
 source/core/opengl/data/interleaved_attribute.cpp
 source/core/opengl/data/interleaved_attribute.h
 source/game/client/voxel_clipboard.cpp
-source/game/client/voxel_clipboard.h source/game/common/world/world_chunk_manager.cpp source/game/common/world/world_chunk_manager.h source/game/common/world/chunk/i_world_chunk.h source/game/common/world/chunk/render_world_chunk.cpp source/game/common/world/chunk/render_world_chunk.h source/game/common/world/chunk/empty_world_chunk.cpp source/game/common/world/chunk/empty_world_chunk.h source/game/common/world/chunk/world_chunk_factory.h source/core/time/stop_watch.cpp source/core/time/stop_watch.h source/core/time/average_stop_watch.cpp source/core/time/average_stop_watch.h source/game/client/imgui_performance_counter.cpp source/game/client/imgui_performance_counter.h source/core/logic/singelton.h source/core/math/rigidbody.cpp source/core/math/rigidbody.h)
+source/game/client/voxel_clipboard.h
+source/game/common/world/world_chunk_manager.cpp
+source/game/common/world/world_chunk_manager.h
+source/game/common/world/chunk/i_world_chunk.h
+source/game/common/world/chunk/render_world_chunk.cpp
+source/game/common/world/chunk/render_world_chunk.h
+source/game/common/world/chunk/empty_world_chunk.cpp
+source/game/common/world/chunk/empty_world_chunk.h
+source/game/common/world/chunk/world_chunk_factory.h
+source/core/time/stop_watch.cpp
+source/core/time/stop_watch.h
+source/core/time/average_stop_watch.cpp
+source/core/time/average_stop_watch.h
+source/game/client/imgui_performance_counter.cpp
+source/game/client/imgui_performance_counter.h
+source/core/logic/singelton.h
+source/core/math/rigidbody.cpp
+source/core/math/rigidbody.h
+        source/game/client/rendering/renderable.h source/core/data/registry.h)
 
 add_executable(CubiX ${SOURCE_FILES} resources.rc)
 target_link_libraries(CubiX ${LINKER_TARGETS})
