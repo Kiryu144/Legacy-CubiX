@@ -5,9 +5,8 @@
 #ifndef CUBIX_WORLD_H
 #define CUBIX_WORLD_H
 
-#include "world_chunk_container.h"
-
 #include "game/world/chunk/chunk_worker.h"
+#include "game/world/chunk/world_chunk_container.h"
 #include "game/world/chunk/world_chunk_factory.h"
 
 #define GLM_ENABLE_EXPERIMENTAL

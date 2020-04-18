@@ -104,9 +104,9 @@ source/core/logic/memory.h
         source/game/world/worldgenerator/world_generator.h
         source/game/world/worldgenerator/world_generator_perlin.cpp
         source/game/world/worldgenerator/world_generator_perlin.h
-        source/game/world/world_chunk_column.cpp
-        source/game/world/world_chunk_column.h
-        source/game/world/world_chunk_container.cpp
+        source/game/world/chunk/world_chunk_column.cpp
+        source/game/world/chunk/world_chunk_column.h
+        source/game/world/chunk/world_chunk_container.cpp
 source/core/data/container2d.h
 source/core/cubix_macro.h
 source/core/logic/lockable.h
@@ -119,8 +119,8 @@ source/core/opengl/data/single_attribute.cpp
 source/core/opengl/data/single_attribute.h
 source/core/opengl/data/interleaved_attribute.cpp
 source/core/opengl/data/interleaved_attribute.h
-        source/game/world/world_chunk_manager.cpp
-        source/game/world/world_chunk_manager.h
+        source/game/world/chunk/world_chunk_manager.cpp
+        source/game/world/chunk/world_chunk_manager.h
         source/game/world/chunk/i_world_chunk.h
         source/game/world/chunk/render_world_chunk.cpp
         source/game/world/chunk/render_world_chunk.h

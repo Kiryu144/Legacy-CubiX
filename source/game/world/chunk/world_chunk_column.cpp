@@ -4,10 +4,9 @@
 
 #include "world_chunk_column.h"
 
-#include "world.h"
-
 #include "game/world/chunk/world_chunk.h"
 #include "game/world/chunk/world_chunk_factory.h"
+#include "game/world/world.h"
 
 namespace Game
 {
