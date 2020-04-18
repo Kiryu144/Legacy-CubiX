@@ -41,6 +41,12 @@ protected:
 	Core::Lockable< ChunkQueue > m_chunksToGenerate;
 	Core::Lockable< ChunkQueue > m_chunksToDelete;
 
+	std::shared_ptr<Core::ShaderProgram> m_chunkShader;
+	int m_ambientLightPowerUniform{ -1 };
+	int m_directionalLightPositionUniform{ -1 };
+	int m_skyColorUniform{ -1 };
+	int m_fogDensityUniform{ -1 };
+
 	void _generateChunk( const glm::ivec3& chunkPosition );
 	void _deleteChunk( const glm::ivec3& chunkPosition );
 
@@ -56,6 +62,7 @@ public:
 	void insert( const VoxelGroup& voxelGroup, glm::ivec3 position );
 	void updateForPlayer( const glm::ivec2& chunkPosition );
 
+	void prepareUniforms(Core::ShaderProgram& shader);
 	void render();
 
 	// Thread safe

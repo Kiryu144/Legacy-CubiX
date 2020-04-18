@@ -20,12 +20,6 @@ RenderWorldChunk::RenderWorldChunk( World& world, const glm::ivec3& chunkPositio
 	m_position			 = IWorldChunk::WorldPosFromChunkPos( chunkPosition );
 	auto& shaderRegistry = world.getRenderer()->getShaderRegistry();
 	m_shaderKey			 = shaderRegistry.getKey( "world_chunk_shader" ).value();
-
-	auto& shader					  = shaderRegistry.getValue( m_shaderKey );
-	m_ambientLightPowerUniform		  = shader->getUniformLocation( "u_ambientLightPower" );
-	m_directionalLightPositionUniform = shader->getUniformLocation( "u_directionalLightPosition" );
-	m_skyColorUniform				  = shader->getUniformLocation( "u_skyColor" );
-	m_fogDensityUniform				  = shader->getUniformLocation( "u_density" );
 }
 
 const glm::vec3& RenderWorldChunk::GetPosForCube( const Core::MultipleFacing::Face& face,
@@ -209,11 +203,6 @@ void RenderWorldChunk::setVoxel( const glm::uvec3& position, const Voxel& voxel 
 
 void RenderWorldChunk::setUniforms( Core::ShaderProgram& shader )
 {
-	shader.setUniform( m_ambientLightPowerUniform, 0.8f );
-	shader.setUniform( m_directionalLightPositionUniform,
-					   glm::vec3{ 5000.0f, -100000.0f, 14400.0f } );
-	shader.setUniform( m_skyColorUniform, glm::vec3( 179 / 255.0f, 210 / 255.0f, 238 / 255.0f ) );
-	shader.setUniform( m_fogDensityUniform, 0.0004f );
 	shader.setUniform( shader.getTransformUniform(), getMatrix() );
 }
 

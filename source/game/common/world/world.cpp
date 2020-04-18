@@ -133,6 +133,19 @@ void World::deleteChunk( const glm::ivec3& chunkPosition )
 
 void World::render()
 {
+	if( m_chunkShader == nullptr )
+	{
+		auto& shaderRegistry	   = getRenderer()->getShaderRegistry();
+		auto shaderKey			   = shaderRegistry.getKey( "world_chunk_shader" ).value();
+		m_chunkShader			   = shaderRegistry.getValue( shaderKey );
+		m_ambientLightPowerUniform = m_chunkShader->getUniformLocation( "u_ambientLightPower" );
+		m_directionalLightPositionUniform
+			= m_chunkShader->getUniformLocation( "u_directionalLightPosition" );
+		m_skyColorUniform	= m_chunkShader->getUniformLocation( "u_skyColor" );
+		m_fogDensityUniform = m_chunkShader->getUniformLocation( "u_density" );
+	}
+
+	prepareUniforms( *m_chunkShader );
 	for( auto& chunkIt : getAllChunks() )
 	{
 		if( chunkIt.expired() )
@@ -152,6 +165,15 @@ void World::render()
 
 		m_renderer->render( chunk.get() );
 	}
+}
+
+void World::prepareUniforms( Core::ShaderProgram& shader )
+{
+	shader.setUniform( m_ambientLightPowerUniform, 0.8f );
+	shader.setUniform( m_directionalLightPositionUniform,
+					   glm::vec3{ 5000.0f, -100000.0f, 14400.0f } );
+	shader.setUniform( m_skyColorUniform, glm::vec3( 179 / 255.0f, 210 / 255.0f, 238 / 255.0f ) );
+	shader.setUniform( m_fogDensityUniform, 0.0004f );
 }
 
 } // namespace Game

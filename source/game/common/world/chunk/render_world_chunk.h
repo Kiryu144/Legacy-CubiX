@@ -43,10 +43,6 @@ protected:
 	bool m_upload{ false };
 
 	Core::RegistryKey m_shaderKey;
-	int m_ambientLightPowerUniform{ -1 };
-	int m_directionalLightPositionUniform{ -1 };
-	int m_skyColorUniform{ -1 };
-	int m_fogDensityUniform{ -1 };
 
 	std::atomic_bool m_meshGenerated{ false };
 
