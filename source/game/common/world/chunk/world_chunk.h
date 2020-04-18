@@ -8,7 +8,7 @@
 #include "core/cubix_macro.h"
 #include "core/data/multiple_facing.h"
 
-#include "game/common/voxel/voxel.h"
+#include "game/common/world/voxel/voxel.h"
 #include "game/common/world/chunk/empty_world_chunk.h"
 
 namespace Game

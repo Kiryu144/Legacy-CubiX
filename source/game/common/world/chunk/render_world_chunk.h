@@ -5,6 +5,7 @@
 #ifndef CUBIX_RENDER_WORLD_CHUNK_H
 #define CUBIX_RENDER_WORLD_CHUNK_H
 
+#include "core/data/registry.h"
 #include "core/logic/lockable.h"
 #include "core/math/transform.h"
 #include "core/opengl/attributebuffer.h"

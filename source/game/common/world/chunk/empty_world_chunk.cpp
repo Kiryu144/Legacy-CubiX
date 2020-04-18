@@ -4,7 +4,7 @@
 
 #include "empty_world_chunk.h"
 
-#include "game/common/voxel/voxel.h"
+#include "game/common/world/voxel/voxel.h"
 
 namespace Game
 {

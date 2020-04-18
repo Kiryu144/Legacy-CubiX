@@ -47,13 +47,13 @@ source/core/opengl/opengl_helper.cpp
 source/core/opengl/attributebuffer.cpp
 source/core/opengl/attributebuffer.h
 source/core/event.h
-source/game/common/voxel/voxel.cpp
-source/game/common/voxel/voxel.h
+        source/game/common/world/voxel/voxel.cpp
+        source/game/common/world/voxel/voxel.h
 source/core/data/color.cpp
 source/core/data/color.h
 source/core/data/container3d.h
-source/game/common/voxel/voxel_group.cpp
-source/game/common/voxel/voxel_group.h
+        source/game/common/world/voxel/voxel_group.cpp
+        source/game/common/world/voxel/voxel_group.h
 source/core/math/transform.cpp
 source/core/math/transform.h
         source/core/data/multiple_facing.cpp
@@ -119,9 +119,7 @@ source/core/opengl/data/single_attribute.cpp
 source/core/opengl/data/single_attribute.h
 source/core/opengl/data/interleaved_attribute.cpp
 source/core/opengl/data/interleaved_attribute.h
-source/game/client/voxel_clipboard.cpp
-source/game/client/voxel_clipboard.h
-source/game/common/world/world_chunk_manager.cpp
+        source/game/common/world/world_chunk_manager.cpp
 source/game/common/world/world_chunk_manager.h
 source/game/common/world/chunk/i_world_chunk.h
 source/game/common/world/chunk/render_world_chunk.cpp
@@ -133,12 +131,10 @@ source/core/time/stop_watch.cpp
 source/core/time/stop_watch.h
 source/core/time/average_stop_watch.cpp
 source/core/time/average_stop_watch.h
-source/game/client/imgui_performance_counter.cpp
-source/game/client/imgui_performance_counter.h
-source/core/logic/singelton.h
+        source/core/logic/singelton.h
 source/core/math/rigidbody.cpp
 source/core/math/rigidbody.h
-        source/game/client/rendering/renderable.h source/core/data/registry.h)
+        source/game/client/rendering/renderable.h source/core/data/registry.h source/game/client/rendering/renderable.cpp)
 
 add_executable(CubiX ${SOURCE_FILES} resources.rc)
 target_link_libraries(CubiX ${LINKER_TARGETS})

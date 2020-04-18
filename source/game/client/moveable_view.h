@@ -17,7 +17,6 @@ class MoveableView : public Core::View, Core::Listener< Core::UserInputHandler::
 {
 private:
 	glm::vec2 m_lastMousePosition{ 0.0f };
-
 	glm::vec2 m_turnDirection{ 0.0f };
 	glm::vec3 m_moveDirection{ 0.0f };
 

@@ -24,10 +24,7 @@ class CubixClient : public Cubix,
 private:
 	Core::Window m_window;
 	Renderer m_renderer;
-
 	MoveableView m_moveableView;
-
-	std::unique_ptr< VoxelGroup > m_group{ nullptr };
 
 	int m_viewDistance{ 12 };
 

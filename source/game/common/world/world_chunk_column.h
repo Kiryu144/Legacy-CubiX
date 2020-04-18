@@ -5,19 +5,18 @@
 #ifndef CUBIX_WORLD_CHUNK_COLUMN_H
 #define CUBIX_WORLD_CHUNK_COLUMN_H
 
-#include "game/common/world/chunk/i_world_chunk.h"
 #include "core/cubix_macro.h"
 
 #include <map>
 #include <memory>
+
 #include <glm/vec2.hpp>
 
 namespace Game
 {
 
+class IWorldChunk;
 class World;
-
-class WorldChunk;
 
 class WorldChunkColumn
 {

@@ -7,7 +7,7 @@
 
 #include "core/cubix_assert.h"
 
-#include "game/common/voxel/voxel.h"
+#include "game/common/world/voxel/voxel.h"
 
 #include <vector>
 

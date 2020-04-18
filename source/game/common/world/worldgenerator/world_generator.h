@@ -5,13 +5,15 @@
 #ifndef CUBIX_WORLD_GENERATOR_H
 #define CUBIX_WORLD_GENERATOR_H
 
-#include "game/common/voxel/voxel.h"
+#include "game/common/world/voxel/voxel.h"
 #include "game/common/world/world.h"
 
 #include <glm/vec2.hpp>
 
 namespace Game
 {
+
+class VoxelGroup;
 
 class WorldGenerator
 {

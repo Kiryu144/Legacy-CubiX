@@ -7,7 +7,7 @@
 
 #include "core/cubix_macro.h"
 
-#include "game/common/voxel/voxel.h"
+#include "game/common/world/voxel/voxel.h"
 #include "game/common/world/chunk/i_world_chunk.h"
 #include "core/logic/lockable.h"
 

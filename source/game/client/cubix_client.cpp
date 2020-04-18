@@ -4,7 +4,8 @@
 
 #include "cubix_client.h"
 
-#include "game/client/imgui_performance_counter.h"
+#include "core/opengl/shader_program.h"
+
 #include "game/common/packet/packet_client_information.h"
 #include "game/common/packet/packet_server_information.h"
 
@@ -32,11 +33,9 @@ CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
 
 void CubixClient::update()
 {
-	Game::ImguiPerformanceCounter::Get().getFrameTime().start();
 	Cubix::update();
 	Core::Window::Update();
 	m_window.swap();
-
 
 	if( m_window.shouldClose() )
 	{
@@ -82,9 +81,7 @@ void CubixClient::update()
 				 static_cast< int >( std::floor( m_moveableView.getPosition().z
 												 / IWorldChunk::GetSideLength() ) ) );
 	ImGui::End();
-	// Game::ImguiPerformanceCounter::Get().draw();
 #endif
-	Game::ImguiPerformanceCounter::Get().getFrameTime().stop();
 }
 
 void CubixClient::onPacketReceive( Core::PeerID id, std::istream& istream )
@@ -127,7 +124,7 @@ void CubixClient::onEvent( const Core::UserInputHandler::EventUpdate& eventType 
 
 void CubixClient::onEvent( const Core::EventWindowFileDrop& eventType )
 {
-	m_group.reset( new VoxelGroup( eventType.fpath ) );
+	//m_group.reset( new VoxelGroup( eventType.fpath ) );
 }
 
 } // namespace Game

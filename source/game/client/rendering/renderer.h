@@ -6,16 +6,19 @@
 #define CUBIX_RENDERER_H
 
 #include "core/data/registry.h"
-#include "core/event.h"
-#include "core/io/window.h"
-#include "core/math/transform.h"
-#include "core/opengl/shader_program.h"
+#include "core/cubix_macro.h"
 
-#include "game/client/rendering/renderable.h"
-#include "game/common/world/world.h"
+#include <glm/mat4x4.hpp>
+
+namespace Core
+{
+class ShaderProgram;
+}
 
 namespace Game
 {
+
+class Renderable;
 
 class Renderer
 {

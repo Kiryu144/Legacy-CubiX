@@ -7,6 +7,7 @@
 #include "core/opengl/data/interleaved_attribute.h"
 #include "core/opengl/shader_program.h"
 
+#include "game/client/rendering/renderer.h"
 #include "game/common/world/world.h"
 
 #include <string>

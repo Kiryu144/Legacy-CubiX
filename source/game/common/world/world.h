@@ -5,21 +5,9 @@
 #ifndef CUBIX_WORLD_H
 #define CUBIX_WORLD_H
 
-#include "core/cubix_macro.h"
-#include "core/logic/lockable.h"
-#include "core/logic/memory.h"
-#include "core/math/glm_math.h"
-
-#include "game/client/rendering/renderer.h"
-#include "game/common/voxel/voxel_group.h"
 #include "game/common/world/chunk/chunk_worker.h"
 #include "game/common/world/chunk/world_chunk_factory.h"
-#include "game/common/world/world_chunk_column.h"
 #include "game/common/world/world_chunk_container.h"
-
-#include <set>
-#include <unordered_map>
-#include <unordered_set>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
@@ -41,7 +29,7 @@ protected:
 	Core::Lockable< ChunkQueue > m_chunksToGenerate;
 	Core::Lockable< ChunkQueue > m_chunksToDelete;
 
-	std::shared_ptr<Core::ShaderProgram> m_chunkShader;
+	std::shared_ptr< Core::ShaderProgram > m_chunkShader;
 	int m_ambientLightPowerUniform{ -1 };
 	int m_directionalLightPositionUniform{ -1 };
 	int m_skyColorUniform{ -1 };
@@ -59,10 +47,10 @@ public:
 	CUBIX_GET_CR( m_chunkFactory, ChunkFactory );
 	CUBIX_GET_SET_R_CR( m_renderer, Renderer );
 
-	void insert( const VoxelGroup& voxelGroup, glm::ivec3 position );
+	//void insert( const VoxelGroup& voxelGroup, glm::ivec3 position );
 	void updateForPlayer( const glm::ivec2& chunkPosition );
 
-	void prepareUniforms(Core::ShaderProgram& shader);
+	void prepareUniforms( Core::ShaderProgram& shader );
 	void render();
 
 	// Thread safe

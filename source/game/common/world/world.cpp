@@ -4,6 +4,11 @@
 
 #include "world.h"
 
+#include "core/opengl/shader_program.h"
+
+#include "game/client/rendering/renderer.h"
+#include "game/common/world/world_chunk_column.h"
+
 namespace Game
 {
 
@@ -70,9 +75,10 @@ void World::update( float deltaTime )
 	}
 }
 
+/*
 void World::insert( const VoxelGroup& voxelGroup, glm::ivec3 position )
 {
-	/*
+
 	glm::ivec3 lowestChunkPos{ IWorldChunk::ChunkPosFromWorldPos( position ) };
 	glm::ivec3 affectedChunks{ static_cast< glm::ivec3 >( voxelGroup.getSize() )
 								   / glm::ivec3( IWorldChunk::GetSideLength() )
@@ -101,8 +107,9 @@ void World::insert( const VoxelGroup& voxelGroup, glm::ivec3 position )
 				// m_chunkWorker.queue( chunk );
 			}
 		}
-	}*/
+	}
 }
+ */
 
 void World::updateForPlayer( const glm::ivec2& chunkPosition )
 {
