@@ -51,4 +51,11 @@ void Renderer::render( Renderable* renderable )
 	glDrawArrays( renderable->getDrawMode(), 0, attrib.getVerticeAmount() );
 }
 
+std::shared_ptr< Core::ShaderProgram > Renderer::createShader( const std::string& name )
+{
+	std::shared_ptr< Core::ShaderProgram > shader( new Core::ShaderProgram() );
+	m_shaderRegistry.insert( name, shader );
+	return shader;
+}
+
 } // namespace Game

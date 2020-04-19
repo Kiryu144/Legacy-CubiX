@@ -20,39 +20,30 @@ namespace Game
 
 CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
 {
+	setWindowTitle();
+	m_window.setVSync( false );
+	m_gameTime.setFPSLimit( static_cast< unsigned int >( -1 ) );
 	m_world.setRenderer( &m_renderer );
-	m_gameTime.setFPSLimit( 10000 );
-	connect( "127.0.0.1", 4444 );
-	m_moveableView.setSpeed( 30 );
 
-	// World Chunk Shader
-	std::shared_ptr< Core::ShaderProgram > worldChunkShader( new Core::ShaderProgram() );
-	worldChunkShader
-		->compileShaderFromFile( "shader\\world_chunk.vert", Core::ShaderProgram::VERTEX_SHADER )
-		.compileShaderFromFile( "shader\\world_chunk.frag", Core::ShaderProgram::FRAGMENT_SHADER )
+	m_renderer.createShader( "world_chunk_shader" )
+		->compileShaderFromFile( "shader\\world_chunk.vert" )
+		.compileShaderFromFile( "shader\\world_chunk.frag" )
 		.link();
-	m_renderer.getShaderRegistry().insert( "world_chunk_shader", std::move( worldChunkShader ) );
 
-	// Gizmo Shader
-	std::shared_ptr< Core::ShaderProgram > gizmoShader( new Core::ShaderProgram() );
-	gizmoShader
-		->compileShaderFromFile( "shader\\gizmo_shader.vert", Core::ShaderProgram::VERTEX_SHADER )
-		.compileShaderFromFile( "shader\\gizmo_shader.frag", Core::ShaderProgram::FRAGMENT_SHADER )
+	m_renderer.createShader( "gizmo_shader" )
+		->compileShaderFromFile( "shader\\gizmo_shader.vert" )
+		.compileShaderFromFile( "shader\\gizmo_shader.frag" )
 		.link();
-	m_renderer.getShaderRegistry().insert( "gizmo_shader", std::move( gizmoShader ) );
 
-	// Voxel Structure Shader
-	std::shared_ptr< Core::ShaderProgram > voxelStructureShader( new Core::ShaderProgram() );
-	voxelStructureShader
-		->compileShaderFromFile( "shader\\voxel_structure.vert",
-								 Core::ShaderProgram::VERTEX_SHADER )
-		.compileShaderFromFile( "shader\\voxel_structure.frag",
-								Core::ShaderProgram::FRAGMENT_SHADER )
+	m_renderer.createShader( "voxel_structure" )
+		->compileShaderFromFile( "shader\\voxel_structure.vert" )
+		.compileShaderFromFile( "shader\\voxel_structure.frag" )
 		.link();
-	m_renderer.getShaderRegistry().insert( "voxel_structure_shader",
-										   std::move( voxelStructureShader ) );
 
 	m_renderer.initializeSubRenderers();
+
+	connect( "127.0.0.1", 4444 );
+	m_moveableView.setSpeed( 30 );
 }
 
 void CubixClient::update()
@@ -92,7 +83,7 @@ void CubixClient::update()
 	ImGui::Text( "FPS: %d", int( m_gameTime.getFPS() ) );
 	ImGui::Text( "Chunks loaded: %d", m_world.getAllChunks().size() );
 	ImGui::Text( "Chunk queue: %d", m_world.getChunkWorker().size() );
-	ImGui::SliderInt( "View Distance", &m_viewDistance, 2, 32 );
+	ImGui::SliderInt( "View Distance", &m_viewDistance, 2, 64 );
 	ImGui::Text( "Position: %d %d %d",
 				 static_cast< int >( m_moveableView.getPosition().x ),
 				 static_cast< int >( m_moveableView.getPosition().y ),
@@ -152,6 +143,18 @@ void CubixClient::onEvent( const Core::UserInputHandler::EventUpdate& eventType 
 void CubixClient::onEvent( const Core::EventWindowFileDrop& eventType )
 {
 	// m_group.reset( new VoxelGroup( eventType.fpath ) );
+}
+
+void CubixClient::setWindowTitle()
+{
+	std::string windowTitle{ "CubiX " + Defines::s_version };
+#ifndef NDEBUG
+	windowTitle += " (debug build)";
+#endif
+#ifdef CUBIX_ENABLE_ASSERT
+	windowTitle += " (asserts)";
+#endif
+	m_window.setTitle( windowTitle );
 }
 
 } // namespace Game

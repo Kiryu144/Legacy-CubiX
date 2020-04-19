@@ -6,14 +6,10 @@
 
 #include "core/cubix_assert.h"
 #include "core/event.h"
+#include "core/opengl/imgui_context.h"
+#include "core/opengl/opengl_context.h"
 
-// clang-format off
-#include <glad/glad.h>
 #include <glfw/glfw3.h>
-#include <imgui/imgui.h>
-#include <imgui/imgui_impl_opengl3.h>
-#include <imgui/imgui_impl_glfw.h>
-// clang-format on
 
 namespace Core
 {
@@ -21,19 +17,28 @@ namespace Core
 Window::Window( int width, int height, const std::string& title, GLFWwindow* parent )
 {
 	cubix_assert( width > 0 && height > 0, "Invalid window size" );
-	cubix_log_or_assert( glfwInit(), "Initialized GLFW3", "Unable to initialize GLFW" );
+	cubix_log_or_assert( glfwInit(), "Initialized GLFW3", "glfwInit() failed" );
+
 	m_window	  = glfwCreateWindow( width, height, title.c_str(), nullptr, parent );
 	m_windowTitle = title;
-	cubix_log_or_assert( m_window, "Created window", "Unable to create GLFW Window" );
+
+	cubix_log_or_assert( m_window, "Created window", "glfwCreateWindow() failed" );
 	m_parent = parent;
 
 	m_userInputHandler.reset( new UserInputHandler( m_window ) );
 
-	setupGLFW();
-	setupOpenGL();
+	glfwWindowHint( GLFW_DOUBLEBUFFER, true );
+	glfwWindowHint( GLFW_SAMPLES, 2 );
+	glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
+	glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
+
+	glfwSetInputMode( m_window, GLFW_STICKY_KEYS, GLFW_TRUE );
+	glfwMakeContextCurrent( m_window );
+
+	Core::OpenGLContext::Get().init( ( GLADloadproc )glfwGetProcAddress );
 
 #if CUBIX_IMGUI
-	setupImGui();
+	Core::ImguiContext::Get().init( m_window );
 #endif
 
 	glfwSetWindowSizeCallback( m_window, []( GLFWwindow* window, int w, int h ) {
@@ -50,47 +55,6 @@ Window::Window( int width, int height, const std::string& title, GLFWwindow* par
 	EventWindowResize resize{ static_cast< unsigned int >( width ),
 							  static_cast< unsigned int >( height ) };
 	Handler< EventWindowResize >::Fire( resize );
-
-	setVSync( false );
-}
-
-void Window::setupGLFW()
-{
-	glfwWindowHint( GLFW_DOUBLEBUFFER, true );
-	glfwWindowHint( GLFW_SAMPLES, 2 );
-	glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
-	glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
-
-	glfwSetInputMode( m_window, GLFW_STICKY_KEYS, GLFW_TRUE );
-}
-
-void Window::setupOpenGL()
-{
-	glfwMakeContextCurrent( m_window );
-	gladLoadGLLoader( ( GLADloadproc )glfwGetProcAddress );
-
-	cubix_log_or_assert( gladLoadGL(), "Initialized OpenGL", "Unable to load opengl" );
-
-	auto size = getSize();
-	glViewport( 0, 0, size.x, size.y );
-	glClearColor( 179 / 255.0f, 210 / 255.0f, 238 / 255.0f, 1.0 );
-	glEnable( GL_DEPTH_TEST );
-	glEnable( GL_BLEND );
-	glEnable( GL_CULL_FACE );
-	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-}
-
-void Window::setupImGui()
-{
-	ImGui::CreateContext();
-	const ImGuiIO& io = ImGui::GetIO();
-	( void )io;
-
-	ImGui::StyleColorsDark();
-	ImGui_ImplGlfw_InitForOpenGL( m_window, true );
-	ImGui_ImplOpenGL3_Init( "#version 410" );
-
-	Logger::Log( "Initialized ImGui" );
 }
 
 Window::~Window()
@@ -114,8 +78,7 @@ void Window::swap()
 	static bool firstFrame = true;
 	if( !firstFrame )
 	{
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
+		ImguiContext::Get().endFrame();
 	}
 	firstFrame = false;
 #endif
@@ -126,9 +89,7 @@ void Window::swap()
 	m_userInputHandler->update();
 
 #if CUBIX_IMGUI
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
+	ImguiContext::Get().startFrame();
 #endif
 }
 

@@ -28,10 +28,6 @@ private:
 
 	std::unique_ptr< UserInputHandler > m_userInputHandler;
 
-	void setupGLFW();
-	void setupOpenGL();
-	void setupImGui();
-
 	bool m_vsync{ false };
 	std::string m_windowTitle;
 

@@ -12,7 +12,7 @@ namespace Core
 {
 
 template< typename T >
-std::string to_string( const T& value, const unsigned int precision = 99 )
+std::string to_string( const T& value, const unsigned int precision )
 {
 	std::ostringstream out;
 	out.precision( precision );
@@ -20,7 +20,17 @@ std::string to_string( const T& value, const unsigned int precision = 99 )
 	return out.str();
 }
 
+template< typename T >
+std::string to_string( const T& value )
+{
+	std::ostringstream out;
+	out << value;
+	return out.str();
+}
+
 std::string ByteSizeToString( size_t size );
+
+bool EndsWith( std::string const& value, std::string const& ending );
 
 } // namespace Core
 

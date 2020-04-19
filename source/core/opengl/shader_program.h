@@ -58,6 +58,7 @@ public:
 	ShaderProgram& compileShaderFromSource( const std::string& source,
 											const ShaderType& shaderType );
 	ShaderProgram& compileShaderFromFile( const std::string& file, const ShaderType& shaderType );
+	ShaderProgram& compileShaderFromFile( const std::string& file);
 
 	bool link();
 	void bind();

@@ -5,7 +5,6 @@
 #include "single_attribute.h"
 
 #include "core/cubix_assert.h"
-#include "core/opengl/openg_error.h"
 #include "core/opengl/opengl_helper.h"
 
 namespace Core
@@ -23,8 +22,8 @@ SingleAttribute::SingleAttribute( GLenum type, unsigned int scalars, bool normal
 void SingleAttribute::vertexAttribPointer( unsigned int index )
 {
 	glEnableVertexAttribArray( index );
-	gl_log_error( glVertexAttribPointer(
-		index, getScalars(), getType(), static_cast< GLboolean >( getNormalize() ), 0, nullptr ) );
+	glVertexAttribPointer(
+		index, getScalars(), getType(), static_cast< GLboolean >( getNormalize() ), 0, nullptr );
 }
 
 size_t SingleAttribute::getSize( unsigned int multiplier )

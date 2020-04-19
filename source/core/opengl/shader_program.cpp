@@ -5,7 +5,7 @@
 #include "shader_program.h"
 
 #include "core/cubix_assert.h"
-#include "core/opengl/openg_error.h"
+#include "core/logic/string_cast.h"
 
 #include <fstream>
 
@@ -21,11 +21,10 @@ ShaderProgram::ShaderProgram( ShaderProgram&& other ) : m_program( std::move( ot
 ShaderProgram& ShaderProgram::compileShaderFromSource( const std::string& source,
 													   const ShaderProgram::ShaderType& shaderType )
 {
-	gl_clear_error();
 	Shader shader{ glCreateShader( shaderType ) };
 	const char* c_str = source.c_str();
-	gl_log_error( glShaderSource( shader.getID(), 1, &c_str, nullptr ) );
-	gl_log_error( glCompileShader( shader.getID() ) );
+	glShaderSource( shader.getID(), 1, &c_str, nullptr );
+	glCompileShader( shader.getID() );
 
 	// Check compilation status
 	GLint status;
@@ -40,9 +39,9 @@ ShaderProgram& ShaderProgram::compileShaderFromSource( const std::string& source
 	{
 		// Error on compilation
 		GLint logLength = 0;
-		gl_log_error( glGetShaderiv( shader.getID(), GL_INFO_LOG_LENGTH, &logLength ) );
+		glGetShaderiv( shader.getID(), GL_INFO_LOG_LENGTH, &logLength );
 		std::string log( logLength, 0 );
-		gl_log_error( glGetShaderInfoLog( shader.getID(), logLength, &logLength, &log.at( 0 ) ) );
+		glGetShaderInfoLog( shader.getID(), logLength, &logLength, &log.at( 0 ) );
 		Logger::Log( Logger::WARNING,
 					 "Error on compiling " + Core::to_string( shaderType )
 						 + " shader ID: " + std::to_string( shader.getID() ) + "\n" + log );
@@ -67,6 +66,27 @@ ShaderProgram& ShaderProgram::compileShaderFromFile( const std::string& file,
 	return *this;
 }
 
+ShaderProgram& ShaderProgram::compileShaderFromFile( const std::string& file )
+{
+	if( Core::EndsWith( file, ".vert" ) )
+	{
+		return compileShaderFromFile( file, VERTEX_SHADER );
+	}
+
+	if( Core::EndsWith( file, ".frag" ) )
+	{
+		return compileShaderFromFile( file, FRAGMENT_SHADER );
+	}
+
+	if( Core::EndsWith( file, ".geom" ) )
+	{
+		return compileShaderFromFile( file, GEOMETRY_SHADER );
+	}
+
+	Logger::Log( Logger::WARNING, "Unable to deduce shader type from filename " + file );
+	return *this;
+}
+
 bool ShaderProgram::link()
 {
 	m_program = std::move( Program( glCreateProgram() ) );
@@ -74,10 +94,10 @@ bool ShaderProgram::link()
 	// Attach all compiled shaders
 	for( auto& it : m_compiledShaders )
 	{
-		gl_log_error( glAttachShader( m_program.getID(), it.second.getID() ) );
+		glAttachShader( m_program.getID(), it.second.getID() );
 	}
 
-	gl_log_error( glLinkProgram( m_program.getID() ) );
+	glLinkProgram( m_program.getID() );
 
 	// Get link status
 	GLint status;
@@ -87,10 +107,10 @@ bool ShaderProgram::link()
 	{
 		// Error on linking
 		GLint logLength = 0;
-		gl_log_error( glGetProgramiv( m_program.getID(), GL_INFO_LOG_LENGTH, &logLength ) );
+		glGetProgramiv( m_program.getID(), GL_INFO_LOG_LENGTH, &logLength );
 		std::string log( logLength, 0 );
-		gl_log_error(
-			glGetProgramInfoLog( m_program.getID(), logLength, &logLength, &log.at( 0 ) ) );
+
+		glGetProgramInfoLog( m_program.getID(), logLength, &logLength, &log.at( 0 ) );
 
 		Logger::Log( Logger::WARNING,
 					 "Error on linking shader program ID: " + std::to_string( m_program.getID() )

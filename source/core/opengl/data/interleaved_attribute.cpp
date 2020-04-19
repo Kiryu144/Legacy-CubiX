@@ -5,7 +5,6 @@
 #include "interleaved_attribute.h"
 
 #include "core/cubix_assert.h"
-#include "core/opengl/openg_error.h"
 
 namespace Core
 {
@@ -28,12 +27,12 @@ void InterleavedAttribute::vertexAttribPointer( unsigned int index )
 	for( auto& attribute : m_attributes )
 	{
 		glEnableVertexAttribArray( index );
-		gl_log_error( glVertexAttribPointer( index++,
-											 attribute.getScalars(),
-											 attribute.getType(),
-											 static_cast< GLboolean >( attribute.getNormalize() ),
-											 static_cast< GLsizei >( m_stride ),
-											 ( void* )offset ) );
+		glVertexAttribPointer( index++,
+							   attribute.getScalars(),
+							   attribute.getType(),
+							   static_cast< GLboolean >( attribute.getNormalize() ),
+							   static_cast< GLsizei >( m_stride ),
+							   ( void* )offset );
 		offset += attribute.getSize( 1 );
 	}
 }

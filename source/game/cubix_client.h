@@ -34,6 +34,8 @@ private:
 	std::string m_voxelMemoryConsumption{ "Total Voxel Memory: 0B" };
 #endif
 
+	void setWindowTitle();
+
 protected:
 	void onPacketReceive( Core::PeerID id, std::istream& istream ) override;
 	void onEvent( const Core::EventWindowResize& eventType ) override;

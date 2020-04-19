@@ -198,6 +198,7 @@ const glm::vec3& Transform::getScale() const
 {
 	return m_scale;
 }
+
 bool Transform::needsUpdate() const
 {
 	return m_needsUpdate;

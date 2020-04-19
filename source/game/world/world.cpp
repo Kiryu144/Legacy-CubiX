@@ -70,8 +70,8 @@ void World::update( float deltaTime )
 		else
 		{
 			auto chunk = it->lock();
-			chunk->setMillisecondsNotSeen( chunk->getMillisecondsNotSeen() + deltaTime * 1000 );
-			if( chunk->getMillisecondsNotSeen() > 500 )
+			chunk->setMillisecondsNotSeen( chunk->getMillisecondsNotSeen() + 1 );
+			if( chunk->getMillisecondsNotSeen() > 200 )
 			{
 				deleteChunk( chunk->getChunkPosition() );
 			}

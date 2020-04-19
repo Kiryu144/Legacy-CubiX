@@ -36,13 +36,15 @@ protected:
 	std::shared_ptr< GizmoRenderer > m_gizmoRenderer;
 
 public:
-	void initializeSubRenderers();
-
 	CUBIX_GET_SET_CR_CR( m_projection, Projection );
 	CUBIX_GET_SET_CR_CR( m_view, View );
 	CUBIX_GET_R_CR( m_shaderRegistry, ShaderRegistry );
 	CUBIX_GET_R_CR( m_gizmoRenderer, GizmoRenderer );
 
+	// Helper
+	std::shared_ptr< Core::ShaderProgram > createShader( const std::string& name );
+
+	void initializeSubRenderers();
 	void render( Renderable* renderable );
 };
 
