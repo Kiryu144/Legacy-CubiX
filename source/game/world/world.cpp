@@ -10,6 +10,7 @@
 #include "game/rendering/renderer.h"
 #include "game/world/chunk/world_chunk_column.h"
 #include "game/world/entity/entity.h"
+#include "game/world/voxel/placed_voxel.h"
 
 #include <glm/gtx/string_cast.hpp>
 
@@ -81,7 +82,7 @@ void World::update( float deltaTime )
 	for( auto& entity : m_entities )
 	{
 		entity->update( *this, deltaTime );
-		m_renderer->getGizmoRenderer()->drawCube( *entity );
+		m_renderer->getGizmoRenderer()->drawCube( *entity, { 255, 0, 255, 255 } );
 	}
 }
 
@@ -211,6 +212,29 @@ size_t World::calculateVoxelMemoryConsumption() const
 void World::summonEntity( std::shared_ptr< Entity > m_entity )
 {
 	m_entities.push_back( m_entity );
+}
+
+void World::getVoxels( const Core::AxisAlignedBB& aabb, std::list< PlacedVoxel >& buffer )
+{
+	glm::ivec3 min{ std::floor( aabb.getMin().x ),
+					std::floor( aabb.getMin().y ),
+					std::floor( aabb.getMin().z ) };
+	glm::ivec3 max{ std::floor( aabb.getMax().x ),
+					std::floor( aabb.getMax().y ),
+					std::floor( aabb.getMax().z ) };
+
+	// Optimize by caching chunks ( getVoxel() is slow )
+	for( int x = min.x; x <= max.x; ++x )
+	{
+		for( int y = min.y; y <= max.y; ++y )
+		{
+			for( int z = min.z; z <= max.z; ++z )
+			{
+				glm::ivec3 pos{ x, y, z };
+				buffer.push_back( PlacedVoxel( *this, pos, getVoxel( pos ) ) );
+			}
+		}
+	}
 }
 
 } // namespace Game

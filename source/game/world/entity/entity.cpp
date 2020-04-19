@@ -4,6 +4,9 @@
 
 #include "entity.h"
 
+#include "game/rendering/gizmo_renderer.h"
+#include "game/rendering/renderer.h"
+#include "game/world/voxel/placed_voxel.h"
 #include "game/world/world.h"
 
 namespace Game
@@ -14,33 +17,65 @@ void Entity::update( World& world, float deltaTime )
 	Core::AxisAlignedBB myBB = m_axisAlignedBb;
 	myBB.offset( m_position );
 
-	for( int x = -1; x < 1; ++x )
+	std::list< PlacedVoxel > voxels;
+	world.getVoxels( myBB, voxels );
+
+	for( auto& voxel : voxels )
 	{
-		for( int y = -1; y < 1; ++y )
+		if( !voxel.exists() )
 		{
-			for( int z = -1; z < 1; ++z )
-			{
-				glm::ivec3 worldVoxelPos{ static_cast< int >( m_position.x + x ),
-										  static_cast< int >( m_position.y + y ),
-										  static_cast< int >( m_position.z + z ) };
-
-				auto voxel = world.getVoxel( m_position + glm::vec3{ x, y, z } );
-				if( !voxel.exists() )
-				{
-					continue;
-				}
-
-				Core::AxisAlignedBB voxelBB{ Core::AxisAlignedBB::FromPosition( worldVoxelPos ) };
-				if( myBB.intersectsWith( voxelBB ) )
-				{
-					glm::vec3 offset = myBB.calculateOffset( voxelBB, getVelocity() );
-					getVelocity() -= offset;
-				}
-			}
+			continue;
+		}
+		Core::AxisAlignedBB voxelBB{ Core::AxisAlignedBB::FromPosition( voxel.getPosition() ) };
+		if( myBB.intersectsWith( voxelBB ) )
+		{
+			glm::vec3 offset = myBB.calculateOffset( voxelBB, getVelocity() );
+			getVelocity() -= offset;
 		}
 	}
 
 	Core::Rigidbody::update( deltaTime );
 }
+
+/*
+void Entity::update( World& world, float deltaTime )
+{
+	std::list< PlacedVoxel > voxels;
+	glm::vec3 offset;
+	for( int i = 0; i < 3; ++i )
+	{
+		Core::AxisAlignedBB myBB = m_axisAlignedBb;
+		myBB.offset( m_position );
+		voxels.clear();
+		world.getVoxels( myBB, voxels );
+
+		for( auto& voxel : voxels )
+		{
+			if( !voxel.exists() )
+			{
+				continue;
+			}
+			Core::AxisAlignedBB voxelBB{ Core::AxisAlignedBB::FromPosition( voxel.getPosition() ) };
+
+			switch( i )
+			{
+			case 1:
+				offset[ i ] = myBB.calculateYOffset( voxelBB, getVelocity()[ i ] );
+				break;
+			case 0:
+				offset[ i ] = myBB.calculateXOffset( voxelBB, getVelocity()[ i ] );
+				break;
+			case 2:
+				offset[ i ] = myBB.calculateZOffset( voxelBB, getVelocity()[ i ] );
+				break;
+			}
+		}
+	}
+
+	getVelocity() -= offset;
+	Core::Rigidbody::update( deltaTime );
+}
+
+*/
 
 } // namespace Game

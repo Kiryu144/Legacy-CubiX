@@ -5,6 +5,8 @@
 #ifndef CUBIX_AXIS_ALIGNED_BB_H
 #define CUBIX_AXIS_ALIGNED_BB_H
 
+#include "core/cubix_macro.h"
+
 #include <glm/vec3.hpp>
 
 namespace Core
@@ -25,6 +27,9 @@ public:
 	{
 		return AxisAlignedBB( pos, pos + size );
 	}
+
+	CUBIX_GET_R_CR( m_min, Min );
+	CUBIX_GET_R_CR( m_max, Max );
 
 	void addCoord( const glm::vec3& coord );
 	void offset( const glm::vec3& v );

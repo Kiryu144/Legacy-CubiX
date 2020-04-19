@@ -12,11 +12,17 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
 
+namespace Core
+{
+class AxisAlignedBB;
+}
+
 namespace Game
 {
 
 class Renderer;
 class Entity;
+class PlacedVoxel;
 
 class World : public WorldChunkContainer
 {
@@ -53,6 +59,7 @@ public:
 	// void insert( const VoxelGroup& voxelGroup, glm::ivec3 position );
 	void updateForPlayer( const glm::ivec2& chunkPosition );
 	void summonEntity( std::shared_ptr< Entity > m_entity );
+	void getVoxels( const Core::AxisAlignedBB& aabb, std::list< PlacedVoxel >& buffer );
 
 	void prepareUniforms( Core::ShaderProgram& shader );
 	void render();
