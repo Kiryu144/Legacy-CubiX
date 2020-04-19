@@ -115,10 +115,8 @@ Voxel WorldChunkContainer::getVoxel( const glm::ivec3& pos, const Voxel& _def ) 
 	{
 		return _def;
 	}
-	return chunk->getVoxel(
-		pos
-		- chunk->getChunkPosition()
-			* glm::ivec3{ static_cast< int >( IWorldChunk::GetSideLength() ) } );
+	auto worldPos = IWorldChunk::WorldPosFromChunkPos( chunk->getChunkPosition() );
+	return chunk->getVoxel( pos - worldPos );
 }
 
 } // namespace Game

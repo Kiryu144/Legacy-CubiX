@@ -16,6 +16,7 @@ namespace Game
 {
 
 class Renderer;
+class Entity;
 
 class World : public WorldChunkContainer
 {
@@ -28,6 +29,8 @@ protected:
 	std::unique_ptr< IWorldChunkFactory > m_chunkFactory;
 	Core::Lockable< ChunkQueue > m_chunksToGenerate;
 	Core::Lockable< ChunkQueue > m_chunksToDelete;
+
+	std::list< std::shared_ptr< Entity > > m_entities;
 
 	std::shared_ptr< Core::ShaderProgram > m_chunkShader;
 	int m_ambientLightPowerUniform{ -1 };
@@ -47,8 +50,9 @@ public:
 	CUBIX_GET_CR( m_chunkFactory, ChunkFactory );
 	CUBIX_GET_SET_R_CR( m_renderer, Renderer );
 
-	//void insert( const VoxelGroup& voxelGroup, glm::ivec3 position );
+	// void insert( const VoxelGroup& voxelGroup, glm::ivec3 position );
 	void updateForPlayer( const glm::ivec2& chunkPosition );
+	void summonEntity( std::shared_ptr< Entity > m_entity );
 
 	void prepareUniforms( Core::ShaderProgram& shader );
 	void render();

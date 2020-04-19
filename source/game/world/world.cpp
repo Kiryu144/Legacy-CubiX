@@ -6,8 +6,12 @@
 
 #include "core/opengl/shader_program.h"
 
+#include "game/rendering/gizmo_renderer.h"
 #include "game/rendering/renderer.h"
 #include "game/world/chunk/world_chunk_column.h"
+#include "game/world/entity/entity.h"
+
+#include <glm/gtx/string_cast.hpp>
 
 namespace Game
 {
@@ -72,6 +76,12 @@ void World::update( float deltaTime )
 			}
 			++it;
 		}
+	}
+
+	for( auto& entity : m_entities )
+	{
+		entity->update( *this, deltaTime );
+		m_renderer->getGizmoRenderer()->drawCube( *entity );
 	}
 }
 
@@ -176,6 +186,7 @@ void World::render()
 
 void World::prepareUniforms( Core::ShaderProgram& shader )
 {
+	shader.bind();
 	shader.setUniform( m_ambientLightPowerUniform, 0.8f );
 	shader.setUniform( m_directionalLightPositionUniform,
 					   glm::vec3{ 5000.0f, -100000.0f, 14400.0f } );
@@ -195,6 +206,11 @@ size_t World::calculateVoxelMemoryConsumption() const
 		}
 	}
 	return size;
+}
+
+void World::summonEntity( std::shared_ptr< Entity > m_entity )
+{
+	m_entities.push_back( m_entity );
 }
 
 } // namespace Game

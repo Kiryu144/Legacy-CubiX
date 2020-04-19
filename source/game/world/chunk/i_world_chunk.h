@@ -63,9 +63,9 @@ public:
 
 	static glm::ivec3 ChunkPosFromWorldPos( const glm::ivec3& worldPosition )
 	{
-		return { std::floor( worldPosition.x / GetSideLength() ),
-				 std::floor( worldPosition.y / GetSideLength() ),
-				 std::floor( worldPosition.z / GetSideLength() ) };
+		return { std::floor( static_cast< float >( worldPosition.x ) / GetSideLength() ),
+				 std::floor( static_cast< float >( worldPosition.y ) / GetSideLength() ),
+				 std::floor( static_cast< float >( worldPosition.z ) / GetSideLength() ) };
 	}
 
 	static glm::ivec3 WorldPosFromChunkPos( const glm::ivec3& chunkPosition )

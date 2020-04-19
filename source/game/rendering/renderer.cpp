@@ -4,13 +4,19 @@
 
 #include "renderer.h"
 
-#include "renderable.h"
-
 #include "core/opengl/attributebuffer.h"
 #include "core/opengl/shader_program.h"
 
+#include "game/rendering/gizmo_renderer.h"
+#include "game/rendering/renderable.h"
+
 namespace Game
 {
+
+void Renderer::initializeSubRenderers()
+{
+	m_gizmoRenderer.reset( new GizmoRenderer( *this ) );
+}
 
 void Renderer::render( Renderable* renderable )
 {

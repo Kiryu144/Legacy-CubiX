@@ -27,6 +27,8 @@ void Rigidbody::update( float deltaTime )
 
 		getPosition()[ i ] += m_velocity[ i ] * deltaTime;
 	}
+
+	m_velocity.y -= m_gravity * deltaTime;
 }
 
 void Rigidbody::addVelocity( const glm::vec3& vel )

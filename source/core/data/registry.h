@@ -77,6 +77,16 @@ public:
 		cubix_assert( key.isValid(), "Invalid key" );
 		return m_data[ key._getKey() ];
 	}
+
+	T& getValue( const std::string& name )
+	{
+		return getValue( getKey( name ).value() );
+	}
+
+	const T& getValue( const std::string& name ) const
+	{
+		return getValue( getKey( name ).value() );
+	}
 };
 
 } // namespace Core

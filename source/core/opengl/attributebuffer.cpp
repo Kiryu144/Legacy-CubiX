@@ -23,7 +23,7 @@ void AttributeBuffer::bind( GLuint vertexAttribIndex )
 	m_attribute->vertexAttribPointer( vertexAttribIndex );
 }
 
-void AttributeBuffer::upload( void* data, size_t vertices )
+void AttributeBuffer::upload( const void* data, size_t vertices )
 {
 	cubix_assert( data != nullptr, "Nullptr data provided" );
 	cubix_assert( vertices != 0, "Cannot upload data with zero vertices" );

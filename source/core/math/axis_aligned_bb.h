@@ -12,24 +12,30 @@ namespace Core
 
 class AxisAlignedBB
 {
-private:
-	template< typename T >
-	int sign( T val ) const
-	{
-		return ( T( 0 ) < val ) - ( val < T( 0 ) );
-	}
-
 protected:
 	glm::vec3 m_min;
 	glm::vec3 m_max;
-	glm::vec3 m_size;
-	glm::vec3 m_center;
 
 public:
-	AxisAlignedBB( const glm::vec3& min, const glm::vec3& max );
+	AxisAlignedBB( const glm::vec3& min = glm::vec3{ 0.0f },
+				   const glm::vec3& max = glm::vec3{ 1.0f } );
 
-	void translate(const glm::vec3& v);
-	glm::vec3 getOverlapping( const AxisAlignedBB& other ) const;
+	static inline AxisAlignedBB FromPosition( const glm::vec3& pos,
+											  const glm::vec3& size = glm::vec3( 1.0 ) )
+	{
+		return AxisAlignedBB( pos, pos + size );
+	}
+
+	void addCoord( const glm::vec3& coord );
+	void offset( const glm::vec3& v );
+
+	float calculateXOffset( const AxisAlignedBB& other, float def = 0.0f ) const;
+	float calculateYOffset( const AxisAlignedBB& other, float def = 0.0f ) const;
+	float calculateZOffset( const AxisAlignedBB& other, float def = 0.0f ) const;
+	glm::vec3 calculateOffset( const AxisAlignedBB& alignedBb, const glm::vec3& def ) const;
+
+	bool intersectsWith( const AxisAlignedBB& other ) const;
+	bool intersectsWith( const glm::vec3& pos ) const;
 };
 
 } // namespace Core

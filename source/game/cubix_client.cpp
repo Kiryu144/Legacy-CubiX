@@ -9,6 +9,8 @@
 
 #include "game/packet/packet_client_information.h"
 #include "game/packet/packet_server_information.h"
+#include "game/rendering/gizmo_renderer.h"
+#include "game/world/entity/entity.h"
 
 #include <glfw/glfw3.h>
 #include <imgui/imgui.h>
@@ -23,13 +25,34 @@ CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
 	connect( "127.0.0.1", 4444 );
 	m_moveableView.setSpeed( 30 );
 
+	// World Chunk Shader
 	std::shared_ptr< Core::ShaderProgram > worldChunkShader( new Core::ShaderProgram() );
 	worldChunkShader
-		->compileShaderFromFile( "voxelstructure.vert", Core::ShaderProgram::VERTEX_SHADER )
-		.compileShaderFromFile( "voxelstructure.frag", Core::ShaderProgram::FRAGMENT_SHADER )
+		->compileShaderFromFile( "shader\\world_chunk.vert", Core::ShaderProgram::VERTEX_SHADER )
+		.compileShaderFromFile( "shader\\world_chunk.frag", Core::ShaderProgram::FRAGMENT_SHADER )
 		.link();
-
 	m_renderer.getShaderRegistry().insert( "world_chunk_shader", std::move( worldChunkShader ) );
+
+	// Gizmo Shader
+	std::shared_ptr< Core::ShaderProgram > gizmoShader( new Core::ShaderProgram() );
+	gizmoShader
+		->compileShaderFromFile( "shader\\gizmo_shader.vert", Core::ShaderProgram::VERTEX_SHADER )
+		.compileShaderFromFile( "shader\\gizmo_shader.frag", Core::ShaderProgram::FRAGMENT_SHADER )
+		.link();
+	m_renderer.getShaderRegistry().insert( "gizmo_shader", std::move( gizmoShader ) );
+
+	// Voxel Structure Shader
+	std::shared_ptr< Core::ShaderProgram > voxelStructureShader( new Core::ShaderProgram() );
+	voxelStructureShader
+		->compileShaderFromFile( "shader\\voxel_structure.vert",
+								 Core::ShaderProgram::VERTEX_SHADER )
+		.compileShaderFromFile( "shader\\voxel_structure.frag",
+								Core::ShaderProgram::FRAGMENT_SHADER )
+		.link();
+	m_renderer.getShaderRegistry().insert( "voxel_structure_shader",
+										   std::move( voxelStructureShader ) );
+
+	m_renderer.initializeSubRenderers();
 }
 
 void CubixClient::update()
@@ -119,12 +142,10 @@ void CubixClient::onEvent( const Core::UserInputHandler::EventUpdate& eventType 
 {
 	if( eventType.instance.isKeyDown( Core::UserInputHandler::F ) )
 	{
-		// m_world.insert( *m_group, m_moveableView.getPosition() );
-	}
-
-	if( eventType.instance.isKeyDown( Core::UserInputHandler::R ) )
-	{
-		m_moveableView.getPosition() += glm::vec3{ 5000, 0, 5000 };
+		std::shared_ptr< Entity > entity( new Entity() );
+		entity->getPosition() = m_moveableView.getPosition();
+		entity->setVelocity( m_moveableView.getDirection() * glm::vec3( 50.0f ) );
+		m_world.summonEntity( entity );
 	}
 }
 

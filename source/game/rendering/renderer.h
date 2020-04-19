@@ -5,8 +5,8 @@
 #ifndef CUBIX_RENDERER_H
 #define CUBIX_RENDERER_H
 
-#include "core/data/registry.h"
 #include "core/cubix_macro.h"
+#include "core/data/registry.h"
 
 #include <glm/mat4x4.hpp>
 
@@ -19,6 +19,7 @@ namespace Game
 {
 
 class Renderable;
+class GizmoRenderer;
 
 class Renderer
 {
@@ -31,10 +32,16 @@ protected:
 	glm::mat4 m_projection;
 	glm::mat4 m_view;
 
+	// Sub renderers
+	std::shared_ptr< GizmoRenderer > m_gizmoRenderer;
+
 public:
+	void initializeSubRenderers();
+
 	CUBIX_GET_SET_CR_CR( m_projection, Projection );
 	CUBIX_GET_SET_CR_CR( m_view, View );
 	CUBIX_GET_R_CR( m_shaderRegistry, ShaderRegistry );
+	CUBIX_GET_R_CR( m_gizmoRenderer, GizmoRenderer );
 
 	void render( Renderable* renderable );
 };

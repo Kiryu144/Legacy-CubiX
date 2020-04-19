@@ -16,10 +16,12 @@ class Rigidbody : public Core::Transform
 protected:
 	float m_airDrag{ 1.0f };
 	glm::vec3 m_velocity{ 0.0f };
+	float m_gravity{ 20.0f };
 
 public:
-	CUBIX_GET_SET_CR_CR( m_airDrag, AirDrag );
-	CUBIX_GET_SET_CR_CR( m_velocity, Velocity );
+	CUBIX_GET_SET_R_CR( m_airDrag, AirDrag );
+	CUBIX_GET_SET_R_CR( m_velocity, Velocity );
+	CUBIX_GET_SET_R_CR( m_gravity, Gravity );
 
 	void addVelocity( const glm::vec3& vel );
 	void addVelocity( const glm::vec3& vel, const glm::vec3& max );

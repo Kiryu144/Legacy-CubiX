@@ -30,7 +30,7 @@ public:
 	AttributeBuffer( std::shared_ptr< Attribute > attribute,
 					 GLenum bufferTarget = GL_ARRAY_BUFFER );
 
-	void upload( void* data, size_t vertices );
+	void upload( const void* data, size_t vertices );
 	void bind( GLuint vertexAttribIndex );
 	bool isValid() const;
 
