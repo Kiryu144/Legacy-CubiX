@@ -87,8 +87,8 @@ public:
 	virtual void setPopulated() = 0;
 	virtual void setGenerated() = 0;
 
-	virtual void setMillisecondsNotSeen( int ms ) = 0;
-	virtual int getMillisecondsNotSeen()		  = 0;
+	virtual void setFramesNotSeen( int ms ) = 0;
+	virtual int getFramesNotSeen()		  = 0;
 
 	virtual size_t getVoxelCount() = 0;
 };

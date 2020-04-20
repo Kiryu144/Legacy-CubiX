@@ -5,12 +5,12 @@
 #include "world.h"
 
 #include "core/opengl/shader_program.h"
+#include "core/time/auto_stop_watch.h"
 
 #include "game/rendering/gizmo_renderer.h"
 #include "game/rendering/renderer.h"
 #include "game/world/chunk/world_chunk_column.h"
 #include "game/world/entity/entity.h"
-#include "game/world/voxel/placed_voxel.h"
 
 #include <glm/gtx/string_cast.hpp>
 
@@ -25,29 +25,37 @@ World::World( Renderer* renderer )
 {
 }
 
-void World::generateChunk( const glm::ivec3& chunkPosition )
+void World::queueGenerateChunk( const glm::ivec3& chunkPosition )
 {
 	auto lock( m_chunksToGenerate.lockGuard() );
 	m_chunksToGenerate.insert( chunkPosition );
 }
 
-void World::_generateChunk( const glm::ivec3& chunkPosition )
+void World::queueDeleteChunk( const glm::ivec3& chunkPosition )
 {
-	auto chunk = createChunk( chunkPosition );
-	if( chunk != nullptr )
-	{
-		m_chunkWorker.queue( chunk );
-	}
+	auto lock( m_chunksToDelete.lockGuard() );
+	m_chunksToDelete.insert( chunkPosition );
+}
+
+void World::queueUpdateChunk( const glm::ivec3& chunkPosition )
+{
+	auto lock( m_chunksToUpdate.lockGuard() );
+	m_chunksToUpdate.insert( chunkPosition );
 }
 
 void World::update( float deltaTime )
 {
 	m_chunkWorker.checkForCrash();
+
 	{
 		auto lock( m_chunksToGenerate.lockGuard() );
 		for( auto& chunkPosition : m_chunksToGenerate )
 		{
-			_generateChunk( chunkPosition );
+			auto chunk = createChunk( chunkPosition );
+			if( chunk != nullptr )
+			{
+				m_chunkWorker.queue( chunk );
+			}
 		}
 		m_chunksToGenerate.clear();
 	}
@@ -56,9 +64,22 @@ void World::update( float deltaTime )
 		auto lock( m_chunksToDelete.lockGuard() );
 		for( auto& chunkPosition : m_chunksToDelete )
 		{
-			_deleteChunk( chunkPosition );
+			removeChunk( chunkPosition );
 		}
 		m_chunksToDelete.clear();
+	}
+
+	{
+		auto lock( m_chunksToUpdate.lockGuard() );
+		for( auto& chunkPosition : m_chunksToUpdate )
+		{
+			auto chunk = createChunk( chunkPosition );
+			if( chunk != nullptr )
+			{
+				m_chunkWorker.queue( chunk );
+			}
+		}
+		m_chunksToUpdate.clear();
 	}
 
 	for( auto it = m_allChunks.begin(); it != m_allChunks.end(); )
@@ -70,10 +91,10 @@ void World::update( float deltaTime )
 		else
 		{
 			auto chunk = it->lock();
-			chunk->setMillisecondsNotSeen( chunk->getMillisecondsNotSeen() + 1 );
-			if( chunk->getMillisecondsNotSeen() > 200 )
+			chunk->setFramesNotSeen( chunk->getFramesNotSeen() + 1 );
+			if( chunk->getFramesNotSeen() > 200 )
 			{
-				deleteChunk( chunk->getChunkPosition() );
+				queueDeleteChunk( chunk->getChunkPosition() );
 			}
 			++it;
 		}
@@ -127,26 +148,15 @@ void World::updateForPlayer( const glm::ivec2& chunkPosition )
 	auto chunkColumn = getChunkColumn( chunkPosition );
 	if( chunkColumn == nullptr )
 	{
-		generateChunk( { chunkPosition.x, 0, chunkPosition.y } );
+		queueGenerateChunk( { chunkPosition.x, 0, chunkPosition.y } );
 	}
 	else
 	{
 		for( auto it : chunkColumn->getChunks() )
 		{
-			it.second->setMillisecondsNotSeen( 0 );
+			it.second->setFramesNotSeen( 0 );
 		}
 	}
-}
-
-void World::_deleteChunk( const glm::ivec3& chunkPosition )
-{
-	removeChunk( chunkPosition );
-}
-
-void World::deleteChunk( const glm::ivec3& chunkPosition )
-{
-	auto lock( m_chunksToDelete.lockGuard() );
-	m_chunksToDelete.insert( chunkPosition );
 }
 
 void World::render()
@@ -175,7 +185,7 @@ void World::render()
 			= std::static_pointer_cast< RenderWorldChunk >( chunkIt.lock() );
 
 		chunk->uploadWhenNeeded();
-		if( !chunk->isMeshGenerated() || chunk->getMillisecondsNotSeen() > 0
+		if( !chunk->isMeshGenerated() || chunk->getFramesNotSeen() > 0
 			|| chunk->getAttributeBuffer().getVerticeAmount() == 0 )
 		{
 			continue;
@@ -214,27 +224,19 @@ void World::summonEntity( std::shared_ptr< Entity > m_entity )
 	m_entities.push_back( m_entity );
 }
 
-void World::getVoxels( const Core::AxisAlignedBB& aabb, std::list< PlacedVoxel >& buffer )
+std::optional< glm::ivec3 > World::raycastBlocks( const glm::vec3& start,
+												  const glm::vec3& direction,
+												  int maxDistance ) const
 {
-	glm::ivec3 min{ std::floor( aabb.getMin().x ),
-					std::floor( aabb.getMin().y ),
-					std::floor( aabb.getMin().z ) };
-	glm::ivec3 max{ std::floor( aabb.getMax().x ),
-					std::floor( aabb.getMax().y ),
-					std::floor( aabb.getMax().z ) };
-
-	// Optimize by caching chunks ( getVoxel() is slow )
-	for( int x = min.x; x <= max.x; ++x )
+	glm::vec3 directionNorm{ glm::normalize( direction ) };
+	for( glm::vec3 pos = start; maxDistance > 0; pos += directionNorm, --maxDistance )
 	{
-		for( int y = min.y; y <= max.y; ++y )
+		if( getVoxel( pos ).exists() )
 		{
-			for( int z = min.z; z <= max.z; ++z )
-			{
-				glm::ivec3 pos{ x, y, z };
-				buffer.push_back( PlacedVoxel( *this, pos, getVoxel( pos ) ) );
-			}
+			return glm::ivec3( pos );
 		}
 	}
+	return {};
 }
 
 } // namespace Game

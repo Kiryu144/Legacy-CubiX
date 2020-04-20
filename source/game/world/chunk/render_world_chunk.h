@@ -49,6 +49,7 @@ protected:
 
 	std::mutex m_uploadMutex;
 	bool m_upload{ false };
+	bool m_needsNewMesh{ false };
 
 	Core::RegistryKey m_shaderKey;
 
@@ -67,6 +68,8 @@ public:
 
 	bool isMeshGenerated() const;
 	void setMeshGenerated();
+
+	CUBIX_GET_SET_CR_CR( m_needsNewMesh, NeedsNewMesh );
 
 	void setUniforms( Core::ShaderProgram& shader ) override;
 	Core::RegistryKey getShader() override;

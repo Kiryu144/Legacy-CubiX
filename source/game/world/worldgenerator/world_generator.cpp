@@ -87,11 +87,11 @@ void WorldGenerator::generateHeight( std::shared_ptr< IWorldChunk > chunk )
 
 	if( generateChunkOnTop )
 	{
-		chunk->getWorld().generateChunk( chunk->getChunkPosition() + glm::ivec3{ 0, 1, 0 } );
+		chunk->getWorld().queueGenerateChunk( chunk->getChunkPosition() + glm::ivec3{ 0, 1, 0 } );
 	}
 	if( generateChunkOnBottom )
 	{
-		chunk->getWorld().generateChunk( chunk->getChunkPosition() + glm::ivec3{ 0, -1, 0 } );
+		chunk->getWorld().queueGenerateChunk( chunk->getChunkPosition() + glm::ivec3{ 0, -1, 0 } );
 	}
 }
 

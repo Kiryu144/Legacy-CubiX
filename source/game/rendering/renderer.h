@@ -20,6 +20,7 @@ namespace Game
 
 class Renderable;
 class GizmoRenderer;
+class BlockOutlineRenderer;
 
 class Renderer
 {
@@ -34,18 +35,21 @@ protected:
 
 	// Sub renderers
 	std::shared_ptr< GizmoRenderer > m_gizmoRenderer;
+	std::shared_ptr< BlockOutlineRenderer > m_blockOutlineRenderer;
 
 public:
 	CUBIX_GET_SET_CR_CR( m_projection, Projection );
 	CUBIX_GET_SET_CR_CR( m_view, View );
 	CUBIX_GET_R_CR( m_shaderRegistry, ShaderRegistry );
 	CUBIX_GET_R_CR( m_gizmoRenderer, GizmoRenderer );
+	CUBIX_GET_R_CR( m_blockOutlineRenderer, BlockOutlineRenderer );
 
 	// Helper
 	std::shared_ptr< Core::ShaderProgram > createShader( const std::string& name );
 
 	void initializeSubRenderers();
 	void render( Renderable* renderable );
+	void finalizeSubRenderer();
 };
 
 } // namespace Game

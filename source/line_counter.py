@@ -14,8 +14,8 @@ def custom_compare(item1, item2):
         return int(s.split(": ")[1])
     return strip(item2) - strip(item1)
 
-matches.sort()
-#matches = sorted(matches, key=functools.cmp_to_key(custom_compare))
+#matches.sort()
+matches = sorted(matches, key=functools.cmp_to_key(custom_compare))
 
 for match in matches:
     print(match)

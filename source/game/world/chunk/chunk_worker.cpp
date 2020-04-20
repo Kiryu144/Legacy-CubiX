@@ -61,13 +61,14 @@ void ChunkWorker::worker()
 				chunk->setPopulated();
 				if( chunk->getVoxelCount() == 0 )
 				{
-					chunk->getWorld().deleteChunk( chunk->getChunkPosition() );
+					chunk->getWorld().queueDeleteChunk( chunk->getChunkPosition() );
 				}
 				wasWorkDone = true;
 			}
 
 			RenderWorldChunk* renderWorldChunk = dynamic_cast< RenderWorldChunk* >( chunk.get() );
-			if( renderWorldChunk && !renderWorldChunk->isMeshGenerated() )
+			if( renderWorldChunk
+				&& ( !renderWorldChunk->isMeshGenerated() || renderWorldChunk->getNeedsNewMesh() ) )
 			{
 				renderWorldChunk->regenerateMesh();
 				renderWorldChunk->setMeshGenerated();

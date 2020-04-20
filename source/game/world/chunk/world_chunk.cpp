@@ -20,9 +20,10 @@ Voxel WorldChunk::getVoxelFromWorld( const glm::ivec3& position, const Voxel& _d
 		|| position.y >= GetSideLength() || position.z < 0 || position.z >= GetSideLength() )
 	{
 		return _def;
+		/*
 		return m_world.getVoxel( m_chunkPosition * glm::ivec3( GetSize() )
 									 + ( position % glm::ivec3( GetSize() ) ),
-								 _def );
+								 _def );*/
 	}
 	return getVoxel( position );
 }

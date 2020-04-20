@@ -33,8 +33,10 @@ protected:
 	ChunkWorker m_chunkWorker;
 	Renderer* m_renderer;
 	std::unique_ptr< IWorldChunkFactory > m_chunkFactory;
+
 	Core::Lockable< ChunkQueue > m_chunksToGenerate;
 	Core::Lockable< ChunkQueue > m_chunksToDelete;
+	Core::Lockable< ChunkQueue > m_chunksToUpdate;
 
 	std::list< std::shared_ptr< Entity > > m_entities;
 
@@ -43,9 +45,6 @@ protected:
 	int m_directionalLightPositionUniform{ -1 };
 	int m_skyColorUniform{ -1 };
 	int m_fogDensityUniform{ -1 };
-
-	void _generateChunk( const glm::ivec3& chunkPosition );
-	void _deleteChunk( const glm::ivec3& chunkPosition );
 
 public:
 	World( Renderer* renderer );
@@ -59,16 +58,19 @@ public:
 	// void insert( const VoxelGroup& voxelGroup, glm::ivec3 position );
 	void updateForPlayer( const glm::ivec2& chunkPosition );
 	void summonEntity( std::shared_ptr< Entity > m_entity );
-	void getVoxels( const Core::AxisAlignedBB& aabb, std::list< PlacedVoxel >& buffer );
 
 	void prepareUniforms( Core::ShaderProgram& shader );
 	void render();
 
+	std::optional< glm::ivec3 > raycastBlocks( const glm::vec3& start,
+											   const glm::vec3& direction,
+											   int maxDistance ) const;
 	size_t calculateVoxelMemoryConsumption() const;
 
 	// Thread safe
-	void generateChunk( const glm::ivec3& chunkPosition );
-	void deleteChunk( const glm::ivec3& chunkPosition );
+	void queueGenerateChunk( const glm::ivec3& chunkPosition );
+	void queueDeleteChunk( const glm::ivec3& chunkPosition );
+	void queueUpdateChunk( const glm::ivec3& chunkPosition );
 };
 
 } // namespace Game

@@ -47,12 +47,12 @@ bool EmptyWorldChunk::isGenerated() const
 	return true;
 }
 
-void EmptyWorldChunk::setMillisecondsNotSeen( int ms )
+void EmptyWorldChunk::setFramesNotSeen( int ms )
 {
 	m_millisecondsNotSeen = ms;
 }
 
-int EmptyWorldChunk::getMillisecondsNotSeen()
+int EmptyWorldChunk::getFramesNotSeen()
 {
 	return m_millisecondsNotSeen;
 }

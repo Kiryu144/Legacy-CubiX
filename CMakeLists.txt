@@ -132,7 +132,7 @@ source/core/time/average_stop_watch.h
         source/core/logic/singelton.h
 source/core/math/rigidbody.cpp
 source/core/math/rigidbody.h
-        source/game/rendering/renderable.h source/core/data/registry.h source/game/rendering/renderable.cpp source/core/logic/string_cast.h source/core/logic/string_cast.cpp source/game/world/entity/entity.cpp source/game/world/entity/entity.h source/game/world/entity/player.cpp source/game/world/entity/player.h source/game/rendering/gizmo_renderer.cpp source/game/rendering/gizmo_renderer.h source/game/world/voxel/placed_voxel.cpp source/game/world/voxel/placed_voxel.h source/core/opengl/opengl_context.cpp source/core/opengl/opengl_context.h source/core/opengl/imgui_context.cpp source/core/opengl/imgui_context.h)
+        source/game/rendering/renderable.h source/core/data/registry.h source/game/rendering/renderable.cpp source/core/logic/string_cast.h source/core/logic/string_cast.cpp source/game/world/entity/entity.cpp source/game/world/entity/entity.h source/game/world/entity/player.cpp source/game/world/entity/player.h source/game/rendering/gizmo_renderer.cpp source/game/rendering/gizmo_renderer.h source/game/world/voxel/placed_voxel.cpp source/game/world/voxel/placed_voxel.h source/core/opengl/opengl_context.cpp source/core/opengl/opengl_context.h source/core/opengl/imgui_context.cpp source/core/opengl/imgui_context.h source/core/time/auto_stop_watch.cpp source/core/time/auto_stop_watch.h source/game/rendering/block_outline_renderer.cpp source/game/rendering/block_outline_renderer.h source/game/rendering/sub_renderer.h)
 
 add_executable(CubiX ${SOURCE_FILES} resources.rc)
 target_link_libraries(CubiX ${LINKER_TARGETS})

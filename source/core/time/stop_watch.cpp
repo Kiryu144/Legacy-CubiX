@@ -21,13 +21,20 @@ void StopWatch::start()
 
 void StopWatch::stop()
 {
-	m_timeElapsed += now() - m_start;
+	auto _now	  = now();
+	m_timeElapsed = _now - m_start;
+	m_start		  = _now;
 }
 
 void StopWatch::reset()
 {
-	start();
 	m_timeElapsed = m_timeElapsed.zero();
+}
+
+float StopWatch::getTimeElapsedMs() const
+{
+	return std::chrono::duration_cast< std::chrono::microseconds >( m_timeElapsed ).count()
+		/ 1000.0f;
 }
 
 } // namespace Core

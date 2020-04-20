@@ -9,6 +9,7 @@
 
 #include "game/packet/packet_client_information.h"
 #include "game/packet/packet_server_information.h"
+#include "game/rendering/block_outline_renderer.h"
 #include "game/rendering/gizmo_renderer.h"
 #include "game/world/entity/entity.h"
 
@@ -40,6 +41,11 @@ CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
 		.compileShaderFromFile( "shader\\voxel_structure.frag" )
 		.link();
 
+	m_renderer.createShader( "block_outline" )
+		->compileShaderFromFile( "shader\\block_outline.vert" )
+		.compileShaderFromFile( "shader\\block_outline.frag" )
+		.link();
+
 	m_renderer.initializeSubRenderers();
 
 	connect( "127.0.0.1", 4444 );
@@ -55,6 +61,15 @@ void CubixClient::update()
 	if( m_window.shouldClose() )
 	{
 		quit();
+	}
+
+	m_moveableView.update( m_gameTime.getDeltaTime() );
+
+	auto raycastHit
+		= m_world.raycastBlocks( m_moveableView.getPosition(), m_moveableView.getDirection(), 24 );
+	if( raycastHit.has_value() )
+	{
+		m_renderer.getBlockOutlineRenderer()->render( raycastHit.value(), { 0, 0, 0, 160 } );
 	}
 
 	glm::ivec3 playerChunkPos{ IWorldChunk::ChunkPosFromWorldPos( m_moveableView.getPosition() ) };
@@ -73,9 +88,9 @@ void CubixClient::update()
 		}
 	}
 
-	m_moveableView.update( m_gameTime.getDeltaTime() );
 	m_renderer.setView( m_moveableView.getViewMatrix() );
 	m_world.render();
+	m_renderer.finalizeSubRenderer();
 
 #if CUBIX_IMGUI
 	bool active = true;
@@ -137,6 +152,21 @@ void CubixClient::onEvent( const Core::UserInputHandler::EventUpdate& eventType 
 		entity->getPosition() = m_moveableView.getPosition();
 		entity->setVelocity( m_moveableView.getDirection() * glm::vec3( 50.0f ) );
 		m_world.summonEntity( entity );
+	}
+
+	if( eventType.instance.isKeyDown( Core::UserInputHandler::MOUSE_1 ) )
+	{
+		auto raycastHit = m_world.raycastBlocks(
+			m_moveableView.getPosition(), m_moveableView.getDirection(), 100 );
+		if( raycastHit.has_value() )
+		{
+			m_world.setVoxel( raycastHit.value(), {} ); // Remove voxel
+			auto chunk
+				= m_world.getChunk( IWorldChunk::ChunkPosFromWorldPos( raycastHit.value() ) );
+			auto renderChunk = static_cast< RenderWorldChunk* >( chunk.get() );
+			renderChunk->regenerateMesh();
+			m_world.queueUpdateChunk( chunk->getChunkPosition() );
+		}
 	}
 }
 

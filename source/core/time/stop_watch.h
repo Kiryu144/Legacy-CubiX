@@ -21,12 +21,13 @@ private:
 
 protected:
 	Timepoint m_start;
-	Duration m_timeElapsed;
+	Duration m_timeElapsed{ 0 };
 
 	Timepoint now() const;
 
 public:
 	StopWatch();
+	virtual ~StopWatch() = default;
 
 	CUBIX_GET_CR( m_start, Start );
 	CUBIX_GET_CR( m_timeElapsed, TimeElapsed );
@@ -34,6 +35,8 @@ public:
 	virtual void start();
 	virtual void stop();
 	virtual void reset();
+
+	virtual float getTimeElapsedMs() const;
 };
 
 } // namespace Core

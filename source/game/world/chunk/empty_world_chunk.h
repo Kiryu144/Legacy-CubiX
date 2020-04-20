@@ -30,8 +30,8 @@ public:
 	bool isGenerated() const override;
 	void setPopulated() override {}
 	void setGenerated() override {}
-	void setMillisecondsNotSeen( int ms ) override;
-	int getMillisecondsNotSeen() override;
+	void setFramesNotSeen( int ms ) override;
+	int getFramesNotSeen() override;
 	size_t getVoxelCount() override;
 };
 

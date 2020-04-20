@@ -9,6 +9,7 @@
 #include "core/logic/lockable.h"
 
 #include "game/world/chunk/i_world_chunk.h"
+#include "game/world/voxel/placed_voxel.h"
 #include "game/world/voxel/voxel.h"
 
 #include <list>
@@ -22,6 +23,11 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 // clang-format on
+
+namespace Core
+{
+class AxisAlignedBB;
+}
 
 namespace Game
 {
@@ -42,29 +48,27 @@ protected:
 	ChunkList m_allChunks;
 	World& m_world;
 
-	// Get chunk column for a given 2D chunkposition. Returns nullptr if missing.
 	std::shared_ptr< WorldChunkColumn > getChunkColumn( const glm::ivec2& chunkPos );
 	std::shared_ptr< const WorldChunkColumn > getChunkColumn( const glm::ivec2& chunkPos ) const;
-
 	std::shared_ptr< WorldChunkColumn > getOrCreateChunkColumn( const glm::ivec2& chunkPos );
 
 public:
 	WorldChunkContainer( World& world );
 
-	// Get chunk from a given chunkpos. Returns nullptr if missing
 	std::shared_ptr< IWorldChunk > getChunk( const glm::ivec3& chunkPos );
 	std::shared_ptr< const IWorldChunk > getChunk( const glm::ivec3& chunkPos ) const;
 
+	void setVoxel( const glm::ivec3& pos, const Voxel& voxel );
 	Voxel getVoxel( const glm::ivec3& pos, const Voxel& _def = Voxel() ) const;
 
-	std::vector< std::shared_ptr< IWorldChunk > > getSurroundingChunks( const glm::ivec3& chunkPos );
+	void getVoxels( const Core::AxisAlignedBB& aabb, std::list< PlacedVoxel >& buffer );
 
-	// Returns true if chunk exists, false if otherwise
+	std::vector< std::shared_ptr< IWorldChunk > > getSurroundingChunks(
+		const glm::ivec3& chunkPos );
+
 	bool getChunkExists( const glm::ivec3& chunkPos ) const;
 
-	// Creates an empty chunk instance
 	std::shared_ptr< IWorldChunk > createChunk( const glm::ivec3& chunkPos );
-
 	void removeChunk( const glm::ivec3& chunkPos );
 
 	CUBIX_GET_R_CR( m_allChunks, AllChunks );
