@@ -7,6 +7,8 @@
 
 #include <glad/glad.h>
 
+#include "core/data/color.h"
+
 namespace Core
 {
 
@@ -20,6 +22,8 @@ protected:
 
 public:
 	void init( GLADloadproc glaDloadproc );
+
+	void setClearColor(const Color& color) const;
 
 	static OpenGLContext& Get()
 	{

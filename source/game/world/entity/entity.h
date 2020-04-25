@@ -19,7 +19,7 @@ protected:
 	Core::AxisAlignedBB m_axisAlignedBb;
 
 public:
-	void update( World& world, float deltaTime );
+	virtual void update( World& world, float deltaTime );
 };
 
 } // namespace Game

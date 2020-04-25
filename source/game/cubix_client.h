@@ -15,6 +15,8 @@
 namespace Game
 {
 
+class PlayerController;
+
 class CubixClient : public Cubix,
 					public Core::NetClient,
 					public Core::Listener< Core::EventWindowResize >,
@@ -25,6 +27,7 @@ private:
 	Core::Window m_window;
 	Renderer m_renderer;
 	MoveableView m_moveableView;
+	std::shared_ptr< PlayerController > m_playerController;
 
 	int m_viewDistance{ 12 };
 

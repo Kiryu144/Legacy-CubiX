@@ -10,7 +10,7 @@
 namespace Core
 {
 
-class View : public Rigidbody
+class View : public virtual Transform
 {
 protected:
 	glm::vec3 m_front;

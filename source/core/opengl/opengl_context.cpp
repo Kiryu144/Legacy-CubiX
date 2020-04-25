@@ -46,6 +46,12 @@ void OpenGLContext::init( GLADloadproc glaDloadproc )
 	m_initialized = true;
 }
 
+void OpenGLContext::setClearColor( const Color& color ) const
+{
+	auto floatColor = color.toFloat();
+	glClearColor( floatColor.r, floatColor.g, floatColor.b, floatColor.a );
+}
+
 void _OnGlError( GLenum source,
 				 GLenum type,
 				 GLuint id,
