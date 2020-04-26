@@ -4,11 +4,10 @@
 
 #include "chunk_worker.h"
 
-#include "i_world_chunk.h"
-#include "render_world_chunk.h"
-
-#include "game/world/worldgenerator/world_generator.h"
-#include "game/world/worldgenerator/world_generator_perlin.h"
+#include "game/world/chunk/i_world_chunk.h"
+#include "game/world/chunk/render_world_chunk.h"
+#include "game/world/chunk/world_chunk_column.h"
+#include "game/world/world.h"
 
 #include <string.h>
 
@@ -26,14 +25,12 @@ ChunkWorker::ChunkWorker( unsigned int threadAmount )
 
 void ChunkWorker::worker()
 {
-	WorldGeneratorPerlin worldGenerator;
-
 	auto sleepTime = std::chrono::milliseconds( 50 );
 	while( !m_quit )
 	{
 		std::this_thread::sleep_for( sleepTime );
 		sleepTime = sleepTime.zero();
-		std::shared_ptr< IWorldChunk > chunk;
+		ChunkOperation operation;
 		{
 			auto guard( m_queue.lockGuard() );
 			if( m_queue.empty() )
@@ -41,46 +38,50 @@ void ChunkWorker::worker()
 				sleepTime = std::chrono::milliseconds( 100 );
 				continue;
 			}
-			chunk = m_queue.front();
+			operation = m_queue.front();
 			m_queue.pop_front();
 		}
 
-		bool wasWorkDone{ false };
-		if( chunk != nullptr && chunk.use_count() > 1 )
+		if( operation.column != nullptr )
 		{
-			if( !chunk->isGenerated() )
+			if( operation.action == Action::GENERATE_TERRAIN )
 			{
-				worldGenerator.generateHeight( chunk );
-				chunk->setGenerated();
-				wasWorkDone = true;
+				operation.column->getWorld().getWorldGenerator().generateHeight( operation.column );
+				operation.column->setIsGenerated( true );
+				operation.column->getWorld().getChunkWorker().queue( operation.column,
+																	 Action::POPULATE_TERRAIN );
+				continue;
 			}
 
-			if( !chunk->isPopulated() )
+			if( operation.action == Action::POPULATE_TERRAIN )
 			{
-				// TODO: Implement
-				chunk->setPopulated();
-				if( chunk->getVoxelCount() == 0 )
+				operation.column->setIsPopulated( true );
+				operation.column->getWorld().finalizeChunkColumn(
+					operation.column->getChunkPosition() );
+
+				for( auto& chunk : operation.column->getChunks() )
 				{
-					chunk->getWorld().queueDeleteChunk( chunk->getChunkPosition() );
+					operation.column->getWorld().getChunkWorker().queue( chunk.second,
+																		 Action::GENERATE_MESH );
 				}
-				wasWorkDone = true;
+				continue;
 			}
-
-			RenderWorldChunk* renderWorldChunk = dynamic_cast< RenderWorldChunk* >( chunk.get() );
-			if( renderWorldChunk
-				&& ( !renderWorldChunk->isMeshGenerated() || renderWorldChunk->getNeedsNewMesh() ) )
-			{
-				renderWorldChunk->regenerateMesh();
-				renderWorldChunk->setMeshGenerated();
-				wasWorkDone = true;
-			}
+			continue;
 		}
 
-		if( !wasWorkDone )
+		if( operation.chunk != nullptr )
 		{
-			Core::Logger::Warn( std::string()
-								+ "Chunk at [insert chunkpos] was added to chunkworker without "
-								  "actually needing any work." );
+			if( operation.action == Action::GENERATE_MESH )
+			{
+				RenderWorldChunk* renderWorldChunk
+					= dynamic_cast< RenderWorldChunk* >( operation.chunk.get() );
+				if( !renderWorldChunk )
+				{
+					continue;
+				}
+				renderWorldChunk->regenerateMesh();
+				renderWorldChunk->setMeshGenerated();
+			}
 		}
 	}
 }
@@ -97,17 +98,22 @@ ChunkWorker::~ChunkWorker()
 	}
 }
 
-void ChunkWorker::queue( std::shared_ptr< IWorldChunk > chunk, bool priority )
+void ChunkWorker::queue( std::shared_ptr< IWorldChunk > chunk, Action action )
 {
 	auto guard( m_queue.lockGuard() );
-	if( priority )
-	{
-		m_queue.push_front( chunk );
-	}
-	else
-	{
-		m_queue.push_back( chunk );
-	}
+	ChunkOperation operation;
+	operation.chunk	 = chunk;
+	operation.action = action;
+	m_queue.push_back( operation );
+}
+
+void ChunkWorker::queue( std::shared_ptr< WorldChunkColumn > column, Action action )
+{
+	auto guard( m_queue.lockGuard() );
+	ChunkOperation operation;
+	operation.column = column;
+	operation.action = action;
+	m_queue.push_back( operation );
 }
 
 size_t ChunkWorker::size()

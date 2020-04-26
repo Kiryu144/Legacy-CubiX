@@ -98,10 +98,6 @@ set(SOURCE_FILES
         source/game/rendering/renderer.h
         source/game/world/chunk/chunk_worker.cpp
         source/game/world/chunk/chunk_worker.h
-        source/game/world/worldgenerator/world_generator.cpp
-        source/game/world/worldgenerator/world_generator.h
-        source/game/world/worldgenerator/world_generator_perlin.cpp
-        source/game/world/worldgenerator/world_generator_perlin.h
         source/game/world/chunk/world_chunk_column.cpp
         source/game/world/chunk/world_chunk_column.h
         source/game/world/chunk/world_chunk_container.cpp
@@ -132,7 +128,7 @@ set(SOURCE_FILES
         source/core/logic/singelton.h
         source/core/math/rigidbody.cpp
         source/core/math/rigidbody.h
-        source/game/rendering/renderable.h source/core/data/registry.h source/game/rendering/renderable.cpp source/core/logic/string_cast.h source/core/logic/string_cast.cpp source/game/world/entity/entity.cpp source/game/world/entity/entity.h source/game/world/entity/player.cpp source/game/world/entity/player.h source/game/rendering/gizmo_renderer.cpp source/game/rendering/gizmo_renderer.h source/game/world/voxel/placed_voxel.cpp source/game/world/voxel/placed_voxel.h source/core/opengl/opengl_context.cpp source/core/opengl/opengl_context.h source/core/opengl/imgui_context.cpp source/core/opengl/imgui_context.h source/core/time/auto_stop_watch.cpp source/core/time/auto_stop_watch.h source/game/rendering/block_outline_renderer.cpp source/game/rendering/block_outline_renderer.h source/game/rendering/sub_renderer.h source/game/player_controller.cpp source/game/player_controller.h)
+        source/game/rendering/renderable.h source/core/data/registry.h source/game/rendering/renderable.cpp source/core/logic/string_cast.h source/core/logic/string_cast.cpp source/game/world/entity/entity.cpp source/game/world/entity/entity.h source/game/world/entity/player.cpp source/game/world/entity/player.h source/game/rendering/world/gizmo_renderer.cpp source/game/rendering/world/gizmo_renderer.h source/game/world/voxel/placed_voxel.cpp source/game/world/voxel/placed_voxel.h source/core/opengl/opengl_context.cpp source/core/opengl/opengl_context.h source/core/opengl/imgui_context.cpp source/core/opengl/imgui_context.h source/core/time/auto_stop_watch.cpp source/core/time/auto_stop_watch.h source/game/rendering/world/block_outline_renderer.cpp source/game/rendering/world/block_outline_renderer.h source/game/rendering/sub_renderer.h source/game/player_controller.cpp source/game/player_controller.h source/game/world/worldgenerator/biome/biome.cpp source/game/world/worldgenerator/biome/biome.h source/game/world/worldgenerator/world_generator.cpp source/game/world/worldgenerator/world_generator.h source/game/world/worldgenerator/biome/hilly_plains.cpp source/game/world/worldgenerator/biome/hilly_plains.h source/core/data/process_state.h source/game/world/chunk/new_world_chunk.h)
 
 add_executable(CubiX ${SOURCE_FILES} resources.rc)
 target_link_libraries(CubiX ${LINKER_TARGETS})

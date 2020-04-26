@@ -11,8 +11,8 @@
 #include "game/packet/packet_client_information.h"
 #include "game/packet/packet_server_information.h"
 #include "game/player_controller.h"
-#include "game/rendering/block_outline_renderer.h"
-#include "game/rendering/gizmo_renderer.h"
+#include "game/rendering/world/block_outline_renderer.h"
+#include "game/rendering/world/gizmo_renderer.h"
 #include "game/world/entity/entity.h"
 #include "game/world/entity/player.h"
 
@@ -54,7 +54,7 @@ CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
 	m_renderer.initializeSubRenderers();
 
 	connect( "127.0.0.1", 4444 );
-	m_moveableView.setSpeed( 1800 );
+	m_moveableView.setSpeed( 18000 );
 	m_moveableView.setActive( false );
 
 	std::shared_ptr< Player > player( new Player() );
@@ -80,7 +80,7 @@ void CubixClient::update()
 		= m_world.raycastBlocks( m_moveableView.getPosition(), m_moveableView.getDirection(), 24 );
 	if( raycastHit.has_value() )
 	{
-		// m_renderer.getBlockOutlineRenderer()->render( raycastHit.value(), { 0, 0, 0, 160 } );
+		m_renderer.getBlockOutlineRenderer()->render( raycastHit.value(), { 0, 0, 0, 160 } );
 	}
 
 	glm::ivec3 playerChunkPos{ IWorldChunk::ChunkPosFromWorldPos( m_moveableView.getPosition() ) };
@@ -108,8 +108,9 @@ void CubixClient::update()
 		m_playerController->updateView();
 		m_renderer.setView( m_playerController->getView().getViewMatrix() );
 	}
+	m_renderer.setView( m_moveableView.getViewMatrix() );
 
-	m_playerController->update( m_gameTime.getDeltaTime() );
+	//m_playerController->update( m_gameTime.getDeltaTime() );
 
 	m_world.render();
 	m_renderer.finalizeSubRenderer();

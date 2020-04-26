@@ -66,6 +66,8 @@ public:
 	std::vector< std::shared_ptr< IWorldChunk > > getSurroundingChunks(
 		const glm::ivec3& chunkPos );
 
+	void finalizeChunkColumn(const glm::ivec2& columnPos);
+
 	bool getChunkExists( const glm::ivec3& chunkPos ) const;
 
 	std::shared_ptr< IWorldChunk > createChunk( const glm::ivec3& chunkPos );

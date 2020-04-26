@@ -81,12 +81,6 @@ public:
 	virtual Voxel getVoxelFromWorld( const glm::ivec3& position,
 									 const Voxel& _def = Voxel() ) const = 0;
 
-	virtual bool isPopulated() const = 0;
-	virtual bool isGenerated() const = 0;
-
-	virtual void setPopulated() = 0;
-	virtual void setGenerated() = 0;
-
 	virtual void setFramesNotSeen( int ms ) = 0;
 	virtual int getFramesNotSeen()		  = 0;
 

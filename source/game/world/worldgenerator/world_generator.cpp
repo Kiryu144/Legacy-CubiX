@@ -4,108 +4,67 @@
 
 #include "world_generator.h"
 
+#include "game/world/chunk/i_world_chunk.h"
+#include "game/world/chunk/world_chunk_column.h"
+#include "game/world/world.h"
+#include "game/world/worldgenerator/biome/biome.h"
+#include "game/world/worldgenerator/biome/hilly_plains.h"
+
+#include <set>
+
+#include <glm/gtx/hash.hpp>
+
 namespace Game
 {
 
-int WorldGenerator::getHeight( const glm::ivec2& worldPosition ) const
+WorldGenerator::WorldGenerator( World& world ) : m_world( world )
 {
-	return 0;
+	m_biome.reset( new Biome( 25, 10 ) );
+	m_hillyPlains.reset( new HillyPlains() );
+
+	m_baseHeight.SetSeed( 123 );
+	m_moisture.SetSeed( m_baseHeight.GetSeed() + 28101999 );
 }
 
-Voxel WorldGenerator::getVoxel( unsigned int blocksUnderground, int yLevel ) const
+void WorldGenerator::generateHeight( const std::shared_ptr< WorldChunkColumn >& column ) const
 {
-	static const Voxel grass{ 88, 237, 110, 255 };
-	static const Voxel stone{ 166, 166, 166, 255 };
-	static const Voxel sand{ 255, 255, 160, 255 };
-
-	if( yLevel <= 0 && blocksUnderground < 2 )
-	{
-		return sand;
-	}
-	else if( blocksUnderground == 0 )
-	{
-		return grass;
-	}
-	else
-	{
-		return stone;
-	}
-}
-
-Voxel WorldGenerator::getWaterVoxel() const
-{
-	return { 51, 170, 255, 255 };
-}
-
-void WorldGenerator::generateHeight( std::shared_ptr< IWorldChunk > chunk )
-{
-	prepareForChunk( chunk->getChunkPosition() );
-	glm::ivec3 worldPosition = IWorldChunk::WorldPosFromChunkPos( chunk->getChunkPosition() );
-	bool generateChunkOnTop{ false };
-	bool generateChunkOnBottom{ false };
+	glm::ivec3 chunkPosition{ column->getChunkPosition().x, 0, column->getChunkPosition().y };
+	glm::ivec3 startWorldPosition{ IWorldChunk::WorldPosFromChunkPos( chunkPosition ) };
 	for( int x = 0; x < IWorldChunk::GetSideLength(); ++x )
 	{
 		for( int z = 0; z < IWorldChunk::GetSideLength(); ++z )
 		{
-			int y = getHeight( { chunk->getChunkPosition().x * IWorldChunk::GetSideLength() + x,
-								 chunk->getChunkPosition().z * IWorldChunk::GetSideLength() + z } );
+			glm::ivec3 worldPos{ startWorldPosition + glm::ivec3{ x, 0, z } };
 
-			if( y < worldPosition.y )
+			float elevation{ m_baseHeight.GetPerlin( worldPos.x, worldPos.z ) };
+			float moisture{ m_moisture.GetPerlin( worldPos.x, worldPos.z ) };
+			auto biome{ getBiome( elevation, moisture ) };
+
+			int voxelHeight{ biome->getBaseHeight()
+							 + static_cast< int >( elevation * biome->getHeightVariation() ) };
+
+			chunkPosition.y = IWorldChunk::ChunkPosFromWorldPos( { 0, voxelHeight, 0 } ).y;
+			auto chunk{ column->createEmptyChunkIfAbsent( chunkPosition.y ) };
+			// optimize: Cache chunks for heights
+
+			unsigned int depth{ 0 };
+			for( int y = voxelHeight - chunkPosition.y * IWorldChunk::GetSideLength(); y >= 0; --y )
 			{
-				generateChunkOnBottom = true;
-
-				if( worldPosition.y < 0 )
-				{
-					for( int _y = 0; _y > y && _y < IWorldChunk::GetSideLength(); ++_y )
-					{
-						chunk->setVoxel( { x, _y, z }, getWaterVoxel() );
-					}
-				}
-				continue;
-			}
-
-			if( y >= ( worldPosition.y + static_cast< int >( IWorldChunk::GetSideLength() ) ) )
-			{
-				generateChunkOnTop = true;
-				continue;
-			}
-
-			unsigned int depth = 0;
-			for( int _y = IWorldChunk::GetSideLength() - 1; _y >= 0; --_y )
-			{
-				if( _y <= y - worldPosition.y )
-				{
-					chunk->setVoxel( { x, _y, z }, getVoxel( depth, worldPosition.y + _y ) );
-				}
-				else if( worldPosition.y < 0 )
-				{
-					chunk->setVoxel( { x, _y, z }, getWaterVoxel() );
-				}
+				chunk->setVoxel( { x, y, z }, m_biome->getVoxelForDepth( depth++ ) );
 			}
 		}
 	}
-
-	if( generateChunkOnTop )
-	{
-		chunk->getWorld().queueGenerateChunk( chunk->getChunkPosition() + glm::ivec3{ 0, 1, 0 } );
-	}
-	if( generateChunkOnBottom )
-	{
-		chunk->getWorld().queueGenerateChunk( chunk->getChunkPosition() + glm::ivec3{ 0, -1, 0 } );
-	}
 }
 
-void WorldGenerator::populate( std::shared_ptr< IWorldChunk > chunk )
+std::shared_ptr< Biome > WorldGenerator::getBiome( float elevation, float moisture ) const
 {
-	if( m_trees.empty() )
+	return m_biome;
+	if( elevation >= 0.5f )
 	{
-		return;
+		return m_hillyPlains;
 	}
-}
 
-void WorldGenerator::addTree( std::shared_ptr< VoxelGroup >& tree )
-{
-	m_trees.push_back( { tree } );
+	return m_biome;
 }
 
 } // namespace Game

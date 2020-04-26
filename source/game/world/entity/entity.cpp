@@ -4,8 +4,8 @@
 
 #include "entity.h"
 
-#include "game/rendering/gizmo_renderer.h"
 #include "game/rendering/renderer.h"
+#include "game/rendering/world/gizmo_renderer.h"
 #include "game/world/voxel/placed_voxel.h"
 #include "game/world/world.h"
 

@@ -17,22 +17,40 @@ namespace Game
 {
 
 class IWorldChunk;
+class WorldChunkColumn;
 
 class ChunkWorker : Core::NoCopy
 {
-private:
+public:
+	enum Action
+	{
+		GENERATE_TERRAIN,
+		POPULATE_TERRAIN,
+		GENERATE_MESH
+	};
+
+protected:
+	struct ChunkOperation
+	{
+		Action action;
+		std::shared_ptr< IWorldChunk > chunk{ nullptr };
+		std::shared_ptr< WorldChunkColumn > column{ nullptr };
+	};
+
+protected:
 	std::atomic_bool m_quit{ false };
 	void worker();
 
-protected:
 	std::list< std::thread > m_threads;
-	Core::Lockable< std::list< std::shared_ptr< IWorldChunk > > > m_queue;
+	Core::Lockable< std::list< ChunkOperation > > m_queue;
 
 public:
 	ChunkWorker( unsigned int threadAmount );
 	~ChunkWorker();
 
-	void queue( std::shared_ptr< IWorldChunk > chunk, bool priority = false );
+	void queue( std::shared_ptr< IWorldChunk > chunk, Action action );
+	void queue( std::shared_ptr< WorldChunkColumn > column, Action action );
+
 	void checkForCrash();
 
 	size_t size();

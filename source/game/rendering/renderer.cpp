@@ -7,9 +7,9 @@
 #include "core/opengl/attributebuffer.h"
 #include "core/opengl/shader_program.h"
 
-#include "game/rendering/block_outline_renderer.h"
-#include "game/rendering/gizmo_renderer.h"
 #include "game/rendering/renderable.h"
+#include "game/rendering/world/block_outline_renderer.h"
+#include "game/rendering/world/gizmo_renderer.h"
 
 namespace Game
 {

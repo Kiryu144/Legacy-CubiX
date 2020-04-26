@@ -26,10 +26,6 @@ public:
 	World& getWorld() const override;
 	const glm::ivec3& getChunkPosition() const override;
 	Voxel getVoxelFromWorld( const glm::ivec3& position, const Voxel& _def ) const override;
-	bool isPopulated() const override;
-	bool isGenerated() const override;
-	void setPopulated() override {}
-	void setGenerated() override {}
 	void setFramesNotSeen( int ms ) override;
 	int getFramesNotSeen() override;
 	size_t getVoxelCount() override;

@@ -37,16 +37,6 @@ Voxel EmptyWorldChunk::getVoxelFromWorld( const glm::ivec3& position, const Voxe
 	return _def;
 }
 
-bool EmptyWorldChunk::isPopulated() const
-{
-	return true;
-}
-
-bool EmptyWorldChunk::isGenerated() const
-{
-	return true;
-}
-
 void EmptyWorldChunk::setFramesNotSeen( int ms )
 {
 	m_millisecondsNotSeen = ms;

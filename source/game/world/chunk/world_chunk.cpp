@@ -44,26 +44,6 @@ const Voxel& WorldChunk::getVoxel( const glm::uvec3& position ) const
 	return m_data[ GetIndexForPosition( position ) ];
 }
 
-bool WorldChunk::isPopulated() const
-{
-	return m_isPopulated;
-}
-
-bool WorldChunk::isGenerated() const
-{
-	return m_isGenerated;
-}
-
-void WorldChunk::setPopulated()
-{
-	m_isPopulated = true;
-}
-
-void WorldChunk::setGenerated()
-{
-	m_isGenerated = true;
-}
-
 size_t WorldChunk::getVoxelCount()
 {
 	return m_voxelCount;

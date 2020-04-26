@@ -8,6 +8,7 @@
 
 #include "game/world/chunk/world_chunk.h"
 #include "game/world/chunk/world_chunk_column.h"
+#include "game/world/world.h"
 
 #include <shared_mutex>
 
@@ -47,10 +48,7 @@ std::shared_ptr< IWorldChunk > WorldChunkContainer::createChunk( const glm::ivec
 {
 	auto column = getOrCreateChunkColumn( { chunkPos.x, chunkPos.z } );
 	auto chunk	= column->createEmptyChunkIfAbsent( chunkPos.y );
-	if( chunk != nullptr )
-	{
-		m_allChunks.push_back( chunk );
-	}
+	m_world.getChunkWorker().queue( column, ChunkWorker::GENERATE_TERRAIN );
 	return chunk;
 }
 
@@ -150,6 +148,18 @@ void WorldChunkContainer::getVoxels( const Core::AxisAlignedBB& aabb,
 				glm::ivec3 pos{ x, y, z };
 				buffer.push_back( PlacedVoxel( m_world, pos, getVoxel( pos ) ) );
 			}
+		}
+	}
+}
+
+void WorldChunkContainer::finalizeChunkColumn( const glm::ivec2& columnPos )
+{
+	auto column = getChunkColumn( columnPos );
+	if( column != nullptr && column->getIsPopulated() )
+	{
+		for( auto& chunk : column->getChunks() )
+		{
+			m_allChunks.push_back( chunk.second );
 		}
 	}
 }

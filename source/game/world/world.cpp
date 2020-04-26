@@ -7,8 +7,8 @@
 #include "core/opengl/shader_program.h"
 #include "core/time/auto_stop_watch.h"
 
-#include "game/rendering/gizmo_renderer.h"
 #include "game/rendering/renderer.h"
+#include "game/rendering/world/gizmo_renderer.h"
 #include "game/world/chunk/world_chunk_column.h"
 #include "game/world/entity/entity.h"
 
@@ -21,7 +21,8 @@ World::World( Renderer* renderer )
 	: WorldChunkContainer( *this ),
 	  m_chunkWorker( 4 ),
 	  m_chunkFactory( new RenderWorldChunkFactory() ),
-	  m_renderer( renderer )
+	  m_renderer( renderer ),
+	  m_worldGenerator( *this )
 {
 }
 
@@ -51,11 +52,7 @@ void World::update( float deltaTime )
 		auto lock( m_chunksToGenerate.lockGuard() );
 		for( auto& chunkPosition : m_chunksToGenerate )
 		{
-			auto chunk = createChunk( chunkPosition );
-			if( chunk != nullptr )
-			{
-				m_chunkWorker.queue( chunk );
-			}
+			createChunk( chunkPosition );
 		}
 		m_chunksToGenerate.clear();
 	}
@@ -67,19 +64,6 @@ void World::update( float deltaTime )
 			removeChunk( chunkPosition );
 		}
 		m_chunksToDelete.clear();
-	}
-
-	{
-		auto lock( m_chunksToUpdate.lockGuard() );
-		for( auto& chunkPosition : m_chunksToUpdate )
-		{
-			auto chunk = createChunk( chunkPosition );
-			if( chunk != nullptr )
-			{
-				m_chunkWorker.queue( chunk );
-			}
-		}
-		m_chunksToUpdate.clear();
 	}
 
 	for( auto it = m_allChunks.begin(); it != m_allChunks.end(); )
@@ -148,7 +132,8 @@ void World::updateForPlayer( const glm::ivec2& chunkPosition )
 	auto chunkColumn = getChunkColumn( chunkPosition );
 	if( chunkColumn == nullptr )
 	{
-		queueGenerateChunk( { chunkPosition.x, 0, chunkPosition.y } );
+		m_chunkWorker.queue( getOrCreateChunkColumn( chunkPosition ),
+							 ChunkWorker::GENERATE_TERRAIN );
 	}
 	else
 	{

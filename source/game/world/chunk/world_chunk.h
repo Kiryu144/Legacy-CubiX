@@ -24,9 +24,6 @@ protected:
 	std::array< Voxel, IWorldChunk::GetVolume() > m_data;
 	size_t m_voxelCount{ 0 };
 
-	std::atomic_bool m_isGenerated{ false };
-	std::atomic_bool m_isPopulated{ false };
-
 public:
 	WorldChunk( World& world, const glm::ivec3& chunkPosition = glm::ivec3{ 0, 0, 0 } );
 
@@ -34,11 +31,6 @@ public:
 	const Voxel& getVoxel( const glm::uvec3& position ) const override;
 	Voxel getVoxelFromWorld( const glm::ivec3& position,
 							 const Voxel& _def = Voxel() ) const override;
-
-	bool isPopulated() const override;
-	bool isGenerated() const override;
-	void setPopulated() override;
-	void setGenerated() override;
 
 	size_t getVoxelCount() override;
 };

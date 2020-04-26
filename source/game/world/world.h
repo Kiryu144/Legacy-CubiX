@@ -8,6 +8,7 @@
 #include "game/world/chunk/chunk_worker.h"
 #include "game/world/chunk/world_chunk_container.h"
 #include "game/world/chunk/world_chunk_factory.h"
+#include "game/world/worldgenerator/world_generator.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
@@ -30,6 +31,7 @@ public:
 	typedef std::unordered_set< glm::ivec3 > ChunkQueue;
 
 protected:
+	WorldGenerator m_worldGenerator;
 	ChunkWorker m_chunkWorker;
 	Renderer* m_renderer;
 	std::unique_ptr< IWorldChunkFactory > m_chunkFactory;
@@ -51,6 +53,7 @@ public:
 	virtual ~World() = default;
 	virtual void update( float deltaTime );
 
+	CUBIX_GET_R_CR( m_worldGenerator, WorldGenerator );
 	CUBIX_GET_R_CR( m_chunkWorker, ChunkWorker );
 	CUBIX_GET_CR( m_chunkFactory, ChunkFactory );
 	CUBIX_GET_SET_R_CR( m_renderer, Renderer );

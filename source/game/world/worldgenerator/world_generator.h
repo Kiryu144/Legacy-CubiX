@@ -5,44 +5,38 @@
 #ifndef CUBIX_WORLD_GENERATOR_H
 #define CUBIX_WORLD_GENERATOR_H
 
-#include "game/world/voxel/voxel.h"
-#include "game/world/world.h"
+#include "core/cubix_macro.h"
 
-#include <glm/vec2.hpp>
+#include <memory>
+
+#include <fast_noise/FastNoise.h>
 
 namespace Game
 {
 
-class VoxelGroup;
+class World;
+class WorldChunkColumn;
+class Biome;
+class HillyPlains;
 
 class WorldGenerator
 {
-public:
-	struct Tree
-	{
-		std::shared_ptr< VoxelGroup > tree;
-	};
-
 protected:
-	virtual Voxel getVoxel( unsigned int blocksUnderground, int yLevel ) const;
-	virtual Voxel getWaterVoxel() const;
-	virtual int getHeight( const glm::ivec2& worldPosition ) const;
-	virtual void prepareForChunk( const glm::ivec3& chunkPosition ) {}
+	FastNoise m_baseHeight;
+	FastNoise m_moisture;
 
-	std::vector< Tree > m_trees;
+	World& m_world;
+	std::shared_ptr< Biome > m_biome;
+	std::shared_ptr< HillyPlains > m_hillyPlains;
+
+	std::shared_ptr< Biome > getBiome( float elevation, float moisture ) const;
 
 public:
-	WorldGenerator() = default;
+	WorldGenerator( World& world );
 
-	void generateHeight( std::shared_ptr< IWorldChunk > chunk );
-	void populate( std::shared_ptr< IWorldChunk > chunk );
+	CUBIX_GET_R_CR( m_world, World );
 
-	void addTree( std::shared_ptr< VoxelGroup >& tree );
-
-	int getSeed() const
-	{
-		return 123555;
-	}
+	void generateHeight( const std::shared_ptr< WorldChunkColumn >& column ) const;
 };
 
 } // namespace Game

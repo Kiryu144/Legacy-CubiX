@@ -30,7 +30,8 @@ const WorldChunkColumn::ColumnMap::mapped_type WorldChunkColumn::getChunk( int y
 
 WorldChunkColumn::ColumnMap::mapped_type WorldChunkColumn::createEmptyChunkIfAbsent( int yLevel )
 {
-	if( getChunk( yLevel ).get() == nullptr )
+	auto chunk{ getChunk( yLevel ) };
+	if( chunk == nullptr )
 	{
 		return m_column
 			.insert( { yLevel,
@@ -38,7 +39,7 @@ WorldChunkColumn::ColumnMap::mapped_type WorldChunkColumn::createEmptyChunkIfAbs
 						   m_world, { m_chunkPosition.x, yLevel, m_chunkPosition.y } ) ) } )
 			.first->second;
 	}
-	return { nullptr };
+	return chunk;
 }
 
 void WorldChunkColumn::removeChunk( int yLevel )
