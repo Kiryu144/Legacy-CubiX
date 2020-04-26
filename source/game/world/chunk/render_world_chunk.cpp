@@ -18,27 +18,23 @@ namespace Game
 RenderWorldChunk::RenderWorldChunk( World& world, const glm::ivec3& chunkPosition )
 	: WorldChunk( world, chunkPosition ), m_attributeBuffer( Core::InterleavedVertNormColAttribute )
 {
-	m_position			 = IWorldChunk::WorldPosFromChunkPos( chunkPosition );
-	auto& shaderRegistry = world.getRenderer()->getShaderRegistry();
-	m_shaderKey			 = shaderRegistry.getKey( "world_chunk_shader" ).value();
+	m_position = WorldPosFromChunkPos( chunkPosition );
 }
 
 bool RenderWorldChunk::IsFullRenderVoxel( const glm::ivec3& pos,
-										  const RenderWorldChunk::FullRenderVoxelBitset& bitset )
+										  const RenderWorldChunk::SolidVoxelBitset& bitset )
 {
-	return bitset[ IWorldChunk::GetIndexForPosition( pos ) ];
+	return bitset[ GetIndexForPosition( pos ) ];
 }
 
 bool RenderWorldChunk::IsFullRenderVoxelSurr( const glm::ivec3& pos,
-											  const FullRenderVoxelBitset ( *bitset )[ 3 ][ 3 ] )
+											  const SolidVoxelBitset ( *bitset )[ 3 ][ 3 ] )
 {
-	glm::ivec3 chunkOffset{
-		std::floor( static_cast< float >( pos.x ) / IWorldChunk::GetSideLength() ),
-		std::floor( static_cast< float >( pos.y ) / IWorldChunk::GetSideLength() ),
-		std::floor( static_cast< float >( pos.z ) / IWorldChunk::GetSideLength() )
-	};
+	glm::ivec3 chunkOffset{ std::floor( static_cast< float >( pos.x ) / GetSideLength() ),
+							std::floor( static_cast< float >( pos.y ) / GetSideLength() ),
+							std::floor( static_cast< float >( pos.z ) / GetSideLength() ) };
 	return IsFullRenderVoxel(
-		pos - ( chunkOffset * glm::ivec3( IWorldChunk::GetSize() ) ),
+		pos - ( chunkOffset * glm::ivec3( GetSize() ) ),
 		bitset[ chunkOffset.x + 1 ][ chunkOffset.y + 1 ][ chunkOffset.z + 1 ] );
 }
 
@@ -76,11 +72,10 @@ const glm::vec3& RenderWorldChunk::GetNormForCube( const Core::MultipleFacing::F
 	return s_normals[ Core::MultipleFacing::IndexOf( face ) ];
 }
 
-int RenderWorldChunk::getACColorCorrectionForCube(
-	const Core::MultipleFacing::Face& face,
-	const glm::ivec3& pos,
-	int index,
-	const FullRenderVoxelBitset ( *bitset )[ 3 ][ 3 ] )
+int RenderWorldChunk::getACColorCorrectionForCube( const Core::MultipleFacing::Face& face,
+												   const glm::ivec3& pos,
+												   int index,
+												   const SolidVoxelBitset ( *bitset )[ 3 ][ 3 ] )
 {
 	static const glm::ivec3 s_acLookups[ 6 * 6 * 3 ]{
 		{ 1, 0, -1 },  { 1, -1, -1 },  { 0, -1, -1 }, { 0, -1, -1 }, { -1, -1, -1 }, { -1, 0, -1 },
@@ -117,11 +112,11 @@ int RenderWorldChunk::getACColorCorrectionForCube(
 void RenderWorldChunk::regenerateMesh()
 {
 	{
-		std::lock_guard< decltype( m_uploadMutex ) > lock_guard( m_uploadMutex );
-		m_upload = false;
+		std::lock_guard< decltype( m_uploadingProcessMutex ) > guard( m_uploadingProcessMutex );
+		m_uploadVertices = false;
 	}
 
-	FullRenderVoxelBitset fullRenderBlocks[ 3 ][ 3 ][ 3 ];
+	SolidVoxelBitset fullRenderBlocks[ 3 ][ 3 ][ 3 ];
 
 	for( int x = -1; x <= 1; ++x )
 	{
@@ -133,7 +128,7 @@ void RenderWorldChunk::regenerateMesh()
 				if( chunk != nullptr )
 				{
 					fullRenderBlocks[ x + 1 ][ y + 1 ][ z + 1 ]
-						= static_cast< decltype( this ) >( chunk.get() )->m_renderableVoxels;
+						= static_cast< decltype( this ) >( chunk.get() )->m_solidVoxelBitset;
 				}
 			}
 		}
@@ -178,14 +173,11 @@ void RenderWorldChunk::regenerateMesh()
 		}
 	}
 
-	{
-		std::lock_guard< decltype( m_uploadMutex ) > lock_guard( m_uploadMutex );
-		m_upload = true;
-	}
+	m_uploadVertices = true;
 }
 
 Core::MultipleFacing RenderWorldChunk::findVisibleFaces(
-	const glm::uvec3& pos, const FullRenderVoxelBitset ( *bitset )[ 3 ][ 3 ] ) const
+	const glm::uvec3& pos, const SolidVoxelBitset ( *bitset )[ 3 ][ 3 ] ) const
 {
 	using namespace Core;
 	glm::ivec3 ipos{ pos };
@@ -207,8 +199,8 @@ Core::MultipleFacing RenderWorldChunk::findVisibleFaces(
 
 void RenderWorldChunk::uploadWhenNeeded()
 {
-	std::lock_guard< decltype( m_uploadMutex ) > guard( m_uploadMutex );
-	if( m_upload )
+	std::lock_guard< decltype( m_uploadingProcessMutex ) > guard( m_uploadingProcessMutex );
+	if( m_uploadVertices )
 	{
 		if( !m_vertices.empty() )
 		{
@@ -216,18 +208,8 @@ void RenderWorldChunk::uploadWhenNeeded()
 		}
 
 		m_vertices.clear();
-		m_upload = false;
+		m_uploadVertices = false;
 	}
-}
-
-bool RenderWorldChunk::isMeshGenerated() const
-{
-	return m_meshGenerated;
-}
-
-void RenderWorldChunk::setMeshGenerated()
-{
-	m_meshGenerated = true;
 }
 
 void RenderWorldChunk::setVoxel( const glm::uvec3& position, const Voxel& voxel )
@@ -239,24 +221,9 @@ void RenderWorldChunk::setVoxel( const glm::uvec3& position, const Voxel& voxel 
 	{
 		m_voxelCount += voxel.exists() ? +1 : -1;
 	}
-	m_renderableVoxels[ index ] = voxel.exists();
+	m_solidVoxelBitset[ index ] = voxel.exists();
 
 	existingVoxel = voxel;
-}
-
-void RenderWorldChunk::setUniforms( Core::ShaderProgram& shader )
-{
-	shader.setUniform( shader.getTransformUniform(), getMatrix() );
-}
-
-Core::RegistryKey RenderWorldChunk::getShader()
-{
-	return m_shaderKey;
-}
-
-Core::AttributeBuffer& RenderWorldChunk::getAttributeBuffer()
-{
-	return m_attributeBuffer;
 }
 
 } // namespace Game

@@ -4,7 +4,7 @@
 
 #include "world_generator.h"
 
-#include "game/world/chunk/i_world_chunk.h"
+#include "game/world/chunk/world_chunk.h"
 #include "game/world/chunk/world_chunk_column.h"
 #include "game/world/world.h"
 #include "game/world/worldgenerator/biome/biome.h"
@@ -29,10 +29,10 @@ WorldGenerator::WorldGenerator( World& world ) : m_world( world )
 void WorldGenerator::generateHeight( const std::shared_ptr< WorldChunkColumn >& column ) const
 {
 	glm::ivec3 chunkPosition{ column->getChunkPosition().x, 0, column->getChunkPosition().y };
-	glm::ivec3 startWorldPosition{ IWorldChunk::WorldPosFromChunkPos( chunkPosition ) };
-	for( int x = 0; x < IWorldChunk::GetSideLength(); ++x )
+	glm::ivec3 startWorldPosition{ WorldChunk::WorldPosFromChunkPos( chunkPosition ) };
+	for( int x = 0; x < WorldChunk::GetSideLength(); ++x )
 	{
-		for( int z = 0; z < IWorldChunk::GetSideLength(); ++z )
+		for( int z = 0; z < WorldChunk::GetSideLength(); ++z )
 		{
 			glm::ivec3 worldPos{ startWorldPosition + glm::ivec3{ x, 0, z } };
 
@@ -43,12 +43,16 @@ void WorldGenerator::generateHeight( const std::shared_ptr< WorldChunkColumn >& 
 			int voxelHeight{ biome->getBaseHeight()
 							 + static_cast< int >( elevation * biome->getHeightVariation() ) };
 
-			chunkPosition.y = IWorldChunk::ChunkPosFromWorldPos( { 0, voxelHeight, 0 } ).y;
-			auto chunk{ column->createEmptyChunkIfAbsent( chunkPosition.y ) };
+			chunkPosition.y = WorldChunk::ChunkPosFromWorldPos( { 0, voxelHeight, 0 } ).y;
+			auto chunk{ column->getOrCreateChunk( chunkPosition.y ) };
+			if( !chunk->isInitialized() )
+			{
+				chunk->initializeData();
+			}
 			// optimize: Cache chunks for heights
 
 			unsigned int depth{ 0 };
-			for( int y = voxelHeight - chunkPosition.y * IWorldChunk::GetSideLength(); y >= 0; --y )
+			for( int y = voxelHeight - chunkPosition.y * WorldChunk::GetSideLength(); y >= 0; --y )
 			{
 				chunk->setVoxel( { x, y, z }, m_biome->getVoxelForDepth( depth++ ) );
 			}

@@ -13,6 +13,10 @@
 #include "game/player_controller.h"
 #include "game/rendering/world/block_outline_renderer.h"
 #include "game/rendering/world/gizmo_renderer.h"
+#include "game/rendering/world/world_chunk_renderer.h"
+#include "game/world/chunk/chunk_worker.h"
+#include "game/world/chunk/render_world_chunk.h"
+#include "game/world/chunk/world_chunk.h"
 #include "game/world/entity/entity.h"
 #include "game/world/entity/player.h"
 
@@ -31,7 +35,7 @@ CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
 
 	Core::OpenGLContext::Get().setClearColor( { 127, 170, 255, 255 } );
 
-	m_renderer.createShader( "world_chunk_shader" )
+	m_renderer.createShader( "world_chunk" )
 		->compileShaderFromFile( "shader\\world_chunk.vert" )
 		.compileShaderFromFile( "shader\\world_chunk.frag" )
 		.link();
@@ -83,7 +87,13 @@ void CubixClient::update()
 		m_renderer.getBlockOutlineRenderer()->render( raycastHit.value(), { 0, 0, 0, 160 } );
 	}
 
-	glm::ivec3 playerChunkPos{ IWorldChunk::ChunkPosFromWorldPos( m_moveableView.getPosition() ) };
+	for( auto& chunk : m_world.getAllChunks() )
+	{
+		m_renderer.getWorldChunkRenderer()->render(
+			std::dynamic_pointer_cast< RenderWorldChunk >( chunk ) );
+	}
+
+	glm::ivec3 playerChunkPos{ WorldChunk::ChunkPosFromWorldPos( m_moveableView.getPosition() ) };
 	for( int x = -m_viewDistance; x <= m_viewDistance; ++x )
 	{
 		for( int z = -m_viewDistance; z <= m_viewDistance; ++z )
@@ -110,9 +120,8 @@ void CubixClient::update()
 	}
 	m_renderer.setView( m_moveableView.getViewMatrix() );
 
-	//m_playerController->update( m_gameTime.getDeltaTime() );
+	// m_playerController->update( m_gameTime.getDeltaTime() );
 
-	m_world.render();
 	m_renderer.finalizeSubRenderer();
 
 #if CUBIX_IMGUI
@@ -128,11 +137,11 @@ void CubixClient::update()
 				 static_cast< int >( m_moveableView.getPosition().z ) );
 	ImGui::Text( "Chunk Position: %d %d %d",
 				 static_cast< int >(
-					 std::floor( m_moveableView.getPosition().x / IWorldChunk::GetSideLength() ) ),
+					 std::floor( m_moveableView.getPosition().x / WorldChunk::GetSideLength() ) ),
 				 static_cast< int >(
-					 std::floor( m_moveableView.getPosition().y / IWorldChunk::GetSideLength() ) ),
-				 static_cast< int >( std::floor( m_moveableView.getPosition().z
-												 / IWorldChunk::GetSideLength() ) ) );
+					 std::floor( m_moveableView.getPosition().y / WorldChunk::GetSideLength() ) ),
+				 static_cast< int >(
+					 std::floor( m_moveableView.getPosition().z / WorldChunk::GetSideLength() ) ) );
 	if( ImGui::Button( m_voxelMemoryConsumption.c_str() ) )
 	{
 		m_voxelMemoryConsumption = "Total Voxel Memory: "
@@ -184,11 +193,9 @@ void CubixClient::onEvent( const Core::UserInputHandler::EventUpdate& eventType 
 		if( raycastHit.has_value() )
 		{
 			m_world.setVoxel( raycastHit.value(), {} ); // Remove voxel
-			auto chunk
-				= m_world.getChunk( IWorldChunk::ChunkPosFromWorldPos( raycastHit.value() ) );
+			auto chunk = m_world.getChunk( WorldChunk::ChunkPosFromWorldPos( raycastHit.value() ) );
 			auto renderChunk = static_cast< RenderWorldChunk* >( chunk.get() );
-			renderChunk->regenerateMesh();
-			m_world.queueUpdateChunk( chunk->getChunkPosition() );
+			m_world.getChunkWorker().queue( chunk, ChunkWorker::GENERATE_MESH );
 		}
 	}
 }

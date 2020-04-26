@@ -17,8 +17,7 @@ namespace Game
 
 WorldChunkContainer::WorldChunkContainer( World& world ) : m_world( world ) {}
 
-std::shared_ptr< const IWorldChunk > WorldChunkContainer::getChunk(
-	const glm::ivec3& chunkPos ) const
+std::shared_ptr< WorldChunk > WorldChunkContainer::getChunk( const glm::ivec3& chunkPos ) const
 {
 	auto it = m_chunkColumnMap.find( { chunkPos.x, chunkPos.z } );
 	if( it == m_chunkColumnMap.end() )
@@ -28,40 +27,19 @@ std::shared_ptr< const IWorldChunk > WorldChunkContainer::getChunk(
 	return it->second->getChunk( chunkPos.y );
 }
 
-std::shared_ptr< IWorldChunk > WorldChunkContainer::getChunk( const glm::ivec3& chunkPos )
+bool WorldChunkContainer::doesChunkExist( const glm::ivec3& chunkPos ) const
 {
-	std::lock_guard< decltype( m_chunkColumnMutex ) > guard( m_chunkColumnMutex );
-	auto it = m_chunkColumnMap.find( { chunkPos.x, chunkPos.z } );
-	if( it == m_chunkColumnMap.end() )
-	{
-		return nullptr;
-	}
-	return it->second->getChunk( chunkPos.y );
+	return m_chunkColumnMap.find( { chunkPos.x, chunkPos.z } ) != m_chunkColumnMap.end();
 }
 
-bool WorldChunkContainer::getChunkExists( const glm::ivec3& chunkPos ) const
-{
-	return getChunk( chunkPos ).get() != nullptr;
-}
-
-std::shared_ptr< IWorldChunk > WorldChunkContainer::createChunk( const glm::ivec3& chunkPos )
+std::shared_ptr< WorldChunk > WorldChunkContainer::getOrCreateChunk( const glm::ivec3& chunkPos )
 {
 	auto column = getOrCreateChunkColumn( { chunkPos.x, chunkPos.z } );
-	auto chunk	= column->createEmptyChunkIfAbsent( chunkPos.y );
-	m_world.getChunkWorker().queue( column, ChunkWorker::GENERATE_TERRAIN );
-	return chunk;
+	return column->getOrCreateChunk( chunkPos.y );
 }
 
 std::shared_ptr< WorldChunkColumn > WorldChunkContainer::getChunkColumn(
 	const glm::ivec2& chunkPos )
-{
-	std::lock_guard< decltype( m_chunkColumnMutex ) > guard( m_chunkColumnMutex );
-	auto it = m_chunkColumnMap.find( chunkPos );
-	return it != m_chunkColumnMap.end() ? it->second : nullptr;
-}
-
-std::shared_ptr< const WorldChunkColumn > WorldChunkContainer::getChunkColumn(
-	const glm::ivec2& chunkPos ) const
 {
 	auto it = m_chunkColumnMap.find( chunkPos );
 	return it != m_chunkColumnMap.end() ? it->second : nullptr;
@@ -70,23 +48,25 @@ std::shared_ptr< const WorldChunkColumn > WorldChunkContainer::getChunkColumn(
 std::shared_ptr< WorldChunkColumn > WorldChunkContainer::getOrCreateChunkColumn(
 	const glm::ivec2& chunkPos )
 {
-	if( const auto& ptr = getChunkColumn( chunkPos ) )
+	auto it = m_chunkColumnMap.find( chunkPos );
+	if( it != m_chunkColumnMap.end() )
 	{
-		return ptr;
+		return it->second;
 	}
-	std::lock_guard< decltype( m_chunkColumnMutex ) > guard( m_chunkColumnMutex );
-	m_chunkColumnMap.insert(
-		{ chunkPos,
-		  std::shared_ptr< WorldChunkColumn >( new WorldChunkColumn( m_world, chunkPos ) ) } );
-	return m_chunkColumnMap.find( chunkPos )->second;
+
+	return m_chunkColumnMap
+		.insert(
+			{ chunkPos,
+			  std::shared_ptr< WorldChunkColumn >( new WorldChunkColumn( m_world, chunkPos ) ) } )
+		.first->second;
 }
 
-void WorldChunkContainer::removeChunk( const glm::ivec3& chunkPos )
+void WorldChunkContainer::deleteChunk( const glm::ivec3& chunkPos )
 {
 	auto column = getChunkColumn( glm::ivec2{ chunkPos.x, chunkPos.z } );
 	if( column != nullptr )
 	{
-		column->removeChunk( chunkPos.y );
+		column->deleteChunk( chunkPos.y );
 		if( column->size() == 0 )
 		{
 			m_chunkColumnMap.erase( { chunkPos.x, chunkPos.z } );
@@ -94,37 +74,24 @@ void WorldChunkContainer::removeChunk( const glm::ivec3& chunkPos )
 	}
 }
 
-std::vector< std::shared_ptr< IWorldChunk > > WorldChunkContainer::getSurroundingChunks(
-	const glm::ivec3& chunkPos )
-{
-	std::vector< std::shared_ptr< IWorldChunk > > vec;
-	vec.reserve( Core::MultipleFacing::Facings.size() );
-	for( const auto& face : Core::MultipleFacing::Facings )
-	{
-		vec.push_back(
-			getChunk( chunkPos + glm::ivec3( Core::MultipleFacing::DirectionOf( face ) ) ) );
-	}
-	return vec;
-}
-
 Voxel WorldChunkContainer::getVoxel( const glm::ivec3& pos, const Voxel& _def ) const
 {
-	auto chunk = getChunk( IWorldChunk::ChunkPosFromWorldPos( pos ) );
+	auto chunk = getChunk( WorldChunk::ChunkPosFromWorldPos( pos ) );
 	if( chunk == nullptr )
 	{
 		return _def;
 	}
-	return chunk->getVoxel( pos - IWorldChunk::WorldPosFromChunkPos( chunk->getChunkPosition() ) );
+	return chunk->getVoxel( pos - WorldChunk::WorldPosFromChunkPos( chunk->getChunkPosition() ) );
 }
 
 void WorldChunkContainer::setVoxel( const glm::ivec3& pos, const Voxel& voxel )
 {
-	auto chunk = getChunk( IWorldChunk::ChunkPosFromWorldPos( pos ) );
+	auto chunk = getChunk( WorldChunk::ChunkPosFromWorldPos( pos ) );
 	if( chunk == nullptr )
 	{
 		return;
 	}
-	return chunk->setVoxel( pos - IWorldChunk::WorldPosFromChunkPos( chunk->getChunkPosition() ),
+	return chunk->setVoxel( pos - WorldChunk::WorldPosFromChunkPos( chunk->getChunkPosition() ),
 							voxel );
 }
 
@@ -155,11 +122,11 @@ void WorldChunkContainer::getVoxels( const Core::AxisAlignedBB& aabb,
 void WorldChunkContainer::finalizeChunkColumn( const glm::ivec2& columnPos )
 {
 	auto column = getChunkColumn( columnPos );
-	if( column != nullptr && column->getIsPopulated() )
+	if( column != nullptr )
 	{
-		for( auto& chunk : column->getChunks() )
+		for( auto& chunk : column->getChunkColumnData() )
 		{
-			m_allChunks.push_back( chunk.second );
+			m_allChunks.insert( chunk.second );
 		}
 	}
 }

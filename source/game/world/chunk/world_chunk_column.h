@@ -15,35 +15,39 @@
 namespace Game
 {
 
-class IWorldChunk;
+class WorldChunk;
 class World;
 
 class WorldChunkColumn
 {
 public:
-	typedef std::map< int, std::shared_ptr< IWorldChunk > > ColumnMap;
+	typedef std::map< int, std::shared_ptr< WorldChunk > > ColumnMap;
 
 protected:
-	ColumnMap m_column;
 	World& m_world;
 	glm::ivec2 m_chunkPosition;
-
-	bool m_isGenerated{ false };
-	bool m_isPopulated{ false };
+	ColumnMap m_column;
 
 public:
 	WorldChunkColumn( World& world, const glm::ivec2& chunkPosition );
 
 	CUBIX_GET_R_CR( m_world, World );
+	CUBIX_GET_R_CR( m_column, ChunkColumnData );
 	CUBIX_GET_CR( m_chunkPosition, ChunkPosition );
-	CUBIX_GET_R_CR( m_column, Chunks );
-	CUBIX_GET_SET_CR_CR( m_isGenerated, IsGenerated );
-	CUBIX_GET_SET_CR_CR( m_isPopulated, IsPopulated );
 
-	ColumnMap::mapped_type getChunk( int yLevel );
-	const ColumnMap::mapped_type getChunk( int yLevel ) const;
-	ColumnMap::mapped_type createEmptyChunkIfAbsent( int yLevel );
-	void removeChunk( int yLevel );
+	// Returns chunk at the given yLevel. Returns nullptr if missing
+	std::shared_ptr< WorldChunk > getChunk( int yLevel ) const;
+
+	// Returns a chunk at given yLevel or creates a new one if that one is missing.
+	// If so, it returns the new chunk.
+	// Chunk will be created as a WorldChunk or RenderWorldChunk. This depends
+	// on if a renderer is present in the owning world.
+	std::shared_ptr< WorldChunk > getOrCreateChunk( int yLevel );
+
+	// Removed all references to a given chunk at yLevel
+	void deleteChunk( int yLevel );
+
+	// Returns amount of chunks present in column
 	size_t size() const;
 };
 

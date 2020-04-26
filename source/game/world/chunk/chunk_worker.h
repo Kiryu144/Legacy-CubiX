@@ -16,7 +16,7 @@
 namespace Game
 {
 
-class IWorldChunk;
+class WorldChunk;
 class WorldChunkColumn;
 
 class ChunkWorker : Core::NoCopy
@@ -33,7 +33,7 @@ protected:
 	struct ChunkOperation
 	{
 		Action action;
-		std::shared_ptr< IWorldChunk > chunk{ nullptr };
+		std::shared_ptr< WorldChunk > chunk{ nullptr };
 		std::shared_ptr< WorldChunkColumn > column{ nullptr };
 	};
 
@@ -48,7 +48,7 @@ public:
 	ChunkWorker( unsigned int threadAmount );
 	~ChunkWorker();
 
-	void queue( std::shared_ptr< IWorldChunk > chunk, Action action );
+	void queue( std::shared_ptr< WorldChunk > chunk, Action action );
 	void queue( std::shared_ptr< WorldChunkColumn > column, Action action );
 
 	void checkForCrash();

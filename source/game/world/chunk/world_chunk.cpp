@@ -10,26 +10,13 @@ namespace Game
 {
 
 WorldChunk::WorldChunk( World& world, const glm::ivec3& chunkPosition )
-	: EmptyWorldChunk( world, chunkPosition )
+	: m_world( world ), m_chunkPosition( chunkPosition )
 {
-}
-
-Voxel WorldChunk::getVoxelFromWorld( const glm::ivec3& position, const Voxel& _def ) const
-{
-	if( position.x < 0 || position.x >= GetSideLength() || position.y < 0
-		|| position.y >= GetSideLength() || position.z < 0 || position.z >= GetSideLength() )
-	{
-		return _def;
-		/*
-		return m_world.getVoxel( m_chunkPosition * glm::ivec3( GetSize() )
-									 + ( position % glm::ivec3( GetSize() ) ),
-								 _def );*/
-	}
-	return getVoxel( position );
 }
 
 void WorldChunk::setVoxel( const glm::uvec3& position, const Voxel& voxel )
 {
+	cubix_assert( !m_data.empty(), "Data hasn't been initialized yet" );
 	auto& existingVoxel = m_data[ GetIndexForPosition( position ) ];
 	if( existingVoxel.exists() != voxel.exists() )
 	{
@@ -41,12 +28,28 @@ void WorldChunk::setVoxel( const glm::uvec3& position, const Voxel& voxel )
 
 const Voxel& WorldChunk::getVoxel( const glm::uvec3& position ) const
 {
+	static const Voxel noVoxel;
+	if( !isInitialized() )
+	{
+		return noVoxel;
+	}
 	return m_data[ GetIndexForPosition( position ) ];
 }
 
-size_t WorldChunk::getVoxelCount()
+size_t WorldChunk::getVoxelCount() const
 {
 	return m_voxelCount;
+}
+
+void WorldChunk::initializeData()
+{
+	cubix_assert( m_data.empty(), "Data was already initialized" );
+	m_data.resize( GetVolume() );
+}
+
+bool WorldChunk::isInitialized() const
+{
+	return !m_data.empty();
 }
 
 } // namespace Game

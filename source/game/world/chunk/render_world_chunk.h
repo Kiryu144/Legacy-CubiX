@@ -12,18 +12,16 @@
 #include "core/math/transform.h"
 #include "core/opengl/attributebuffer.h"
 
-#include "game/rendering/renderable.h"
-
 #include <atomic>
 #include <bitset>
 
 namespace Game
 {
 
-class RenderWorldChunk : public WorldChunk, public Core::Transform, public Renderable
+class RenderWorldChunk : public WorldChunk, public Core::Transform
 {
 protected:
-	typedef std::bitset< GetVolume() > FullRenderVoxelBitset;
+	typedef std::bitset< GetVolume() > SolidVoxelBitset;
 	struct Vertex
 	{
 		glm::vec3 position;
@@ -36,44 +34,37 @@ protected:
 	int getACColorCorrectionForCube( const Core::MultipleFacing::Face& face,
 									 const glm::ivec3& pos,
 									 int index,
-									 const FullRenderVoxelBitset ( *bitset )[ 3 ][ 3 ] );
+									 const SolidVoxelBitset ( *bitset )[ 3 ][ 3 ] );
 
-	static bool IsFullRenderVoxel( const glm::ivec3& pos, const FullRenderVoxelBitset& bitset );
+	static bool IsFullRenderVoxel( const glm::ivec3& pos, const SolidVoxelBitset& bitset );
 	static bool IsFullRenderVoxelSurr( const glm::ivec3& pos,
-									   const FullRenderVoxelBitset ( *bitset )[ 3 ][ 3 ] );
+									   const SolidVoxelBitset ( *bitset )[ 3 ][ 3 ] );
 
 	Core::AttributeBuffer m_attributeBuffer;
 	std::vector< Vertex > m_vertices;
 
-	FullRenderVoxelBitset m_renderableVoxels;
+	// A bitset containing a bit for every voxel set to true if that block is solid & exists
+	SolidVoxelBitset m_solidVoxelBitset;
 
-	std::mutex m_uploadMutex;
-	bool m_upload{ false };
-	bool m_needsNewMesh{ false };
+	// Is true if the vertices in m_vertices can be safely uploaded to the GPU
+	std::atomic_bool m_uploadVertices{ false };
 
-	Core::RegistryKey m_shaderKey;
-
-	std::atomic_bool m_meshGenerated{ false };
+	// Mutex will be locked everytime an upload attempt is started with uploadWhenNeeded()
+	// This prevents the m_vertices to be accessed while the uploading is in progress
+	std::mutex m_uploadingProcessMutex;
 
 public:
 	RenderWorldChunk( World& world, const glm::ivec3& chunkPosition );
 
-	Core::MultipleFacing findVisibleFaces(
-		const glm::uvec3& pos, const FullRenderVoxelBitset ( *bitset )[ 3 ][ 3 ] ) const;
+	CUBIX_GET_R_CR( m_attributeBuffer, AttributeBuffer );
+
+	Core::MultipleFacing findVisibleFaces( const glm::uvec3& pos,
+										   const SolidVoxelBitset ( *bitset )[ 3 ][ 3 ] ) const;
 
 	void setVoxel( const glm::uvec3& position, const Voxel& voxel ) override;
 
 	void regenerateMesh();
 	void uploadWhenNeeded();
-
-	bool isMeshGenerated() const;
-	void setMeshGenerated();
-
-	CUBIX_GET_SET_CR_CR( m_needsNewMesh, NeedsNewMesh );
-
-	void setUniforms( Core::ShaderProgram& shader ) override;
-	Core::RegistryKey getShader() override;
-	Core::AttributeBuffer& getAttributeBuffer() override;
 };
 
 } // namespace Game

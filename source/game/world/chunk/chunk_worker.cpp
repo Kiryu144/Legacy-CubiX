@@ -4,7 +4,6 @@
 
 #include "chunk_worker.h"
 
-#include "game/world/chunk/i_world_chunk.h"
 #include "game/world/chunk/render_world_chunk.h"
 #include "game/world/chunk/world_chunk_column.h"
 #include "game/world/world.h"
@@ -47,7 +46,6 @@ void ChunkWorker::worker()
 			if( operation.action == Action::GENERATE_TERRAIN )
 			{
 				operation.column->getWorld().getWorldGenerator().generateHeight( operation.column );
-				operation.column->setIsGenerated( true );
 				operation.column->getWorld().getChunkWorker().queue( operation.column,
 																	 Action::POPULATE_TERRAIN );
 				continue;
@@ -55,11 +53,10 @@ void ChunkWorker::worker()
 
 			if( operation.action == Action::POPULATE_TERRAIN )
 			{
-				operation.column->setIsPopulated( true );
 				operation.column->getWorld().finalizeChunkColumn(
 					operation.column->getChunkPosition() );
 
-				for( auto& chunk : operation.column->getChunks() )
+				for( auto& chunk : operation.column->getChunkColumnData() )
 				{
 					operation.column->getWorld().getChunkWorker().queue( chunk.second,
 																		 Action::GENERATE_MESH );
@@ -80,7 +77,6 @@ void ChunkWorker::worker()
 					continue;
 				}
 				renderWorldChunk->regenerateMesh();
-				renderWorldChunk->setMeshGenerated();
 			}
 		}
 	}
@@ -98,7 +94,7 @@ ChunkWorker::~ChunkWorker()
 	}
 }
 
-void ChunkWorker::queue( std::shared_ptr< IWorldChunk > chunk, Action action )
+void ChunkWorker::queue( std::shared_ptr< WorldChunk > chunk, Action action )
 {
 	auto guard( m_queue.lockGuard() );
 	ChunkOperation operation;

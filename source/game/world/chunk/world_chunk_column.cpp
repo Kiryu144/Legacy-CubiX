@@ -4,8 +4,7 @@
 
 #include "world_chunk_column.h"
 
-#include "game/world/chunk/world_chunk.h"
-#include "game/world/chunk/world_chunk_factory.h"
+#include "game/world/chunk/render_world_chunk.h"
 #include "game/world/world.h"
 
 namespace Game
@@ -16,33 +15,38 @@ WorldChunkColumn::WorldChunkColumn( World& world, const glm::ivec2& chunkPositio
 {
 }
 
-WorldChunkColumn::ColumnMap::mapped_type WorldChunkColumn::getChunk( int yLevel )
+std::shared_ptr< WorldChunk > WorldChunkColumn::getChunk( int yLevel ) const
 {
 	auto it = m_column.find( yLevel );
 	return it != m_column.end() ? it->second : nullptr;
 }
 
-const WorldChunkColumn::ColumnMap::mapped_type WorldChunkColumn::getChunk( int yLevel ) const
-{
-	auto cit = m_column.find( yLevel );
-	return cit != m_column.end() ? cit->second : nullptr;
-}
-
-WorldChunkColumn::ColumnMap::mapped_type WorldChunkColumn::createEmptyChunkIfAbsent( int yLevel )
+WorldChunkColumn::ColumnMap::mapped_type WorldChunkColumn::getOrCreateChunk( int yLevel )
 {
 	auto chunk{ getChunk( yLevel ) };
 	if( chunk == nullptr )
 	{
-		return m_column
-			.insert( { yLevel,
-					   std::shared_ptr< IWorldChunk >( m_world.getChunkFactory()->create(
-						   m_world, { m_chunkPosition.x, yLevel, m_chunkPosition.y } ) ) } )
-			.first->second;
+		glm::ivec3 chunkPosition{ m_chunkPosition.x, yLevel, m_chunkPosition.y };
+		if( m_world.getRenderer() == nullptr )
+		{
+			// Server chunk
+			chunk.reset( new WorldChunk( m_world, chunkPosition ) );
+		}
+		else
+		{
+			// Client chunk
+			chunk.reset( new RenderWorldChunk( m_world, chunkPosition ) );
+		}
+
+		return m_column.insert( { yLevel, chunk } ).first->second;
 	}
-	return chunk;
+	else
+	{
+		return chunk;
+	}
 }
 
-void WorldChunkColumn::removeChunk( int yLevel )
+void WorldChunkColumn::deleteChunk( int yLevel )
 {
 	m_column.erase( yLevel );
 }
