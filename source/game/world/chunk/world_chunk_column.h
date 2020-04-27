@@ -28,12 +28,15 @@ protected:
 	glm::ivec2 m_chunkPosition;
 	ColumnMap m_column;
 
+	unsigned int m_notSeen{ 0 };
+
 public:
 	WorldChunkColumn( World& world, const glm::ivec2& chunkPosition );
 
 	CUBIX_GET_R_CR( m_world, World );
 	CUBIX_GET_R_CR( m_column, ChunkColumnData );
 	CUBIX_GET_CR( m_chunkPosition, ChunkPosition );
+	CUBIX_GET_SET_CR_CR( m_notSeen, TicksNotSeen );
 
 	// Returns chunk at the given yLevel. Returns nullptr if missing
 	std::shared_ptr< WorldChunk > getChunk( int yLevel ) const;

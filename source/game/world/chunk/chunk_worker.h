@@ -16,6 +16,7 @@
 namespace Game
 {
 
+class Cubix;
 class WorldChunk;
 class WorldChunkColumn;
 
@@ -38,14 +39,15 @@ protected:
 	};
 
 protected:
+	Cubix& m_game;
 	std::atomic_bool m_quit{ false };
-	void worker();
+	void worker( size_t threadIndex );
 
 	std::list< std::thread > m_threads;
 	Core::Lockable< std::list< ChunkOperation > > m_queue;
 
 public:
-	ChunkWorker( unsigned int threadAmount );
+	ChunkWorker( Cubix& game, unsigned int threadAmount );
 	~ChunkWorker();
 
 	void queue( std::shared_ptr< WorldChunk > chunk, Action action );

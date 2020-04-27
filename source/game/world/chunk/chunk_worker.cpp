@@ -4,6 +4,9 @@
 
 #include "chunk_worker.h"
 
+#include "game/cubix.h"
+#include "game/game_performance.h"
+#include "game/performance/auto_performance_monitor.h"
 #include "game/world/chunk/render_world_chunk.h"
 #include "game/world/chunk/world_chunk_column.h"
 #include "game/world/world.h"
@@ -13,17 +16,24 @@
 namespace Game
 {
 
-ChunkWorker::ChunkWorker( unsigned int threadAmount )
+ChunkWorker::ChunkWorker( Cubix& game, unsigned int threadAmount ) : m_game( game )
 {
+	game.getPerformanceCounter().getChunkMeshCounter().resize( threadAmount );
+	game.getPerformanceCounter().getTerrainGenCounter().resize( threadAmount );
+
 	for( int i = 0; i < threadAmount; ++i )
 	{
-		m_threads.push_back( std::thread( &ChunkWorker::worker, this ) );
+		m_threads.push_back( std::thread( &ChunkWorker::worker, this, i ) );
 	}
+
 	Core::Logger::Log( "Starting " + std::to_string( threadAmount ) + "x chunkworker" );
 }
 
-void ChunkWorker::worker()
+void ChunkWorker::worker( size_t threadIndex )
 {
+	auto& meshCounter{ m_game.getPerformanceCounter().getChunkMeshCounter()[ threadIndex ] };
+	auto& terrainCounter{ m_game.getPerformanceCounter().getTerrainGenCounter()[ threadIndex ] };
+
 	auto sleepTime = std::chrono::milliseconds( 50 );
 	while( !m_quit )
 	{
@@ -45,6 +55,7 @@ void ChunkWorker::worker()
 		{
 			if( operation.action == Action::GENERATE_TERRAIN )
 			{
+				AutoPerformanceMonitor m( terrainCounter );
 				operation.column->getWorld().getWorldGenerator().generateHeight( operation.column );
 				operation.column->getWorld().getChunkWorker().queue( operation.column,
 																	 Action::POPULATE_TERRAIN );
@@ -76,6 +87,7 @@ void ChunkWorker::worker()
 				{
 					continue;
 				}
+				AutoPerformanceMonitor m( meshCounter );
 				renderWorldChunk->regenerateMesh();
 			}
 		}

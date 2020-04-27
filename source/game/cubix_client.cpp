@@ -65,10 +65,12 @@ CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
 	player->getPosition() = glm::vec3( 0.0f, 35.0f, 0.0f );
 	m_world.summonEntity( player );
 	m_playerController.reset( new PlayerController( player ) );
+	m_gameTime.setFPSLimit( 60 );
 }
 
 void CubixClient::update()
 {
+	m_gamePerformanceCounter.getFrameTimeCounter().start();
 	Cubix::update();
 	Core::Window::Update();
 	m_window.swap();
@@ -123,6 +125,7 @@ void CubixClient::update()
 	// m_playerController->update( m_gameTime.getDeltaTime() );
 
 	m_renderer.finalizeSubRenderer();
+	m_gamePerformanceCounter.getFrameTimeCounter().stop();
 
 #if CUBIX_IMGUI
 	bool active = true;
@@ -142,11 +145,21 @@ void CubixClient::update()
 					 std::floor( m_moveableView.getPosition().y / WorldChunk::GetSideLength() ) ),
 				 static_cast< int >(
 					 std::floor( m_moveableView.getPosition().z / WorldChunk::GetSideLength() ) ) );
+	if( raycastHit.has_value() )
+	{
+		Voxel selectedVoxel = m_world.getVoxel( raycastHit.value() );
+		ImGui::Text( "Selected Voxel: { %d, %d, %d, %d }",
+					 static_cast< int >( selectedVoxel.r ),
+					 static_cast< int >( selectedVoxel.g ),
+					 static_cast< int >( selectedVoxel.b ),
+					 static_cast< int >( selectedVoxel.a ) );
+	}
 	if( ImGui::Button( m_voxelMemoryConsumption.c_str() ) )
 	{
 		m_voxelMemoryConsumption = "Total Voxel Memory: "
 			+ Core::ByteSizeToString( m_world.calculateVoxelMemoryConsumption() );
 	}
+	m_gamePerformanceCounter.visualize();
 	ImGui::End();
 #endif
 }

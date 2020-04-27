@@ -17,9 +17,10 @@
 namespace Game
 {
 
-World::World( Renderer* renderer )
+World::World( Cubix& game, Renderer* renderer )
 	: WorldChunkContainer( *this ),
-	  m_chunkWorker( 4 ),
+	  m_game( game ),
+	  m_chunkWorker( game, 1 ),
 	  m_renderer( renderer ),
 	  m_worldGenerator( *this )
 {
@@ -28,6 +29,16 @@ World::World( Renderer* renderer )
 void World::update( float deltaTime )
 {
 	m_chunkWorker.checkForCrash();
+
+	for( auto& column : m_chunkColumnMap )
+	{
+		column.second->setTicksNotSeen( column.second->getTicksNotSeen() + 1 );
+
+		if( column.second->getTicksNotSeen() >= 120 )
+		{
+			deleteColumn( column.first );
+		}
+	}
 
 	for( auto& entity : m_entities )
 	{
@@ -38,11 +49,14 @@ void World::update( float deltaTime )
 
 void World::updateForPlayer( const glm::ivec2& chunkPosition )
 {
-	if( getChunkColumn( chunkPosition ) == nullptr )
+	auto column{ getChunkColumn( chunkPosition ) };
+	if( column == nullptr )
 	{
 		m_chunkWorker.queue( getOrCreateChunkColumn( chunkPosition ),
 							 ChunkWorker::GENERATE_TERRAIN );
+		return;
 	}
+	column->setTicksNotSeen( 0 );
 }
 
 size_t World::calculateVoxelMemoryConsumption() const

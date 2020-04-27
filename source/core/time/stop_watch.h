@@ -29,9 +29,6 @@ public:
 	StopWatch();
 	virtual ~StopWatch() = default;
 
-	CUBIX_GET_CR( m_start, Start );
-	CUBIX_GET_CR( m_timeElapsed, TimeElapsed );
-
 	virtual void start();
 	virtual void stop();
 	virtual void reset();

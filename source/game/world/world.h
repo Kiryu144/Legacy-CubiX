@@ -20,6 +20,7 @@ class AxisAlignedBB;
 namespace Game
 {
 
+class Cubix;
 class Renderer;
 class Entity;
 class PlacedVoxel;
@@ -30,6 +31,7 @@ public:
 	typedef std::unordered_set< glm::ivec3 > ChunkQueue;
 
 protected:
+	Cubix& m_game;
 	WorldGenerator m_worldGenerator;
 	ChunkWorker m_chunkWorker;
 	Renderer* m_renderer;
@@ -37,14 +39,15 @@ protected:
 	std::list< std::shared_ptr< Entity > > m_entities;
 
 public:
-	World( Renderer* renderer );
+	World( Cubix& game, Renderer* renderer );
 	virtual ~World() = default;
 	virtual void update( float deltaTime );
 
+	CUBIX_GET_R_CR( m_game, Game );
 	CUBIX_GET_R_CR( m_worldGenerator, WorldGenerator );
 	CUBIX_GET_R_CR( m_chunkWorker, ChunkWorker );
 	CUBIX_GET_SET_R_CR( m_renderer, Renderer );
-	
+
 	void updateForPlayer( const glm::ivec2& chunkPosition );
 	void summonEntity( std::shared_ptr< Entity > m_entity );
 

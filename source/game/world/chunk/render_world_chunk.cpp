@@ -116,7 +116,7 @@ void RenderWorldChunk::regenerateMesh()
 		m_uploadVertices = false;
 	}
 
-	SolidVoxelBitset fullRenderBlocks[ 3 ][ 3 ][ 3 ];
+	static thread_local SolidVoxelBitset fullRenderBlocks[ 3 ][ 3 ][ 3 ];
 
 	for( int x = -1; x <= 1; ++x )
 	{
@@ -124,11 +124,20 @@ void RenderWorldChunk::regenerateMesh()
 		{
 			for( int z = -1; z <= 1; ++z )
 			{
-				auto chunk = m_world.getChunk( m_chunkPosition + glm::ivec3{ x, y, z } );
+				WorldChunk* chunk{ nullptr };
+				if( x == 0 && y == 0 && z == 0 )
+				{
+					chunk = this;
+				}
+				else
+				{
+					// chunk = m_world.getChunk( m_chunkPosition + glm::ivec3{ x, y, z } ).get();
+				}
+
 				if( chunk != nullptr )
 				{
 					fullRenderBlocks[ x + 1 ][ y + 1 ][ z + 1 ]
-						= static_cast< decltype( this ) >( chunk.get() )->m_solidVoxelBitset;
+						= static_cast< decltype( this ) >( chunk )->m_solidVoxelBitset;
 				}
 			}
 		}

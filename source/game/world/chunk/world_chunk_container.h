@@ -44,6 +44,7 @@ public:
 protected:
 	World& m_world;
 	ChunkColumnMap m_chunkColumnMap;
+	std::mutex m_chunkColumnMapMutex;
 
 	// This list does not neccessarily contain all chunks in existence
 	// Chunks that were just created and are in the process of being
@@ -94,6 +95,8 @@ public:
 	// Removed all references to a given chunk at position.
 	// If chunkcolumn is empty after deletion, it will get deleted aswell.
 	void deleteChunk( const glm::ivec3& chunkPos );
+
+	void deleteColumn( const glm::ivec2& chunkPos );
 };
 
 } // namespace Game

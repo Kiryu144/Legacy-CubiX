@@ -4,10 +4,12 @@
 
 #include "cubix.h"
 
+#include "game/game_performance.h"
+
 namespace Game
 {
 
-Cubix::Cubix() : m_gameTime( 30 ), m_world( nullptr ) {}
+Cubix::Cubix() : m_gameTime( 30 ), m_world( *this, nullptr ) {}
 
 void Cubix::update()
 {
