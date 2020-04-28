@@ -104,7 +104,7 @@ void CubixClient::update()
 			double distance{ std::sqrt(
 				std::pow( static_cast< float >( chunkPos.x ) - playerChunkPos.x, 2 )
 				+ std::pow( static_cast< float >( chunkPos.y ) - playerChunkPos.z, 2 ) ) };
-			if( distance <= m_viewDistance )
+			if( abs( distance ) <= m_viewDistance )
 			{
 				m_world.updateForPlayer( chunkPos );
 			}
