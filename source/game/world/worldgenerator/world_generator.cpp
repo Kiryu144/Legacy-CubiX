@@ -58,6 +58,7 @@ void WorldGenerator::generateHeight( const std::shared_ptr< WorldChunkColumn >& 
 			}
 		}
 	}
+	column->setTerrainGenerated( true );
 }
 
 std::shared_ptr< Biome > WorldGenerator::getBiome( float elevation, float moisture ) const

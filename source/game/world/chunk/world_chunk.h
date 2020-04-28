@@ -18,6 +18,7 @@ namespace Game
 
 class World;
 class Entity;
+class WorldChunkColumn;
 
 class WorldChunk
 {
@@ -91,7 +92,6 @@ public:
 
 	virtual void setVoxel( const glm::uvec3& position, const Voxel& voxel );
 	const Voxel& getVoxel( const glm::uvec3& position ) const;
-
 	size_t getVoxelCount() const;
 };
 

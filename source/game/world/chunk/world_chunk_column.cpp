@@ -56,4 +56,22 @@ size_t WorldChunkColumn::size() const
 	return m_column.size();
 }
 
+bool WorldChunkColumn::hasAllNeighbours() const
+{
+	static const std::vector< glm::ivec2 > checks{
+		glm::ivec2( 1, 0 ), glm::ivec2( -1, 0 ), glm::ivec2( 0, 1 ), glm::ivec2( 0, -1 )
+	};
+
+	for( const auto& check : checks )
+	{
+		const auto& column{ m_world.getChunkColumn( m_chunkPosition + check ) };
+		if( column == nullptr || !column->m_terrainGenerated )
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 } // namespace Game

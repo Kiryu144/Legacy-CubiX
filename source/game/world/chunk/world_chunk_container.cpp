@@ -55,11 +55,12 @@ std::shared_ptr< WorldChunkColumn > WorldChunkContainer::getOrCreateChunkColumn(
 	}
 
 	std::lock_guard< decltype( m_chunkColumnMapMutex ) > guard( m_chunkColumnMapMutex );
-	return m_chunkColumnMap
-		.insert(
-			{ chunkPos,
-			  std::shared_ptr< WorldChunkColumn >( new WorldChunkColumn( m_world, chunkPos ) ) } )
-		.first->second;
+	auto& returnVal = m_chunkColumnMap
+						  .insert( { chunkPos,
+									 std::shared_ptr< WorldChunkColumn >(
+										 new WorldChunkColumn( m_world, chunkPos ) ) } )
+						  .first->second;
+	return returnVal;
 }
 
 void WorldChunkContainer::deleteChunk( const glm::ivec3& chunkPos )
@@ -146,6 +147,12 @@ void WorldChunkContainer::deleteColumn( const glm::ivec2& chunkPos )
 		m_allChunks.erase( chunk.second );
 	}
 	m_chunkColumnMap.erase( chunkPos );
+}
+
+bool WorldChunkContainer::doesChunkColumnExist( const glm::ivec2& pos ) const
+{
+	auto it{ m_chunkColumnMap.find( pos ) };
+	return it != m_chunkColumnMap.end();
 }
 
 } // namespace Game

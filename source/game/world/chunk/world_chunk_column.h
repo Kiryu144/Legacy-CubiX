@@ -6,6 +6,7 @@
 #define CUBIX_WORLD_CHUNK_COLUMN_H
 
 #include "core/cubix_macro.h"
+#include "core/data/multiple_facing.h"
 
 #include <map>
 #include <memory>
@@ -28,6 +29,8 @@ protected:
 	glm::ivec2 m_chunkPosition;
 	ColumnMap m_column;
 
+	bool m_terrainGenerated{ false };
+	bool m_allNeighboursFound{ false };
 	unsigned int m_notSeen{ 0 };
 
 public:
@@ -37,6 +40,8 @@ public:
 	CUBIX_GET_R_CR( m_column, ChunkColumnData );
 	CUBIX_GET_CR( m_chunkPosition, ChunkPosition );
 	CUBIX_GET_SET_CR_CR( m_notSeen, TicksNotSeen );
+	CUBIX_GET_SET_CR_CR( m_terrainGenerated, TerrainGenerated );
+	CUBIX_GET_SET_CR_CR( m_allNeighboursFound, AllNeighboursFound );
 
 	// Returns chunk at the given yLevel. Returns nullptr if missing
 	std::shared_ptr< WorldChunk > getChunk( int yLevel ) const;
@@ -52,6 +57,9 @@ public:
 
 	// Returns amount of chunks present in column
 	size_t size() const;
+
+	// Checks if all neighbouring chunks have terrain generated
+	bool hasAllNeighbours() const;
 };
 
 } // namespace Game

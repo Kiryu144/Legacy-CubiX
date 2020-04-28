@@ -57,13 +57,28 @@ void ChunkWorker::worker( size_t threadIndex )
 			{
 				AutoPerformanceMonitor m( terrainCounter );
 				operation.column->getWorld().getWorldGenerator().generateHeight( operation.column );
-				operation.column->getWorld().getChunkWorker().queue( operation.column,
-																	 Action::POPULATE_TERRAIN );
+
+				static const std::vector< glm::ivec2 > checks{
+					glm::ivec2( 1, 0 ), glm::ivec2( -1, 0 ), glm::ivec2( 0, 1 ), glm::ivec2( 0, -1 )
+				};
+
+				for( const auto& check : checks )
+				{
+					const auto& column{ operation.column->getWorld().getChunkColumn( operation.column->getChunkPosition() + check ) };
+					if( column != nullptr && !column->getAllNeighboursFound()
+					    && column->hasAllNeighbours() )
+					{
+						column->setAllNeighboursFound( true );
+						queue( column, ChunkWorker::POPULATE_TERRAIN );
+					}
+				}
+
 				continue;
 			}
 
 			if( operation.action == Action::POPULATE_TERRAIN )
 			{
+				// Populate
 				operation.column->getWorld().finalizeChunkColumn(
 					operation.column->getChunkPosition() );
 
