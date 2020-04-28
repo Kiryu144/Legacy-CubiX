@@ -19,6 +19,7 @@ protected:
 	Core::AxisAlignedBB m_axisAlignedBb;
 
 public:
+	Entity();
 	virtual void update( World& world, float deltaTime );
 };
 

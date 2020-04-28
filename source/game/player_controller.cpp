@@ -13,26 +13,24 @@ namespace Game
 
 PlayerController::PlayerController( std::shared_ptr< Player > player ) : m_player( player ) {}
 
-void PlayerController::updateView()
-{
-
-	//m_view.getRotation().y = glm::degrees(m_player->getRotation().y);
-	//m_view.getPosition()
-		//= Core::Transform::CreateDirection( m_player->getRotation() ) * glm::vec3( -10.0f ) + glm::vec3(0.0f, 5.0f, 0.0f);
-}
-
 void PlayerController::update( double deltaTime )
 {
-	m_player->getPosition() += glm::vec3{ m_moveDirection.x * 0.01 * deltaTime * m_moveSpeed,
+	// Player
+	m_player->getPosition() += glm::vec3{ m_moveDirection.x * 0.1 * deltaTime * m_moveSpeed,
 										  0.0f,
-										  m_moveDirection.z * 0.01 * deltaTime * m_moveSpeed };
+										  m_moveDirection.z * 0.1 * deltaTime * m_moveSpeed };
 
-	m_player->getRotation() += glm::vec3{ m_mouseMove.x * 0.1 * m_turnSensitivity,
-										  m_mouseMove.y * 0.1 * m_turnSensitivity,
-										  0.0f };
+	m_player->getRotation() += glm::vec3{ 0.0f, -m_mouseMove.y, 0.0f };
 
-	m_player->getRotation().x = glm::clamp( getRotation().x, -89.9f, 89.0f );
+	// View
+	m_view.getRotation().y = -m_player->getRotation().y;
+	m_view.getRotation().x = glm::clamp( m_view.getRotation().x + m_mouseMove.x, -89.9f, 89.0f );
 
+	m_view.getPosition() = m_player->getPosition()
+		- ( Core::Transform::CreateDirection( m_view.getRotation() ) * glm::vec3( 10.0f ) );
+	m_view.getPosition() += m_player->getRotationOrigin();
+
+	// Reset
 	m_moveDirection = { 0.0, 0.0, 0.0 };
 	m_mouseMove		= { 0.0, 0.0 };
 }
@@ -46,8 +44,8 @@ void PlayerController::onEvent( const Core::UserInputHandler::EventUpdate& event
 		= { event.instance.getMousePosition().x, event.instance.getMousePosition().y };
 
 	static const glm::vec3 s_up{ 0.0f, 1.0f, 0.0f };
-	glm::vec3 front
-		= Core::Transform::CreateDirection( { 0.0f, getRotation().y, getRotation().z } );
+	glm::vec3 front = Core::Transform::CreateDirection(
+		{ 0.0f, m_player->getRotation().y, m_player->getRotation().z } );
 
 	if( event.instance.isKeyPressed( Core::UserInputHandler::D ) )
 	{

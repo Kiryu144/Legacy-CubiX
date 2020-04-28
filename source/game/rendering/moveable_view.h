@@ -30,7 +30,7 @@ private:
 public:
 	void update( double deltaTime );
 
-	CUBIX_GET_SET_CR_CR( m_turnDirection, MouseSensitivity );
+	CUBIX_GET_SET_CR_CR( m_turnSensitivity, MouseSensitivity );
 	CUBIX_GET_SET_CR_CR( m_moveSpeed, Speed );
 	CUBIX_GET_SET_CR_CR( m_active, Active );
 };

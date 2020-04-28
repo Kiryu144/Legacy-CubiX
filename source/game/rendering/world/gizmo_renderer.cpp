@@ -13,7 +13,7 @@ namespace Game
 {
 
 GizmoRenderer::GizmoRenderer( Renderer& renderer )
-	: m_renderer( renderer ), m_cubeAttributeBuffer( Core::SingleVertexAttribute )
+	: SubRenderer( renderer ), m_cubeAttributeBuffer( Core::SingleVertexAttribute )
 {
 	m_shader			   = renderer.getShaderRegistry().getValue( "gizmo_shader" );
 	m_colorUniformLocation = m_shader->getUniformLocation( "u_color" );
@@ -28,17 +28,28 @@ GizmoRenderer::GizmoRenderer( Renderer& renderer )
 	m_cubeAttributeBuffer.upload( &s_cubeVertices[ 0 ], s_cubeVertices.size() );
 }
 
-void GizmoRenderer::drawCube( Core::Transform& transform, const Core::Color& color )
+void GizmoRenderer::renderCube( Core::Transform& transform, const Core::Color& color )
+{
+	m_toRender.push_back( { m_cubeAttributeBuffer, color, transform } );
+}
+
+void GizmoRenderer::finalize()
 {
 	m_shader->bind();
-	m_shader->setUniform( m_colorUniformLocation, color.toFloat() );
+
 	m_shader->setUniform( m_shader->getProjectionUniform(), m_renderer.getProjection() );
 	m_shader->setUniform( m_shader->getViewUniform(), m_renderer.getView() );
-	m_shader->setUniform( m_shader->getTransformUniform(), transform.getMatrix() );
 
-	m_cubeAttributeBuffer.bind( 0 );
+	for( auto& entry : m_toRender )
+	{
+		entry.buffer.bind( 0 );
 
-	glDrawArrays( GL_LINE_STRIP, 0, m_cubeAttributeBuffer.getVerticeAmount() );
+		m_shader->setUniform( m_colorUniformLocation, entry.color.toFloat() );
+		m_shader->setUniform( m_shader->getTransformUniform(), entry.transform.getMatrix() );
+
+		glDrawArrays( GL_LINE_STRIP, 0, entry.buffer.getVerticeAmount() );
+	}
+	m_toRender.clear();
 }
 
 } // namespace Game

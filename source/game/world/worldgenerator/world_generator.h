@@ -25,6 +25,7 @@ class WorldGenerator
 protected:
 	FastNoise m_baseHeight;
 	FastNoise m_moisture;
+	FastNoise m_color;
 
 	World& m_world;
 	std::shared_ptr< Biome > m_biome;

@@ -115,4 +115,15 @@ void Window::setVSync( bool enable )
 	glfwSwapInterval( enable );
 }
 
+void Window::setMsaaSamples( int samples )
+{
+	glfwWindowHint( GLFW_SAMPLES, samples );
+	m_msaaLevels = samples;
+}
+
+int Window::getMsaaSamples() const
+{
+	return m_msaaLevels;
+}
+
 } // namespace Core

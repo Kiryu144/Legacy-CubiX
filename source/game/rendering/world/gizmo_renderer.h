@@ -9,6 +9,8 @@
 #include "core/math/transform.h"
 #include "core/opengl/attributebuffer.h"
 
+#include "game/rendering/sub_renderer.h"
+
 #include <memory>
 
 namespace Core
@@ -21,11 +23,20 @@ namespace Game
 
 class Renderer;
 
-class GizmoRenderer
+class GizmoRenderer : public SubRenderer
 {
 protected:
-	Renderer& m_renderer;
+	struct RenderEntry
+	{
+		Core::AttributeBuffer& buffer;
+		Core::Color color;
+		Core::Transform transform;
+	};
+
+protected:
 	Core::AttributeBuffer m_cubeAttributeBuffer;
+
+	std::list< RenderEntry > m_toRender;
 
 	std::shared_ptr< Core::ShaderProgram > m_shader;
 	int m_colorUniformLocation;
@@ -33,8 +44,10 @@ protected:
 public:
 	GizmoRenderer( Renderer& renderer );
 
-	void drawCube( Core::Transform& transform,
-				   const Core::Color& color = Core::Color{ 0, 255, 0, 255 } );
+	void renderCube( Core::Transform& transform,
+					 const Core::Color& color = Core::Color{ 0, 255, 0, 255 } );
+
+	void finalize() override;
 };
 
 } // namespace Game

@@ -16,7 +16,7 @@ namespace Game
 
 class Player;
 
-class PlayerController : public Core::View, Core::Listener< Core::UserInputHandler::EventUpdate >
+class PlayerController : public Core::Listener< Core::UserInputHandler::EventUpdate >
 {
 protected:
 	std::shared_ptr< Player > m_player;
@@ -37,7 +37,6 @@ public:
 	CUBIX_GET_R_CR( m_player, Player );
 	CUBIX_GET_R_CR( m_view, View );
 
-	void updateView();
 	void update( double deltaTime );
 };
 

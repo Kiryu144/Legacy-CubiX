@@ -73,12 +73,12 @@ void MoveableView::update( double deltaTime )
 		return;
 	}
 
-	getPosition() += glm::vec3{ m_moveDirection.x * 0.01 * deltaTime * m_moveSpeed,
-	                            m_moveDirection.y * 0.01 * deltaTime * m_moveSpeed,
-	                            m_moveDirection.z * 0.01 * deltaTime * m_moveSpeed };
+	getPosition() += glm::vec3{ m_moveDirection.x * deltaTime * m_moveSpeed,
+	                            m_moveDirection.y * deltaTime * m_moveSpeed,
+	                            m_moveDirection.z * deltaTime * m_moveSpeed };
 
-	getRotation() += glm::vec3{ m_turnDirection.x * 0.1 * m_turnSensitivity,
-	                            m_turnDirection.y * 0.1 * m_turnSensitivity,
+	getRotation() += glm::vec3{ m_turnDirection.x * m_turnSensitivity,
+	                            m_turnDirection.y * m_turnSensitivity,
 	                            0.0f };
 
 	getRotation().x = glm::clamp( getRotation().x, -89.9f, 89.0f );

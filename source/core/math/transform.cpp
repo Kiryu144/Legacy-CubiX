@@ -23,6 +23,12 @@ void Transform::MatrixScale( glm::mat4& mat, const glm::vec3& vec )
 
 void Transform::MatrixRotateX( glm::mat4& mat, float angle )
 {
+	if( angle == 0 )
+	{
+		return;
+	}
+
+	angle			 = glm::radians( angle );
 	const float c	 = std::cos( angle );
 	const float s	 = std::sin( angle );
 	const float temp = ( 1.0f - c );
@@ -47,6 +53,12 @@ void Transform::MatrixRotateX( glm::mat4& mat, float angle )
 
 void Transform::MatrixRotateY( glm::mat4& mat, float angle )
 {
+	if( angle == 0 )
+	{
+		return;
+	}
+
+	angle			 = glm::radians( angle );
 	const float c	 = std::cos( angle );
 	const float s	 = std::sin( angle );
 	const float temp = ( 1.0f - c );
@@ -71,6 +83,12 @@ void Transform::MatrixRotateY( glm::mat4& mat, float angle )
 
 void Transform::MatrixRotateZ( glm::mat4& mat, float angle )
 {
+	if( angle == 0 )
+	{
+		return;
+	}
+
+	angle			 = glm::radians( angle );
 	const float c	 = std::cos( angle );
 	const float s	 = std::sin( angle );
 	const float temp = ( 1.0f - c );
@@ -120,6 +138,11 @@ glm::mat4 Transform::CreateModelMatrix( const glm::vec3& position,
 										const glm::vec3& rotation,
 										const glm::vec3& rotationOrigin )
 {
+	if( rotationOrigin.x == 0 && rotationOrigin.y == 0 && rotationOrigin.z == 0 )
+	{
+		return CreateModelMatrix( position, scale, rotation );
+	}
+
 	glm::mat4 matrix( 1.0f );
 	MatrixTranslate( matrix, position + rotationOrigin );
 	MatrixRotateX( matrix, rotation.x );
@@ -174,11 +197,17 @@ glm::vec3& Transform::getScale()
 	return m_scale;
 }
 
+glm::vec3& Transform::getRotationOrigin()
+{
+	m_needsUpdate = true;
+	return m_rotationOrigin;
+}
+
 const glm::mat4& Transform::getMatrix()
 {
 	if( m_needsUpdate )
 	{
-		m_matrix	  = CreateModelMatrix( m_position, m_scale, m_rotation );
+		m_matrix	  = CreateModelMatrix( m_position, m_scale, m_rotation, m_rotationOrigin );
 		m_needsUpdate = false;
 	}
 	return m_matrix;
@@ -197,6 +226,11 @@ const glm::vec3& Transform::getRotation() const
 const glm::vec3& Transform::getScale() const
 {
 	return m_scale;
+}
+
+const glm::vec3& Transform::getRotationOrigin() const
+{
+	return m_rotationOrigin;
 }
 
 bool Transform::needsUpdate() const

@@ -30,6 +30,7 @@ CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
 {
 	setWindowTitle();
 	m_window.setVSync( false );
+	m_window.setMsaaSamples( 4 );
 	m_gameTime.setFPSLimit( static_cast< unsigned int >( -1 ) );
 	m_world.setRenderer( &m_renderer );
 
@@ -58,11 +59,12 @@ CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
 	m_renderer.initializeSubRenderers();
 
 	connect( "127.0.0.1", 4444 );
-	m_moveableView.setSpeed( 1800 );
+	m_moveableView.setSpeed( 18 );
+	m_moveableView.setMouseSensitivity( 0.1f );
 	m_moveableView.setActive( false );
 
 	std::shared_ptr< Player > player( new Player() );
-	player->getPosition() = glm::vec3( 0.0f, 35.0f, 0.0f );
+	player->getPosition() = glm::vec3( 0.0f, 55.0f, 0.0f );
 	m_world.summonEntity( player );
 	m_playerController.reset( new PlayerController( player ) );
 }
@@ -115,12 +117,10 @@ void CubixClient::update()
 	}
 	else if( m_playerController.get() != nullptr )
 	{
-		m_playerController->updateView();
 		m_renderer.setView( m_playerController->getView().getViewMatrix() );
 	}
-	m_renderer.setView( m_moveableView.getViewMatrix() );
 
-	// m_playerController->update( m_gameTime.getDeltaTime() );
+	m_playerController->update( m_gameTime.getDeltaTime() );
 
 	m_renderer.finalizeSubRenderer();
 

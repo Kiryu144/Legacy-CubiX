@@ -26,6 +26,7 @@ WorldGenerator::WorldGenerator( World& world ) : m_world( world )
 
 	m_baseHeight.SetSeed( 123 );
 	m_moisture.SetSeed( m_baseHeight.GetSeed() + 28101999 );
+	m_color.SetSeed( m_baseHeight.GetSeed() + -13141 );
 }
 
 void WorldGenerator::generateHeight( const std::shared_ptr< WorldChunkColumn >& column ) const
@@ -40,6 +41,7 @@ void WorldGenerator::generateHeight( const std::shared_ptr< WorldChunkColumn >& 
 
 			float elevation{ m_baseHeight.GetPerlin( worldPos.x, worldPos.z ) };
 			float moisture{ m_moisture.GetPerlin( worldPos.x, worldPos.z ) };
+			float color{ m_color.GetPerlin( worldPos.x * 160, worldPos.z * 160 ) * 5 };
 			auto biome{ getBiome( elevation, moisture ) };
 
 			int voxelHeight{ biome->getBaseHeight()
@@ -56,7 +58,11 @@ void WorldGenerator::generateHeight( const std::shared_ptr< WorldChunkColumn >& 
 			unsigned int depth{ 0 };
 			for( int y = voxelHeight - chunkPosition.y * WorldChunk::GetSideLength(); y >= 0; --y )
 			{
-				chunk->setVoxel( { x, y, z }, m_biome->getVoxelForDepth( depth++ ) );
+				Voxel voxel{ m_biome->getVoxelForDepth( depth++ ) };
+				voxel.r += color;
+				voxel.g += color;
+				voxel.b += color;
+				chunk->setVoxel( { x, y, z }, voxel );
 			}
 		}
 	}

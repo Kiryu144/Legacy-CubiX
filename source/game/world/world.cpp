@@ -32,7 +32,16 @@ void World::update( float deltaTime )
 	for( auto& entity : m_entities )
 	{
 		entity->update( *this, deltaTime );
-		m_renderer->getGizmoRenderer()->drawCube( *entity, { 255, 0, 255, 255 } );
+		m_renderer->getGizmoRenderer()->renderCube( *entity, { 255, 0, 255, 255 } );
+	}
+
+	for( int i = 0; i <= 360; i += 45 )
+	{
+		Core::Transform transform;
+		transform.getPosition()		  = glm::vec3( i / 22.5f, 11.0f, 5.0f );
+		transform.getRotation().y	  = i;
+		transform.getRotationOrigin() = transform.getScale() * glm::vec3( 0.5f );
+		m_renderer->getGizmoRenderer()->renderCube( transform, { 255, 0, 0, 255 } );
 	}
 }
 

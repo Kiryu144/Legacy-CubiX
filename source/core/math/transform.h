@@ -42,6 +42,7 @@ public:
 protected:
 	glm::vec3 m_position{ 0.0f };
 	glm::vec3 m_rotation{ 0.0f };
+	glm::vec3 m_rotationOrigin{ 0.0f };
 	glm::vec3 m_scale{ 1.0f };
 	glm::mat4 m_matrix{ 1.0f };
 
@@ -50,10 +51,12 @@ protected:
 public:
 	glm::vec3& getPosition();
 	glm::vec3& getRotation();
+	glm::vec3& getRotationOrigin();
 	glm::vec3& getScale();
 
 	const glm::vec3& getPosition() const;
 	const glm::vec3& getRotation() const;
+	const glm::vec3& getRotationOrigin() const;
 	const glm::vec3& getScale() const;
 	const glm::mat4& getMatrix();
 

@@ -28,6 +28,7 @@ private:
 
 	std::unique_ptr< UserInputHandler > m_userInputHandler;
 
+	int m_msaaLevels{ 0 };
 	bool m_vsync{ false };
 	std::string m_windowTitle;
 
@@ -49,6 +50,9 @@ public:
 	void setVSync( bool enable );
 
 	void setTitle( const std::string& title );
+
+	void setMsaaSamples(int samples);
+	int getMsaaSamples() const;
 
 	const glm::ivec2& getSize() const;
 	void setSize( const glm::ivec2& size );

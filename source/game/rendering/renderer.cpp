@@ -32,6 +32,7 @@ void Renderer::finalizeSubRenderer()
 {
 	m_blockOutlineRenderer->finalize();
 	m_worldChunkRenderer->finalize();
+	m_gizmoRenderer->finalize();
 }
 
 } // namespace Game
