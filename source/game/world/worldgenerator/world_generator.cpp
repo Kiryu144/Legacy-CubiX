@@ -8,6 +8,7 @@
 #include "game/world/chunk/world_chunk_column.h"
 #include "game/world/world.h"
 #include "game/world/worldgenerator/biome/biome.h"
+#include "game/world/worldgenerator/biome/flat.h"
 #include "game/world/worldgenerator/biome/hilly_plains.h"
 
 #include <set>
@@ -21,6 +22,7 @@ WorldGenerator::WorldGenerator( World& world ) : m_world( world )
 {
 	m_biome.reset( new Biome( 25, 10 ) );
 	m_hillyPlains.reset( new HillyPlains() );
+	m_flat.reset( new Flat() );
 
 	m_baseHeight.SetSeed( 123 );
 	m_moisture.SetSeed( m_baseHeight.GetSeed() + 28101999 );
@@ -62,7 +64,7 @@ void WorldGenerator::generateHeight( const std::shared_ptr< WorldChunkColumn >& 
 
 std::shared_ptr< Biome > WorldGenerator::getBiome( float elevation, float moisture ) const
 {
-	return m_biome;
+	return m_flat;
 	if( elevation >= 0.5f )
 	{
 		return m_hillyPlains;

@@ -58,7 +58,7 @@ CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
 	m_renderer.initializeSubRenderers();
 
 	connect( "127.0.0.1", 4444 );
-	m_moveableView.setSpeed( 18000 );
+	m_moveableView.setSpeed( 1800 );
 	m_moveableView.setActive( false );
 
 	std::shared_ptr< Player > player( new Player() );

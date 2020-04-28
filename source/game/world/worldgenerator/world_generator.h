@@ -18,6 +18,7 @@ class World;
 class WorldChunkColumn;
 class Biome;
 class HillyPlains;
+class Flat;
 
 class WorldGenerator
 {
@@ -28,6 +29,7 @@ protected:
 	World& m_world;
 	std::shared_ptr< Biome > m_biome;
 	std::shared_ptr< HillyPlains > m_hillyPlains;
+	std::shared_ptr< Flat > m_flat;
 
 	std::shared_ptr< Biome > getBiome( float elevation, float moisture ) const;
 
