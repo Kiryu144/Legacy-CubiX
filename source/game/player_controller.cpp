@@ -11,20 +11,33 @@
 namespace Game
 {
 
-PlayerController::PlayerController( std::shared_ptr< Player > player ) : m_player( player ) {}
+PlayerController::PlayerController( std::shared_ptr< Player > player ) : m_player( player )
+{
+	setMoveSpeed( 10.0f );
+	setMouseSensitivity( 1.0f );
+	setJumpStrength( 10.0f );
+}
 
 void PlayerController::update( double deltaTime )
 {
 	// Player
-	m_player->getPosition() += glm::vec3{ m_moveDirection.x * 0.1 * deltaTime * m_moveSpeed,
+	m_player->getPosition() += glm::vec3{ m_moveDirection.x * deltaTime * m_moveSpeed,
 										  0.0f,
-										  m_moveDirection.z * 0.1 * deltaTime * m_moveSpeed };
+										  m_moveDirection.z * deltaTime * m_moveSpeed };
 
-	m_player->getRotation() += glm::vec3{ 0.0f, -m_mouseMove.y, 0.0f };
+	m_player->getRotation()
+		+= glm::vec3{ 0.0f, -m_mouseMove.y * m_mouseSensitivity, 0.0f };
+
+	if( m_jump )
+	{
+		m_jump = false;
+		m_player->getVelocity().y += m_jumpStrength;
+	}
 
 	// View
 	m_view.getRotation().y = -m_player->getRotation().y;
-	m_view.getRotation().x = glm::clamp( m_view.getRotation().x + m_mouseMove.x, -89.9f, 89.0f );
+	m_view.getRotation().x
+		= glm::clamp( m_view.getRotation().x + m_mouseMove.x * m_mouseSensitivity, -89.9f, 89.0f );
 
 	m_view.getPosition() = m_player->getPosition()
 		- ( Core::Transform::CreateDirection( m_view.getRotation() ) * glm::vec3( 10.0f ) );
@@ -44,8 +57,8 @@ void PlayerController::onEvent( const Core::UserInputHandler::EventUpdate& event
 		= { event.instance.getMousePosition().x, event.instance.getMousePosition().y };
 
 	static const glm::vec3 s_up{ 0.0f, 1.0f, 0.0f };
-	glm::vec3 front = Core::Transform::CreateDirection(
-		{ 0.0f, m_player->getRotation().y, m_player->getRotation().z } );
+	glm::vec3 front
+		= Core::Transform::CreateDirection( { 0.0f, -m_player->getRotation().y, 0.0f } );
 
 	if( event.instance.isKeyPressed( Core::UserInputHandler::D ) )
 	{
@@ -67,14 +80,9 @@ void PlayerController::onEvent( const Core::UserInputHandler::EventUpdate& event
 		m_moveDirection -= front;
 	}
 
-	if( event.instance.isKeyPressed( Core::UserInputHandler::LEFT_SHIFT ) )
+	if( event.instance.isKeyDown( Core::UserInputHandler::SPACE ) )
 	{
-		m_moveDirection += glm::vec3{ 0.0f, -1.0f, 0.0f };
-	}
-
-	if( event.instance.isKeyPressed( Core::UserInputHandler::SPACE ) )
-	{
-		m_moveDirection += glm::vec3{ 0.0f, 1.0f, 0.0f };
+		m_jump = true;
 	}
 }
 

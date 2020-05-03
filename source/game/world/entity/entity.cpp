@@ -34,8 +34,9 @@ void Entity::update( World& world, float deltaTime )
 		Core::AxisAlignedBB voxelBB{ Core::AxisAlignedBB::FromPosition( voxel.getPosition() ) };
 		if( myBB.intersectsWith( voxelBB ) )
 		{
-			glm::vec3 offset = myBB.calculateOffset( voxelBB, getVelocity() );
-			getVelocity() -= offset;
+			glm::vec3 offset
+				= myBB.calculateOffset( voxelBB, getVelocity() * glm::vec3( -deltaTime ) );
+			getPosition() += offset;
 		}
 	}
 

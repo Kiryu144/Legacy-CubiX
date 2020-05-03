@@ -25,9 +25,11 @@ protected:
 	glm::vec3 m_moveDirection{ 0.0f };
 	glm::vec2 m_lastMousePosition{ 0.0f };
 	glm::vec2 m_mouseMove{ 0.0f };
+	bool m_jump{ false };
 
-	double m_turnSensitivity = 1.0f;
-	double m_moveSpeed		 = 1.0f;
+	float m_mouseSensitivity = 1.0f;
+	float m_moveSpeed		 = 1.0f;
+	float m_jumpStrength	 = 1.0f;
 
 	void onEvent( const Core::UserInputHandler::EventUpdate& eventType ) override;
 
@@ -36,6 +38,9 @@ public:
 
 	CUBIX_GET_R_CR( m_player, Player );
 	CUBIX_GET_R_CR( m_view, View );
+	CUBIX_GET_SET_CR_CR( m_mouseSensitivity, MouseSensitivity );
+	CUBIX_GET_SET_CR_CR( m_moveSpeed, MoveSpeed );
+	CUBIX_GET_SET_CR_CR( m_jumpStrength, JumpStrength );
 
 	void update( double deltaTime );
 };
