@@ -26,7 +26,7 @@ void BlockOutlineRenderer::render( const glm::ivec3& blockPosition, const Core::
 void BlockOutlineRenderer::finalize()
 {
 	m_shader->bind();
-	m_shader->setUniform( m_shader->getProjectionUniform(), m_renderer.getProjection() );
+	m_shader->setUniform( m_shader->getProjectionUniform(), m_renderer.getPerspectiveProjection() );
 	m_shader->setUniform( m_shader->getViewUniform(), m_renderer.getView() );
 
 	for( const auto& outline : m_outlines )

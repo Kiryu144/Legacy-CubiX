@@ -9,47 +9,46 @@
 namespace Game
 {
 
-WorldChunk::WorldChunk( World& world, const glm::ivec3& chunkPosition )
+WorldChunk::WorldChunk( World& world, const glm::ivec2& chunkPosition )
 	: m_world( world ), m_chunkPosition( chunkPosition )
 {
+	m_data.resize( GetMaxYLevel() - GetMinYLevel() );
+}
+
+std::shared_ptr< WorldChunkLayer >& WorldChunk::getLayer( int y )
+{
+	cubix_assert( y >= GetMinYLevel() && y < GetMaxYLevel(), "Out of bounds" );
+	return m_data[ y + ( -GetMinYLevel() ) ];
+}
+
+const std::shared_ptr< WorldChunkLayer >& WorldChunk::getLayer( int y ) const
+{
+	cubix_assert( y >= GetMinYLevel() && y < GetMaxYLevel(), "Out of bounds" );
+	return m_data[ y + ( -GetMinYLevel() ) ];
+}
+
+std::shared_ptr< WorldChunkLayer >& WorldChunk::getOrCreateLayer( int y )
+{
+	auto& layer = getLayer( y );
+	if( !layer )
+	{
+		layer.reset( new WorldChunkLayer( *this, y ) );
+		m_heightBounds[ 0 ] = std::min( m_heightBounds[ 0 ], y );
+		m_heightBounds[ 1 ] = std::max( m_heightBounds[ 1 ], y );
+	}
+	return layer;
 }
 
 void WorldChunk::setVoxel( const glm::uvec3& position, const Voxel& voxel )
 {
-	cubix_assert( !m_data.empty(), "Data hasn't been initialized yet" );
-	auto& existingVoxel = m_data[ GetIndexForPosition( position ) ];
-	if( existingVoxel.exists() != voxel.exists() )
-	{
-		m_voxelCount += voxel.exists() ? +1 : -1;
-	}
-
-	existingVoxel = voxel;
+	auto& layer = getOrCreateLayer( position.y );
+	layer->setVoxel( position, voxel );
 }
 
-const Voxel& WorldChunk::getVoxel( const glm::uvec3& position ) const
+Voxel WorldChunk::getVoxel( const glm::uvec3& position ) const
 {
-	static const Voxel noVoxel;
-	if( !isInitialized() )
-	{
-		return noVoxel;
-	}
-	return m_data[ GetIndexForPosition( position ) ];
-}
-
-size_t WorldChunk::getVoxelCount() const
-{
-	return m_voxelCount;
-}
-
-void WorldChunk::initializeData()
-{
-	cubix_assert( m_data.empty(), "Data was already initialized" );
-	m_data.resize( GetVolume() );
-}
-
-bool WorldChunk::isInitialized() const
-{
-	return !m_data.empty();
+	auto& layer = getLayer( position.y );
+	return layer ? layer->getVoxel( { position.x, position.z } ) : Voxel();
 }
 
 } // namespace Game

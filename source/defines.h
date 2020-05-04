@@ -12,6 +12,11 @@
 #define CUBIX_GL_ERROR_CALLBACK 1 // enable opengl error callbacks
 #define CUBIX_IMGUI 1			  // enable imgui
 
+#define CUBIX_TICKS_PER_SECOND 20
+#define CUBIX_MS_PER_TICK 1000/CUBIX_TICKS_PER_SECOND
+
+#define CUBIX_CHUNK_SIZE 32
+
 namespace Defines
 {
 

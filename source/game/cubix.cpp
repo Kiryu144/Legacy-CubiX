@@ -7,13 +7,11 @@
 namespace Game
 {
 
-Cubix::Cubix() : m_gameTime( 30 ), m_world( nullptr ) {}
+Cubix::Cubix() : m_gameTime( static_cast< unsigned int >( -1 ) ) {}
 
 void Cubix::update()
 {
 	m_gameTime.update();
-	pollNetworkEvents();
-	m_world.update( m_gameTime.getDeltaTime() );
 }
 
 void Cubix::start()

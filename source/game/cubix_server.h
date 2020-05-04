@@ -5,11 +5,10 @@
 #ifndef CUBIX_CUBIX_SERVER_H
 #define CUBIX_CUBIX_SERVER_H
 
-#include "connected_client.h"
-
 #include "core/net/net_server.h"
 
 #include "game/cubix.h"
+#include "game/player/connected_client.h"
 
 namespace Game
 {

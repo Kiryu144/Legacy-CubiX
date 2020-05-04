@@ -65,7 +65,7 @@ public:
 		Handler< EventType >::remove( this );
 	}
 
-	virtual void onEvent( const EventType& eventType ) = 0;
+	virtual void onEvent( const EventType& event ) = 0;
 };
 
 template< typename EventType >

@@ -17,7 +17,7 @@ Entity::Entity()
 	getRotationOrigin() = getScale() * glm::vec3( 0.5f );
 }
 
-void Entity::update( World& world, float deltaTime )
+void Entity::tick( World& world, float deltaTime )
 {
 	Core::AxisAlignedBB myBB = m_axisAlignedBb;
 	myBB.offset( m_position );

@@ -18,7 +18,6 @@ class ShaderProgram;
 namespace Game
 {
 
-class Renderable;
 class GizmoRenderer;
 class BlockOutlineRenderer;
 class WorldChunkRenderer;
@@ -31,7 +30,8 @@ public:
 protected:
 	ShaderRegistry m_shaderRegistry;
 
-	glm::mat4 m_projection;
+	glm::mat4 m_perspectiveProjection;
+	glm::mat4 m_orthogonalProjection;
 	glm::mat4 m_view;
 
 	// Sub renderers
@@ -40,9 +40,11 @@ protected:
 	std::shared_ptr< WorldChunkRenderer > m_worldChunkRenderer;
 
 public:
-	CUBIX_GET_SET_CR_CR( m_projection, Projection );
+	CUBIX_GET_SET_CR_CR( m_perspectiveProjection, PerspectiveProjection );
+	CUBIX_GET_SET_CR_CR( m_orthogonalProjection, OrthogonalProjection );
 	CUBIX_GET_SET_CR_CR( m_view, View );
 	CUBIX_GET_R_CR( m_shaderRegistry, ShaderRegistry );
+
 	CUBIX_GET_R_CR( m_gizmoRenderer, GizmoRenderer );
 	CUBIX_GET_R_CR( m_blockOutlineRenderer, BlockOutlineRenderer );
 	CUBIX_GET_R_CR( m_worldChunkRenderer, WorldChunkRenderer );

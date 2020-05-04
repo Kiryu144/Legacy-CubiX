@@ -19,7 +19,6 @@ void CubixServer::update()
 {
 	Cubix::update();
 	Core::NetServer::pollNetworkEvents();
-	m_world.update( m_gameTime.getDeltaTime() );
 }
 
 void CubixServer::onNetworkingEvent( const ENetEvent& event )
@@ -42,7 +41,7 @@ void CubixServer::onPacketReceive( Core::PeerID id, std::istream& istream )
 		PacketClientInformation packetClientInformation;
 		packetClientInformation.deserialize( istream );
 		Core::Logger::Log( std::string( "Player " ) + packetClientInformation.getName().get()
-						   + " joined the game" );
+						   + " connected" );
 		break;
 	}
 }

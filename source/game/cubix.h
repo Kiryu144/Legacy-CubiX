@@ -5,23 +5,18 @@
 #ifndef CUBIX_CUBIX_H
 #define CUBIX_CUBIX_H
 
-#include "core/net/net_instance.h"
 #include "core/time/game_time.h"
-
-#include "game/packet/packet.h"
-#include "game/world/world.h"
 
 namespace Game
 {
 
-struct Cubix : public virtual Core::NetInstance
+struct Cubix
 {
 private:
 	bool m_quit{ false };
 
 protected:
 	Core::GameTime m_gameTime;
-	World m_world;
 
 	virtual void update();
 

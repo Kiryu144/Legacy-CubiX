@@ -20,7 +20,7 @@ protected:
 
 public:
 	Entity();
-	virtual void update( World& world, float deltaTime );
+	virtual void tick( World& world, float deltaTime );
 };
 
 } // namespace Game

@@ -9,7 +9,6 @@
 #include "game/rendering/renderer.h"
 #include "game/rendering/world/gizmo_renderer.h"
 #include "game/world/chunk/world_chunk.h"
-#include "game/world/chunk/world_chunk_column.h"
 #include "game/world/entity/entity.h"
 
 #include <glm/gtx/string_cast.hpp>
@@ -17,46 +16,24 @@
 namespace Game
 {
 
-World::World( Renderer* renderer )
-	: WorldChunkContainer( *this ),
-	  m_chunkWorker( 4 ),
-	  m_renderer( renderer ),
-	  m_worldGenerator( *this )
+World::World( Renderer* renderer ) : WorldChunkContainer( *this ), m_renderer( renderer )
 {
+	int range = 10;
+	for( int x = -range; x <= range; ++x )
+	{
+		for( int y = -range; y <= range; ++y )
+		{
+			getOrCreateChunk( { x, y } );
+		}
+	}
 }
 
-void World::update( float deltaTime )
+void World::tick()
 {
-	m_chunkWorker.checkForCrash();
-
 	for( auto& entity : m_entities )
 	{
-		entity->update( *this, deltaTime );
-		m_renderer->getGizmoRenderer()->renderCube( *entity, { 255, 0, 255, 255 } );
+		entity->tick( *this, CUBIX_MS_PER_TICK );
 	}
-
-	for( int i = 0; i <= 360; i += 45 )
-	{
-		Core::Transform transform;
-		transform.getPosition()		  = glm::vec3( i / 22.5f, 11.0f, 5.0f );
-		transform.getRotation().y	  = i;
-		transform.getRotationOrigin() = transform.getScale() * glm::vec3( 0.5f );
-		m_renderer->getGizmoRenderer()->renderCube( transform, { 255, 0, 0, 255 } );
-	}
-}
-
-void World::updateForPlayer( const glm::ivec2& chunkPosition )
-{
-	if( getChunkColumn( chunkPosition ) == nullptr )
-	{
-		m_chunkWorker.queue( getOrCreateChunkColumn( chunkPosition ),
-							 ChunkWorker::GENERATE_TERRAIN );
-	}
-}
-
-size_t World::calculateVoxelMemoryConsumption() const
-{
-	return getAllChunks().size() * WorldChunk::GetVolume() * sizeof( Voxel );
 }
 
 void World::summonEntity( std::shared_ptr< Entity > m_entity )

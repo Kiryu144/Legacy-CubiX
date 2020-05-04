@@ -8,10 +8,13 @@
 #include "core/cubix_assert.h"
 #include "core/cubix_macro.h"
 
+#include "game/world/chunk/world_chunk_layer.h"
 #include "game/world/voxel/voxel.h"
 
 #include <cmath>
 #include <vector>
+
+#include <glm/vec2.hpp>
 
 namespace Game
 {
@@ -24,75 +27,69 @@ class WorldChunk
 public:
 	static constexpr int GetSideLength()
 	{
-		return 32;
+		return WorldChunkLayer::GetSideLength();
 	}
 
 	static constexpr int GetArea()
 	{
-		return GetSideLength() * GetSideLength();
+		return WorldChunkLayer::GetArea();
 	}
 
-	static constexpr int GetVolume()
+	static glm::uvec2 GetSize()
 	{
-		return GetSideLength() * GetSideLength() * GetSideLength();
+		return WorldChunkLayer::GetSize();
 	}
 
-	static glm::uvec3 GetSize()
+	static constexpr int GetMinYLevel()
 	{
-		return glm::uvec3{ GetSideLength() };
+		return -1024;
 	}
 
-	static unsigned int GetIndexForPosition( const glm::uvec3& position )
+	static constexpr int GetMaxYLevel()
 	{
-		// optimize: Evaluate creating a lookup table for the positions
-		cubix_assert( position.x < GetSideLength() && position.y < GetSideLength()
-						  && position.z < GetSideLength(),
-					  "Out of range" );
-		return ( position.z * GetArea() ) + ( position.y * GetSideLength() ) + position.x;
+		return 1024;
 	}
 
-	static glm::uvec3 GetPositionForIndex( unsigned int index )
-	{
-		// OPT: Evaluate creating a lookup table for the indicies
-		unsigned int z = index / GetArea();
-		index -= ( z * GetArea() );
-		unsigned int y = index / GetSideLength();
-		unsigned int x = index % GetSideLength();
-		return { x, y, z };
-	}
-
-	static glm::ivec3 ChunkPosFromWorldPos( const glm::ivec3& worldPosition )
+	static glm::ivec2 ChunkPosFromWorldPos( const glm::ivec3& worldPosition )
 	{
 		return { std::floor( static_cast< float >( worldPosition.x ) / GetSideLength() ),
-				 std::floor( static_cast< float >( worldPosition.y ) / GetSideLength() ),
 				 std::floor( static_cast< float >( worldPosition.z ) / GetSideLength() ) };
 	}
 
-	static glm::ivec3 WorldPosFromChunkPos( const glm::ivec3& chunkPosition )
+	static glm::ivec3 WorldPosFromChunkPos( const glm::ivec2& chunkPosition )
 	{
-		return chunkPosition * glm::ivec3( GetSize() );
+		return { chunkPosition.x * GetSideLength(), 0, chunkPosition.y * GetSideLength() };
+	}
+
+	static glm::ivec3 InsideChunkOffsetFromWorldPos( const glm::ivec3& worldPosition )
+	{
+		auto chunkPos = ChunkPosFromWorldPos( worldPosition );
+		return { worldPosition.x - chunkPos.x * GetSideLength(),
+				 worldPosition.y,
+				 worldPosition.z - chunkPos.y * GetSideLength() };
 	}
 
 protected:
 	World& m_world;
-	glm::ivec3 m_chunkPosition;
+	glm::ivec2 m_chunkPosition;
 
-	std::vector< Voxel > m_data;
-	size_t m_voxelCount{ 0 };
+	std::vector< std::shared_ptr< WorldChunkLayer > > m_data;
+	glm::ivec2 m_heightBounds{ 0, 0 };
 
 public:
-	WorldChunk( World& world, const glm::ivec3& chunkPosition = glm::ivec3{ 0, 0, 0 } );
+	WorldChunk( World& world, const glm::ivec2& chunkPosition = glm::ivec2{ 0, 0 } );
 
 	CUBIX_GET_CR( m_chunkPosition, ChunkPosition );
 	CUBIX_GET_R_CR( m_world, World );
+	CUBIX_GET_V( m_chunkPosition[ 0 ], LowestLayer );
+	CUBIX_GET_V( m_chunkPosition[ 1 ], HighestLayer );
 
-	void initializeData();
-	bool isInitialized() const;
+	std::shared_ptr< WorldChunkLayer >& getLayer( int y );
+	const std::shared_ptr< WorldChunkLayer >& getLayer( int y ) const;
+	std::shared_ptr< WorldChunkLayer >& getOrCreateLayer( int y );
 
 	virtual void setVoxel( const glm::uvec3& position, const Voxel& voxel );
-	const Voxel& getVoxel( const glm::uvec3& position ) const;
-
-	size_t getVoxelCount() const;
+	Voxel getVoxel( const glm::uvec3& position ) const;
 };
 
 } // namespace Game

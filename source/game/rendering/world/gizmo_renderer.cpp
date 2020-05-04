@@ -37,7 +37,7 @@ void GizmoRenderer::finalize()
 {
 	m_shader->bind();
 
-	m_shader->setUniform( m_shader->getProjectionUniform(), m_renderer.getProjection() );
+	m_shader->setUniform( m_shader->getProjectionUniform(), m_renderer.getPerspectiveProjection() );
 	m_shader->setUniform( m_shader->getViewUniform(), m_renderer.getView() );
 
 	for( auto& entry : m_toRender )

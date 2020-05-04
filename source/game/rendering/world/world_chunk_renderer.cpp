@@ -7,7 +7,6 @@
 #include "core/opengl/shader_program.h"
 
 #include "game/rendering/renderer.h"
-#include "game/world/chunk/render_world_chunk.h"
 
 namespace Game
 {
@@ -33,7 +32,7 @@ void WorldChunkRenderer::render( std::shared_ptr< RenderWorldChunk > chunk )
 void WorldChunkRenderer::finalize()
 {
 	m_shader->bind();
-	m_shader->setUniform( m_shader->getProjectionUniform(), m_renderer.getProjection() );
+	m_shader->setUniform( m_shader->getProjectionUniform(), m_renderer.getPerspectiveProjection() );
 	m_shader->setUniform( m_shader->getViewUniform(), m_renderer.getView() );
 	m_shader->setUniform( m_ambientLightPowerUniform, 0.8f );
 	m_shader->setUniform( m_directionalLightPositionUniform,
@@ -42,6 +41,7 @@ void WorldChunkRenderer::finalize()
 						  glm::vec3( 179 / 255.0f, 210 / 255.0f, 238 / 255.0f ) );
 	m_shader->setUniform( m_fogDensityUniform, 0.0004f );
 
+	/*
 	for( auto& chunk : m_chunks )
 	{
 		chunk->uploadWhenNeeded();
@@ -52,7 +52,7 @@ void WorldChunkRenderer::finalize()
 			int vertices = chunk->getAttributeBuffer().getVerticeAmount();
 			glDrawArrays( GL_TRIANGLES, 0, chunk->getAttributeBuffer().getVerticeAmount() );
 		}
-	}
+	}*/
 
 	m_chunks.clear();
 }
