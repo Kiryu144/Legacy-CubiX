@@ -11,6 +11,7 @@
 #include "game/cubix.h"
 #include "game/rendering/moveable_view.h"
 #include "game/rendering/renderer.h"
+#include "game/world/world.h"
 
 namespace Game
 {
@@ -24,7 +25,10 @@ private:
 
 	Core::NetClient m_client;
 
+	World m_world;
+
 	void update() override;
+	void tick() override;
 	void onEvent( const Core::EventWindowResize& event ) override;
 
 	void drawImGui();

@@ -42,4 +42,10 @@ Voxel WorldChunkLayer::getVoxel( size_t index ) const
 	return m_data[ index ];
 }
 
+void WorldChunkLayer::fill( Voxel voxel )
+{
+	m_data.fill( voxel );
+	m_voxelCount = voxel.exists() ? m_data.size() : 0;
+}
+
 } // namespace Game

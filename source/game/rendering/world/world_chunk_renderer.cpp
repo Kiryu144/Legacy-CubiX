@@ -7,6 +7,7 @@
 #include "core/opengl/shader_program.h"
 
 #include "game/rendering/renderer.h"
+#include "game/world/chunk/world_chunk.h"
 
 namespace Game
 {
@@ -21,7 +22,7 @@ WorldChunkRenderer::WorldChunkRenderer( Renderer& renderer ) : SubRenderer( rend
 	m_fogDensityUniform = m_shader->getUniformLocation( "u_density" );
 }
 
-void WorldChunkRenderer::render( std::shared_ptr< RenderWorldChunk > chunk )
+void WorldChunkRenderer::render( std::shared_ptr< WorldChunk >& chunk )
 {
 	if( chunk != nullptr )
 	{
@@ -41,18 +42,12 @@ void WorldChunkRenderer::finalize()
 						  glm::vec3( 179 / 255.0f, 210 / 255.0f, 238 / 255.0f ) );
 	m_shader->setUniform( m_fogDensityUniform, 0.0004f );
 
-	/*
 	for( auto& chunk : m_chunks )
 	{
-		chunk->uploadWhenNeeded();
-		if( chunk->getAttributeBuffer().isValid() )
-		{
-			m_shader->setUniform( m_shader->getTransformUniform(), chunk->getMatrix() );
-			chunk->getAttributeBuffer().bind( 0 );
-			int vertices = chunk->getAttributeBuffer().getVerticeAmount();
-			glDrawArrays( GL_TRIANGLES, 0, chunk->getAttributeBuffer().getVerticeAmount() );
-		}
-	}*/
+		m_shader->setUniform( m_shader->getTransformUniform(), chunk->getTransform().getMatrix() );
+		chunk->getVertexBuffer().bind( 0 );
+		glDrawArrays( GL_TRIANGLES, 0, chunk->getVertexBuffer().getVerticeAmount() );
+	}
 
 	m_chunks.clear();
 }

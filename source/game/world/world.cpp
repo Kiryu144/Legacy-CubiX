@@ -4,56 +4,109 @@
 
 #include "world.h"
 
-#include "core/opengl/shader_program.h"
-
 #include "game/rendering/renderer.h"
-#include "game/rendering/world/gizmo_renderer.h"
+#include "game/rendering/world/world_chunk_renderer.h"
 #include "game/world/chunk/world_chunk.h"
+#include "game/world/chunk/world_chunk_mesh.h"
 #include "game/world/entity/entity.h"
-
-#include <glm/gtx/string_cast.hpp>
 
 namespace Game
 {
 
-World::World( Renderer* renderer ) : WorldChunkContainer( *this ), m_renderer( renderer )
+World::World( Renderer* renderer )
+	: WorldChunkContainer( *this ),
+	  Proxy( renderer == nullptr ),
+	  m_renderer( renderer ),
+	  m_chunkWorker( 4 )
 {
 	int range = 10;
 	for( int x = -range; x <= range; ++x )
 	{
 		for( int y = -range; y <= range; ++y )
 		{
-			getOrCreateChunk( { x, y } );
+			getOrCreateChunk( ChunkPosition{ x, y } );
 		}
 	}
 }
 
 void World::tick()
 {
-	for( auto& entity : m_entities )
-	{
-		entity->tick( *this, CUBIX_MS_PER_TICK );
-	}
-}
+	m_generatedChunks = 0;
+	m_populatedChunks = 0;
+	m_finishedChunks  = 0;
 
-void World::summonEntity( std::shared_ptr< Entity > m_entity )
-{
-	m_entities.push_back( m_entity );
-}
-
-std::optional< glm::ivec3 > World::raycastBlocks( const glm::vec3& start,
-												  const glm::vec3& direction,
-												  int maxDistance ) const
-{
-	glm::vec3 directionNorm{ glm::normalize( direction ) };
-	for( glm::vec3 pos = start; maxDistance > 0; pos += directionNorm, --maxDistance )
+	for( auto chunk : getAllChunks() )
 	{
-		if( getVoxel( pos ).exists() )
+		if( chunk->isWorkedOn() )
 		{
-			return glm::ivec3( pos );
+			continue;
+		}
+
+		if( !chunk->isGenerated() )
+		{
+			generateChunk( chunk );
+			continue;
+		}
+		++m_generatedChunks;
+
+		if( !chunk->isPopulated() )
+		{
+			if( isSurrounded( chunk->getChunkPosition() ) )
+			{
+				populateChunk( chunk );
+			}
+			continue;
+		}
+		++m_populatedChunks;
+
+		if( !chunk->isFinished() )
+		{
+			chunk->setFinished( true );
+			generateMesh( chunk );
+		}
+		++m_finishedChunks;
+
+		if( chunk->getWorldChunkMesh() && !chunk->getWorldChunkMesh()->getVertices().empty() )
+		{
+			chunk->getVertexBuffer().upload( &chunk->getWorldChunkMesh()->getVertices()[ 0 ],
+											 chunk->getWorldChunkMesh()->getVertices().size() );
+			chunk->getWorldChunkMesh()->getVertices().clear();
 		}
 	}
-	return {};
+}
+
+void World::update()
+{
+	for( auto chunk : getAllChunks() )
+	{
+		if( chunk->isWorkedOn() )
+		{
+			continue;
+		}
+
+		if( m_renderer )
+		{
+			if( chunk->getVertexBuffer().isValid() )
+			{
+				m_renderer->getWorldChunkRenderer()->render( chunk );
+			}
+		}
+	}
+}
+
+void World::generateChunk( std::shared_ptr< WorldChunk >& worldChunk )
+{
+	m_chunkWorker.queue( worldChunk, WorldChunkWorker::GENERATE );
+}
+
+void World::populateChunk( std::shared_ptr< WorldChunk >& worldChunk )
+{
+	m_chunkWorker.queue( worldChunk, WorldChunkWorker::POPULATE );
+}
+
+void World::generateMesh( std::shared_ptr< WorldChunk >& worldChunk )
+{
+	m_chunkWorker.queue( worldChunk, WorldChunkWorker::MESH );
 }
 
 } // namespace Game

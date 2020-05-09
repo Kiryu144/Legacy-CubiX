@@ -24,7 +24,7 @@
 namespace Game
 {
 
-CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" )
+CubixClient::CubixClient() : m_window( 1440, 900, "CubiX" ), m_world( &m_renderer )
 {
 	std::string windowTitle{ "CubiX " + Defines::s_version };
 #ifndef NDEBUG
@@ -87,11 +87,9 @@ void CubixClient::update()
 		quit();
 	}
 
-	Core::Transform transform;
-	m_renderer.getGizmoRenderer()->renderCube( transform );
+	m_world.update();
 
 	m_moveableView.update( m_gameTime.getDeltaTime() );
-
 	m_renderer.setView( m_moveableView.getViewMatrix() );
 	m_renderer.finalizeSubRenderer();
 
@@ -100,13 +98,24 @@ void CubixClient::update()
 #endif
 }
 
+void CubixClient::tick()
+{
+	m_world.tick();
+}
+
 void CubixClient::drawImGui()
 {
 #ifdef CUBIX_IMGUI
 	static char serverAddress[ 32 ] = "127.0.0.1:4444";
 
 	ImGui::Begin( "CubiX" );
+	ImGui::Text( "Chunks (Generated, Populated, Finished): %d / %d / %d",
+				 m_world.getGeneratedChunkCount(),
+				 m_world.getPopulatedChunkCount(),
+				 m_world.getFinishedChunkCount(),
+				 m_world.getAllChunks().size() );
 
+	/*
 	if( m_client.getConnected() )
 	{
 		if( ImGui::Button( "Disconnect" ) )
@@ -121,7 +130,7 @@ void CubixClient::drawImGui()
 		{
 			m_client.connect( serverAddress );
 		}
-	}
+	}*/
 	ImGui::End();
 #endif
 }
@@ -130,8 +139,8 @@ void CubixClient::onEvent( const Core::EventWindowResize& event )
 {
 	m_renderer.setPerspectiveProjection( glm::perspective(
 		glm::radians( 70.0f ), static_cast< float >( event.w ) / event.h, 0.1f, 1000.0f ) );
-	m_renderer.setOrthogonalProjection(
-		glm::ortho( 0, static_cast< int >( event.w ), 0, static_cast< int >( event.h ) ) );
+	// m_renderer.setOrthogonalProjection(
+	//	glm::ortho( 0, static_cast< int >( event.w ), 0, static_cast< int >( event.h ) ) );
 }
 
 } // namespace Game

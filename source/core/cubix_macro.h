@@ -26,6 +26,13 @@
 		return x;                       \
 	}
 
+// Inline getter returns const reference
+#define CUBIX_GET_BOOL( x, n )         \
+	const decltype( x )& is##n() const \
+	{                                  \
+		return x;                      \
+	}
+
 // Inline getter returns reference and const reference
 #define CUBIX_GET_R_CR( x, n ) CUBIX_GET_R( x, n ) CUBIX_GET_CR( x, n )
 
@@ -44,12 +51,14 @@
 	}
 
 #define CUBIX_NCONST_GET( nconst_return, class_name, call ) \
-	const_cast< nconst_return >(static_cast<const class_name &>(*this).call);
+	const_cast< nconst_return >( static_cast< const class_name& >( *this ).call );
 
 // Inline getter & setter that take and return const references
 #define CUBIX_GET_SET_R_CR( x, n ) CUBIX_GET_R_CR( x, n ) CUBIX_SET_CR( x, n )
 
 // Inline getter & setter that take and return const references
 #define CUBIX_GET_SET_CR_CR( x, n ) CUBIX_GET_CR( x, n ) CUBIX_SET_CR( x, n )
+
+#define CUBIX_GET_SET_BOOL( x, n ) CUBIX_GET_BOOL( x, n ) CUBIX_SET_CR( x, n )
 
 #endif // CUBIX_CUBIX_MACRO_H

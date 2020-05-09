@@ -4,9 +4,8 @@
 
 #include "world_chunk_container.h"
 
-#include "core/math/axis_aligned_bb.h"
-
 #include "game/world/chunk/world_chunk.h"
+#include "game/world/voxel/voxel.h"
 #include "game/world/world.h"
 
 #include <shared_mutex>
@@ -16,32 +15,13 @@ namespace Game
 
 WorldChunkContainer::WorldChunkContainer( World& world ) : m_world( world ) {}
 
-std::shared_ptr< WorldChunk > WorldChunkContainer::getChunk( const glm::ivec2& chunkPos ) const
+std::shared_ptr< WorldChunk > WorldChunkContainer::getChunk( const ChunkPosition& chunkPos ) const
 {
 	auto it = m_chunkMap.find( chunkPos );
 	return it != m_chunkMap.end() ? it->second : nullptr;
 }
 
-void WorldChunkContainer::setVoxel( const glm::ivec3& pos, const Voxel& voxel )
-{
-	auto chunk = getChunk( pos );
-	if( chunk )
-	{
-		chunk->setVoxel( WorldChunk::InsideChunkOffsetFromWorldPos( pos ), voxel );
-	}
-}
-
-Voxel WorldChunkContainer::getVoxel( const glm::ivec3& pos, const Voxel& _def ) const
-{
-	auto chunk = getChunk( pos );
-	if( !chunk )
-	{
-		return Voxel();
-	}
-	return chunk->getVoxel( WorldChunk::InsideChunkOffsetFromWorldPos( pos ) );
-}
-
-std::shared_ptr< WorldChunk > WorldChunkContainer::getOrCreateChunk( const glm::ivec2& chunkPos )
+std::shared_ptr< WorldChunk > WorldChunkContainer::getOrCreateChunk( const ChunkPosition& chunkPos )
 {
 	auto chunk = getChunk( chunkPos );
 	if( !chunk )
@@ -53,33 +33,49 @@ std::shared_ptr< WorldChunk > WorldChunkContainer::getOrCreateChunk( const glm::
 	return chunk;
 }
 
-void WorldChunkContainer::deleteChunk( const glm::ivec2& chunkPos )
+void WorldChunkContainer::deleteChunk( const ChunkPosition& chunkPos )
 {
 	m_chunkMap.erase( chunkPos );
 }
 
-void WorldChunkContainer::getVoxels( const Core::AxisAlignedBB& aabb,
-									 std::list< PlacedVoxel >& buffer )
+bool WorldChunkContainer::isSurrounded( const ChunkPosition& pos ) const
 {
-	glm::ivec3 min{ std::floor( aabb.getMin().x ),
-					std::floor( aabb.getMin().y ),
-					std::floor( aabb.getMin().z ) };
-	glm::ivec3 max{ std::floor( aabb.getMax().x ),
-					std::floor( aabb.getMax().y ),
-					std::floor( aabb.getMax().z ) };
-
-	// Optimize by caching chunks ( getVoxel() is slow )
-	for( int x = min.x; x <= max.x; ++x )
+	for( int x = -1; x <= 1; ++x )
 	{
-		for( int y = min.y; y <= max.y; ++y )
+		for( int y = -1; y <= 1; ++y )
 		{
-			for( int z = min.z; z <= max.z; ++z )
+			if( x == 0 && y == 0 )
 			{
-				glm::ivec3 pos{ x, y, z };
-				buffer.push_back( PlacedVoxel( m_world, pos, getVoxel( pos ) ) );
+				continue;
+			}
+
+			ChunkPosition chunkPosition{ pos.x + x, pos.y + y };
+			if( !getChunk( chunkPosition ) )
+			{
+				return false;
 			}
 		}
 	}
+	return true;
+}
+
+void WorldChunkContainer::setVoxel( const WorldPosition& pos, const Voxel& voxel )
+{
+	auto chunk = getChunk( pos.toChunkPosition() );
+	if( chunk )
+	{
+		chunk->setVoxel( pos.toInnerChunkOffset(), voxel );
+	}
+}
+
+Voxel WorldChunkContainer::getVoxel( const WorldPosition& pos, const Voxel& _def ) const
+{
+	auto chunk = getChunk( pos.toChunkPosition() );
+	if( !chunk )
+	{
+		return Voxel();
+	}
+	return chunk->getVoxel( pos.toInnerChunkOffset() );
 }
 
 } // namespace Game

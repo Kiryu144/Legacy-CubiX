@@ -25,31 +25,19 @@ class WorldChunk;
 class WorldChunkLayer
 {
 public:
-	static constexpr int GetSideLength()
-	{
-		return CUBIX_CHUNK_SIZE;
-	}
-
-	static constexpr int GetArea()
-	{
-		return GetSideLength() * GetSideLength();
-	}
-
-	static glm::uvec2 GetSize()
-	{
-		return glm::uvec2{ GetSideLength() };
-	}
-
 	static size_t GetIndexForLayer( const glm::uvec2& position )
 	{
-		cubix_assert( position.x < GetSideLength() && position.y < GetSideLength(),
+		cubix_assert( position.x < CUBIX_CHUNK_SIZE && position.y < CUBIX_CHUNK_SIZE,
 					  "Out of range" );
-		return position.y * GetSideLength() + position.x;
+		return position.y * CUBIX_CHUNK_SIZE + position.x;
 	}
 
 protected:
 	WorldChunk& m_worldChunk;
 	int m_yLevel;
+
+	WorldChunkLayer* m_nextLayer{ nullptr };
+	WorldChunkLayer* m_prevLayer{ nullptr };
 
 	std::array< Voxel, CUBIX_CHUNK_SIZE * CUBIX_CHUNK_SIZE > m_data;
 
@@ -61,7 +49,10 @@ public:
 	CUBIX_GET_R_CR( m_worldChunk, WorldChunk );
 	CUBIX_GET_R_CR( m_yLevel, Y );
 	CUBIX_GET_R_CR( m_voxelCount, VoxelCount );
+	CUBIX_GET_SET_CR_CR( m_nextLayer, NextLayer );
+	CUBIX_GET_SET_CR_CR( m_prevLayer, PreviousLayer );
 
+	void fill( Voxel voxel );
 	void setVoxel( size_t index, Voxel voxel );
 	Voxel getVoxel( size_t index ) const;
 

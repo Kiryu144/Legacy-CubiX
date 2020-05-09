@@ -6,38 +6,24 @@
 #define CUBIX_WORLD_CHUNK_CONTAINER_H
 
 #include "core/cubix_macro.h"
-#include "core/logic/lockable.h"
 
-#include "game/world/voxel/placed_voxel.h"
-#include "game/world/voxel/voxel.h"
+#include "game/world/world_position.h"
 
 #include <list>
 #include <memory>
 #include <unordered_map>
-#include <unordered_set>
-
-// clang-format off
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/hash.hpp>
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
-// clang-format on
-
-namespace Core
-{
-class AxisAlignedBB;
-}
 
 namespace Game
 {
 
 class WorldChunk;
 class World;
+class Voxel;
 
 class WorldChunkContainer
 {
 public:
-	typedef std::unordered_map< glm::ivec2, std::shared_ptr< WorldChunk > > ChunkMap;
+	typedef std::unordered_map< ChunkPosition, std::shared_ptr< WorldChunk > > ChunkMap;
 	typedef std::list< std::shared_ptr< WorldChunk > > ChunkList;
 
 protected:
@@ -50,13 +36,13 @@ public:
 
 	CUBIX_GET_R_CR( m_chunkList, AllChunks );
 
-	std::shared_ptr< WorldChunk > getChunk( const glm::ivec2& chunkPos ) const;
-	std::shared_ptr< WorldChunk > getOrCreateChunk( const glm::ivec2& chunkPos );
-	void deleteChunk( const glm::ivec2& chunkPos );
+	std::shared_ptr< WorldChunk > getChunk( const ChunkPosition& chunkPos ) const;
+	std::shared_ptr< WorldChunk > getOrCreateChunk( const ChunkPosition& chunkPos );
+	void deleteChunk( const ChunkPosition& chunkPos );
+	bool isSurrounded( const ChunkPosition& pos ) const;
 
-	void setVoxel( const glm::ivec3& pos, const Voxel& voxel );
-	Voxel getVoxel( const glm::ivec3& pos, const Voxel& _def = Voxel() ) const;
-	void getVoxels( const Core::AxisAlignedBB& aabb, std::list< PlacedVoxel >& buffer );
+	void setVoxel( const WorldPosition& pos, const Voxel& voxel );
+	Voxel getVoxel( const WorldPosition& pos, const Voxel& _def ) const;
 };
 
 } // namespace Game

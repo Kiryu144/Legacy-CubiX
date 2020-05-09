@@ -18,12 +18,12 @@ class ShaderProgram;
 namespace Game
 {
 
-class RenderWorldChunk;
+class WorldChunk;
 
 class WorldChunkRenderer : public SubRenderer
 {
 protected:
-	std::list< std::shared_ptr< RenderWorldChunk > > m_chunks;
+	std::list< std::shared_ptr< WorldChunk > > m_chunks;
 
 	std::shared_ptr< Core::ShaderProgram > m_shader;
 
@@ -35,7 +35,7 @@ protected:
 public:
 	WorldChunkRenderer( Renderer& renderer );
 
-	void render( std::shared_ptr< RenderWorldChunk > chunk );
+	void render( std::shared_ptr< WorldChunk >& chunk );
 	void finalize() override;
 };
 

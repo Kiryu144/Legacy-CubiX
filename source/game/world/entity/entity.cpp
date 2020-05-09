@@ -23,7 +23,7 @@ void Entity::tick( World& world, float deltaTime )
 	myBB.offset( m_position );
 
 	std::list< PlacedVoxel > voxels;
-	world.getVoxels( myBB, voxels );
+	//world.getVoxels( myBB, voxels );
 
 	for( auto& voxel : voxels )
 	{

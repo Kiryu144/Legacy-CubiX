@@ -5,10 +5,11 @@
 #ifndef CUBIX_WORLD_H
 #define CUBIX_WORLD_H
 
+#include "game/proxy.h"
 #include "game/world/chunk/world_chunk_container.h"
+#include "game/world/chunk/world_chunk_worker.h"
 
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/hash.hpp>
+#include <unordered_set>
 
 namespace Core
 {
@@ -22,28 +23,32 @@ class Renderer;
 class Entity;
 class PlacedVoxel;
 
-class World : public WorldChunkContainer
+class World : public WorldChunkContainer, public Proxy
 {
-public:
-	typedef std::unordered_set< glm::ivec3 > ChunkQueue;
-
 protected:
+	WorldChunkWorker m_chunkWorker;
 	Renderer* m_renderer;
 
-	std::list< std::shared_ptr< Entity > > m_entities;
+	void generateChunk( std::shared_ptr< WorldChunk >& worldChunk );
+	void populateChunk( std::shared_ptr< WorldChunk >& worldChunk );
+
+	int m_generatedChunks{ 0 };
+	int m_populatedChunks{ 0 };
+	int m_finishedChunks{ 0 };
 
 public:
 	World( Renderer* renderer );
-	virtual ~World() = default;
-	virtual void tick();
+
+	CUBIX_GET_V( m_generatedChunks, GeneratedChunkCount );
+	CUBIX_GET_V( m_populatedChunks, PopulatedChunkCount );
+	CUBIX_GET_V( m_finishedChunks, FinishedChunkCount );
+
+	void tick();
+	void update();
+
+	void generateMesh( std::shared_ptr< WorldChunk >& worldChunk );
 
 	CUBIX_GET_SET_R_CR( m_renderer, Renderer );
-
-	void summonEntity( std::shared_ptr< Entity > m_entity );
-
-	std::optional< glm::ivec3 > raycastBlocks( const glm::vec3& start,
-											   const glm::vec3& direction,
-											   int maxDistance ) const;
 };
 
 } // namespace Game

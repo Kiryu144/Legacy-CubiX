@@ -140,7 +140,7 @@ set(SOURCE_FILES
         source/game/rendering/world/world_chunk_renderer.cpp
         source/game/rendering/world/world_chunk_renderer.h
         source/game/world/chunk/world_chunk_layer.cpp
-        source/game/world/chunk/world_chunk_layer.h source/game/world/chunk/world_chunk_mesh.cpp source/game/world/chunk/world_chunk_mesh.h)
+        source/game/world/chunk/world_chunk_layer.h source/game/world/chunk/world_chunk_mesh.cpp source/game/world/chunk/world_chunk_mesh.h source/game/world/world_position.cpp source/game/world/world_position.h source/game/proxy.h source/game/world/chunk/world_chunk_worker.cpp source/game/world/chunk/world_chunk_worker.h)
 
 add_executable(CubiX ${SOURCE_FILES} resources.rc)
 target_link_libraries(CubiX ${LINKER_TARGETS})

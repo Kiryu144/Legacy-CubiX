@@ -53,7 +53,7 @@ void GameTime::setFPSLimit( unsigned int fpsLimit )
 
 double GameTime::getTimeSinceEpoch() const
 {
-	return m_lastUpdate.time_since_epoch().count() / 1000.0f;
+	return std::chrono::duration_cast<std::chrono::microseconds>(m_lastUpdate.time_since_epoch()).count() * 1000.0;
 }
 
 } // namespace Core

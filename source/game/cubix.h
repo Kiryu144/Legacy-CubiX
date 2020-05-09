@@ -17,8 +17,10 @@ private:
 
 protected:
 	Core::GameTime m_gameTime;
+	double m_lastTick{ 0 };
 
 	virtual void update();
+	virtual void tick();
 
 public:
 	Cubix();
