@@ -5,10 +5,10 @@
 #include "world_chunk_worker.h"
 
 #include "core/io/window.h"
-#include "core/time/auto_stop_watch.h"
 
 #include "game/world/chunk/world_chunk.h"
 #include "game/world/chunk/world_chunk_mesh.h"
+#include "game/world/world.h"
 
 namespace Game
 {
@@ -57,16 +57,7 @@ void WorldChunkWorker::worker( int index )
 		{
 		case GENERATE:
 		{
-			for( int x = 0; x < CUBIX_CHUNK_SIZE; ++x )
-			{
-				for( int z = 0; z < CUBIX_CHUNK_SIZE; ++z )
-				{
-					for( int y = 0; y < ( ( sin( x / 20.0f ) + 1.0f ) * 5.0f ); ++y )
-					{
-						operation.chunk->setVoxel( { x, y, z }, Voxel{ 0, 128, 0, 255 } );
-					}
-				}
-			}
+			operation.chunk->getWorld().getWorldGenerator().generateHeight( operation.chunk );
 			operation.chunk->setGenerated( true );
 			break;
 		}

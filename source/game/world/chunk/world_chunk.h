@@ -30,12 +30,12 @@ class WorldChunk
 public:
 	static constexpr int GetMinYLevel()
 	{
-		return -512;
+		return -256;
 	}
 
 	static constexpr int GetMaxYLevel()
 	{
-		return 512;
+		return 256;
 	}
 
 	static bool IsInRange( int yLevel )

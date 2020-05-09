@@ -39,7 +39,7 @@ Voxel WorldChunkMesh::getVoxel( const WorldPosition& position ) const
 {
 	auto chunkPos{ position.toChunkPosition() };
 	auto& chunk{ getChunk( chunkPos ) };
-	if( !chunk )
+	if( !chunk || !WorldChunk::IsInRange( position.y ) )
 	{
 		return Voxel();
 	}
@@ -58,14 +58,14 @@ void WorldChunkMesh::generate()
 
 	auto chunk{ getChunk( { 0, 0 } ) };
 	VoxelCluster voxelCluster;
-	for( int y = WorldChunk::GetMinYLevel(); y < WorldChunk::GetMaxYLevel(); ++y )
+	for( int y = WorldChunk::GetMaxYLevel() - 1; y >= WorldChunk::GetMinYLevel(); --y )
 	{
 		auto& layer{ chunk->getLayer( y ) };
 		if( !layer )
 		{
 			continue;
 		}
-
+		
 		for( int z = 0; z < CUBIX_CHUNK_SIZE; ++z )
 		{
 			for( int x = 0; x < CUBIX_CHUNK_SIZE; ++x )

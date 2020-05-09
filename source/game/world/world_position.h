@@ -26,6 +26,9 @@ struct ChunkPosition : public glm::ivec2
 
 	/// \return Returns the position of the chunk in the world
 	WorldPosition toWorldPosition() const;
+
+	/// \return Returns the position of the chunk in the world plus the offset
+	WorldPosition toWorldPosition(const WorldPosition& offset) const;
 };
 
 struct WorldPosition : public glm::ivec3

@@ -140,7 +140,23 @@ set(SOURCE_FILES
         source/game/rendering/world/world_chunk_renderer.cpp
         source/game/rendering/world/world_chunk_renderer.h
         source/game/world/chunk/world_chunk_layer.cpp
-        source/game/world/chunk/world_chunk_layer.h source/game/world/chunk/world_chunk_mesh.cpp source/game/world/chunk/world_chunk_mesh.h source/game/world/world_position.cpp source/game/world/world_position.h source/game/proxy.h source/game/world/chunk/world_chunk_worker.cpp source/game/world/chunk/world_chunk_worker.h)
+        source/game/world/chunk/world_chunk_layer.h
+        source/game/world/chunk/world_chunk_mesh.cpp
+        source/game/world/chunk/world_chunk_mesh.h
+        source/game/world/world_position.cpp
+        source/game/world/world_position.h
+        source/game/proxy.h
+        source/game/world/chunk/world_chunk_worker.cpp
+        source/game/world/chunk/world_chunk_worker.h
+        source/game/world/worldgenerator/world_generator.cpp
+        source/game/world/worldgenerator/world_generator.h
+        source/game/world/worldgenerator/biome/biome.cpp
+        source/game/world/worldgenerator/biome/biome.h
+        source/game/world/worldgenerator/biome/flat.h
+        source/game/world/worldgenerator/biome/flat.cpp
+        source/game/world/worldgenerator/biome/hilly_plains.cpp
+        source/game/world/worldgenerator/biome/hilly_plains.h
+        )
 
 add_executable(CubiX ${SOURCE_FILES} resources.rc)
 target_link_libraries(CubiX ${LINKER_TARGETS})

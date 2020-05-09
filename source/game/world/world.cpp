@@ -17,7 +17,8 @@ World::World( Renderer* renderer )
 	: WorldChunkContainer( *this ),
 	  Proxy( renderer == nullptr ),
 	  m_renderer( renderer ),
-	  m_chunkWorker( 4 )
+	  m_chunkWorker( 4 ),
+	  m_worldGenerator( *this )
 {
 	int range = 10;
 	for( int x = -range; x <= range; ++x )

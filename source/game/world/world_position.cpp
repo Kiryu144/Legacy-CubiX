@@ -17,6 +17,15 @@ WorldPosition ChunkPosition::toWorldPosition() const
 	return worldPosition;
 }
 
+WorldPosition ChunkPosition::toWorldPosition( const WorldPosition& offset ) const
+{
+	WorldPosition worldPosition;
+	worldPosition.x = x * CUBIX_CHUNK_SIZE + offset.x;
+	worldPosition.y = offset.y;
+	worldPosition.z = y * CUBIX_CHUNK_SIZE + offset.z;
+	return worldPosition;
+}
+
 ChunkPosition WorldPosition::toChunkPosition() const
 {
 	ChunkPosition chunkPosition;
