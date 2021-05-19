@@ -7,7 +7,8 @@
 
 #include <list>
 #include <mutex>
-#include <thread>
+#include <mingw.thread.h>
+#include <mingw.mutex.h>
 #include <vector>
 
 namespace Game

@@ -15,6 +15,7 @@ include_directories(${PROJECT_SOURCE_DIR}/lib/glad/include/)
 include_directories(${PROJECT_SOURCE_DIR}/lib/glfw/include/)
 include_directories(${PROJECT_SOURCE_DIR}/lib/glm/include/)
 include_directories(${PROJECT_SOURCE_DIR}/lib/imgui/include/)
+include_directories(${PROJECT_SOURCE_DIR}/lib/thread/include/)
 
 # Library source files
 set(LIBRARY_SOURCE_FILES ${LIBRARY_SOURCE_FILES} lib/enet/src/callbacks.c lib/enet/src/compress.c lib/enet/src/host.c lib/enet/src/list.c lib/enet/src/packet.c lib/enet/src/peer.c lib/enet/src/protocol.c lib/enet/src/unix.c lib/enet/src/win32.c)

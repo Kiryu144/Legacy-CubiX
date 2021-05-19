@@ -11,7 +11,8 @@
 #include <list>
 #include <map>
 #include <mutex>
-#include <thread>
+#include <mingw.thread.h>
+#include <mingw.mutex.h>
 
 namespace Core
 {
