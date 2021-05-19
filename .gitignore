@@ -1,5 +1,4 @@
 cmake-build-*
 .idea
-bin/*.dll
 bin/*.exe
 bin/log.log
