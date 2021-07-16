@@ -33,6 +33,20 @@ set(LINKER_TARGETS winmm ws2_32 glfw3 gdi32 opengl32)
 set(SOURCE_FILES
         ${LIBRARY_SOURCE_FILES}
         source/main.cpp
+        source/core/opengl/window.cpp
+        source/core/opengl/buffer.cpp
+        source/core/opengl/buffer.h
+        source/core/util/nocopy.h
+        source/core/opengl/texture.cpp
+        source/core/opengl/texture.h
+        source/core/opengl/shader.cpp
+        source/core/opengl/shader.h
+        source/core/opengl/helper.cpp
+        source/core/opengl/helper.h
+        source/core/io/files.cpp
+        source/core/io/files.h
+        source/core/io/file_path.cpp
+        source/core/io/file_path.h
         )
 
 add_executable(CubiX ${SOURCE_FILES} resources.rc)
